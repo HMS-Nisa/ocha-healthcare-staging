@@ -1,0 +1,288 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Search, ArrowRight, Check, User, Calendar, Plane, Clock, ShieldCheck, HeartHandshake, MapPin, Star, ChevronDown } from 'lucide-react';
+
+const TESTIMONIALS = [
+    { id: 1, name: "Sarah Jenkins", location: "Perth, Australia", text: "I was overwhelmed by the options in Penang. Ocha's team narrowed it down to two specialists in seconds and handled the booking.", rating: 5 },
+    { id: 2, name: "Budi Santoso", location: "Medan, Indonesia", text: "Sangat membantu. Saya bisa bandingkan harga paket jantung di Melaka dan KL langsung dari HP.", rating: 5 },
+    { id: 3, name: "Michael Chen", location: "Hong Kong", text: "Professional service. They handled my hotel booking near Gleneagles and the airport transfer was seamless.", rating: 5 }
+];
+
+const FAQS = [
+    { q: "Is Ocha's service really free?", a: "Yes. We are funded by our partner hospitals to manage international patients. You pay the hospital directly. No markups." },
+    { q: "How quickly can I get an appointment?", a: "Typically, we can secure appointments within 24-48 hours, even for senior specialists." },
+    { q: "Do you help with insurance claims?", a: "We provide all necessary medical reports and itemized billing required for your insurance claims." },
+    { q: "Can you arrange airport pickup?", a: "Absolutely. Our concierge team arranges airport transfers to your hotel or hospital." }
+];
+---
+
+<Layout title="Ocha Healthcare | Premium Medical Concierge">
+  
+  <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
+
+  {/* === 1. HERO SECTION === */}
+  <section class="relative pt-36 pb-20 lg:pt-48 lg:pb-32 overflow-hidden px-6">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
+        
+        {/* LEFT: Narrative */}
+        <div class="animate-fade-in-up order-2 lg:order-1 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-bold mb-8 tracking-wide uppercase shadow-sm">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                For International Patients
+            </div>
+            
+            {/* Locked to 2 Lines */}
+            <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-slate-900 mb-6 leading-[1.1] tracking-tight max-w-3xl mx-auto lg:mx-0">
+                Your medical trip, <br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500 italic">managed in one place.</span>
+            </h1>
+            
+            <p class="text-lg text-slate-500 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                We replace the confusion of medical travel with clarity. From doctor bookings to airport pickups, Ocha handles the logistics.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="/doctors" class="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition shadow-xl shadow-indigo-200 flex items-center justify-center gap-2 hover:-translate-y-1 duration-300">
+                    Find a Specialist <ArrowRight className="w-5 h-5" />
+                </a>
+                <a href="https://wa.me/60166062534" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition flex items-center justify-center gap-2 hover:border-indigo-200">
+                    Talk to Concierge
+                </a>
+            </div>
+        </div>
+
+        {/* RIGHT: TIGHT STACKED CARD UI */}
+        <div class="relative w-full flex items-center justify-center order-1 lg:order-2 perspective-1000 group mt-10 lg:mt-0">
+            {/* The Stack Container */}
+            <div class="relative w-full max-w-sm">
+                
+                {/* 1. Back Card (Medical Records) */}
+                <div class="absolute top-0 inset-x-0 w-[90%] mx-auto bg-white h-full rounded-[2rem] shadow-lg border border-slate-100 
+                            transform -translate-y-6 scale-90 opacity-60 z-0 origin-bottom
+                            transition-all duration-500 ease-out
+                            group-hover:-translate-y-10 group-hover:scale-95 group-hover:rotate-[-2deg]">
+                     {/* Dummy Content for visual weight */}
+                     <div class="p-6 opacity-30">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+                            <div class="h-2 w-24 bg-slate-200 rounded"></div>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded mb-2"></div>
+                        <div class="h-2 w-3/4 bg-slate-100 rounded"></div>
+                     </div>
+                </div>
+
+                {/* 2. Middle Card (Travel Details) */}
+                <div class="absolute top-0 inset-x-0 w-[95%] mx-auto bg-white h-full rounded-[2rem] shadow-xl border border-slate-100 
+                            transform -translate-y-3 scale-95 opacity-80 z-10 origin-bottom
+                            transition-all duration-500 ease-out
+                            group-hover:-translate-y-5 group-hover:scale-100 group-hover:rotate-[2deg]">
+                    <div class="p-6 opacity-50">
+                        <div class="flex items-center justify-between mb-4">
+                             <div class="h-3 w-32 bg-slate-300 rounded"></div>
+                             <Plane className="w-5 h-5 text-slate-300" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. Front Card (Main Itinerary) - Relative to hold height */}
+                <div class="relative bg-white/90 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] shadow-2xl shadow-indigo-900/15 border border-white/60 z-20 
+                            transform transition-all duration-500 hover:-translate-y-1">
+                     <div class="flex items-center justify-between mb-8 border-b border-slate-100 pb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                <User className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <div class="text-base font-bold text-slate-900">Patient Itinerary</div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="relative flex h-2.5 w-2.5">
+                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                                    </span>
+                                    <span class="text-xs text-green-600 font-bold tracking-wide uppercase">Confirmed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">#OCHA-8821</div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-indigo-100 transition-colors">
+                            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><Calendar className="w-5 h-5" /></div>
+                            <div>
+                                <div class="font-bold text-slate-800 text-sm">Cardiology Consult</div>
+                                <div class="text-slate-500 text-xs mt-0.5">Dr. Lim Wei • Island Hospital</div>
+                            </div>
+                        </div>
+                         <div class="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm hover:border-indigo-100 transition-colors">
+                            <div class="p-2 bg-blue-50 rounded-lg text-blue-500"><Plane className="w-5 h-5" /></div>
+                            <div>
+                                <div class="font-bold text-slate-800 text-sm">Airport Pickup</div>
+                                <div class="text-slate-500 text-xs mt-0.5">Penang Int. Airport • 10:00 AM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  {/* === 2. MEDICAL HUBS === */}
+  <section class="py-24 bg-white relative z-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="font-serif text-3xl md:text-4xl text-slate-900 mb-4">World-Class Medical Hubs</h2>
+            <p class="text-slate-500">Partnered with JCI-accredited hospitals in top healthcare destinations.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6 auto-rows-[300px]">
+            {/* Penang */}
+            <div class="group cursor-pointer rounded-3xl overflow-hidden relative shadow-md hover:shadow-2xl transition-all duration-500 md:col-span-2 md:row-span-2">
+                <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-10 text-white w-full">
+                    <div class="transform translate-y-4 group-hover:translate-y-0 transition duration-300">
+                        <div class="flex items-center gap-2 mb-3"><MapPin className="w-4 h-4 text-indigo-400" /><span class="text-sm font-bold text-indigo-100 uppercase tracking-wider">Malaysia</span></div>
+                        <h3 class="text-4xl font-serif mb-3">Penang</h3>
+                        <p class="text-slate-300 text-base max-w-lg leading-relaxed">The region's top destination for medical tourism. Affordable cardiology, oncology, and fertility treatments.</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Singapore */}
+            <div class="group cursor-pointer rounded-3xl overflow-hidden relative shadow-md hover:shadow-xl transition-all duration-500 md:col-span-1 md:row-span-1">
+                <img src="https://images.unsplash.com/photo-1565967511849-76a60a516170?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-8 text-white">
+                     <h3 class="text-2xl font-serif mb-1">Singapore</h3>
+                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Complex Cases</p>
+                </div>
+            </div>
+
+            {/* Kuala Lumpur */}
+            <div class="group cursor-pointer rounded-3xl overflow-hidden relative shadow-md hover:shadow-xl transition-all duration-500 md:col-span-1 md:row-span-1">
+                <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=687&auto=format&fit=crop" class="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                 <div class="absolute bottom-0 left-0 p-8 text-white">
+                     <h3 class="text-2xl font-serif mb-1">Kuala Lumpur</h3>
+                     <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Heart & Orthopedic</p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  {/* === 3. WHY CHOOSE OCHA === */}
+  <section class="py-24 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <h2 class="font-serif text-3xl font-medium text-slate-900 mb-4">Why patients choose Ocha</h2>
+            <p class="text-slate-500">We replace the confusion of medical travel with clarity and care.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            {[
+                { icon: Clock, title: "Speed", desc: "Traditional agencies take days to reply. Ocha's AI and team provide options and quotes in hours." },
+                { icon: ShieldCheck, title: "Safety", desc: "We only partner with JCI-accredited hospitals and verified specialists with 10+ years experience." },
+                { icon: HeartHandshake, title: "Support", desc: "You are never alone. Our local team meets you at the airport and supports you throughout your stay." }
+            ].map((item) => (
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-indigo-200 transition duration-300 shadow-sm">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-6">
+                        <item.icon className="w-6 h-6 text-indigo-600" />
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                    <p class="text-slate-500 leading-relaxed">{item.desc}</p>
+                </div>
+            ))}
+        </div>
+    </div>
+  </section>
+
+  {/* === 4. TESTIMONIALS === */}
+  <section class="py-24 bg-[#10273d] relative overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <h2 class="font-serif text-3xl md:text-4xl font-medium text-white text-center mb-16">Stories from our patients</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            {TESTIMONIALS.map((t) => (
+                <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10 hover:bg-white/15 transition duration-300">
+                    <div class="flex gap-1 mb-6">
+                        {[...Array(t.rating)].map((_) => (
+                            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                        ))}
+                    </div>
+                    <p class="text-indigo-50 leading-relaxed mb-6 font-serif italic text-lg">"{t.text}"</p>
+                    <div>
+                        <div class="text-white font-semibold text-sm">{t.name}</div>
+                        <div class="text-indigo-200 text-xs">{t.location}</div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+  </section>
+
+  {/* === 5. FAQ === */}
+  <section class="py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-6">
+        <h2 class="font-serif text-3xl font-medium text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+            {FAQS.map((faq) => (
+                <details class="group bg-slate-50 rounded-xl border border-slate-100 open:bg-white open:shadow-sm transition-all duration-300">
+                    <summary class="flex justify-between items-center cursor-pointer p-6 list-none text-slate-900 font-medium text-lg">
+                        {faq.q}
+                        <span class="transform group-open:rotate-180 transition-transform duration-300 text-slate-400">
+                            <ChevronDown className="w-5 h-5" />
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-500 leading-relaxed animate-fade-in">
+                        {faq.a}
+                    </div>
+                </details>
+            ))}
+        </div>
+    </div>
+  </section>
+
+  {/* === 6. BIG FOOTER CTA === */}
+  <section class="py-20 px-6 bg-slate-50">
+    <div class="max-w-5xl mx-auto bg-indigo-900 rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+        {/* Background Blobs */}
+        <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 opacity-20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-400 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+        
+        <div class="relative z-10">
+            <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">Ready to plan your medical trip?</h2>
+            <p class="text-indigo-100 text-lg mb-10 max-w-2xl mx-auto">Get a free treatment plan, cost estimate, and doctor availability check within 24 hours.</p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/doctors" class="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-50 transition shadow-lg flex items-center justify-center gap-2">
+                    Start Free Inquiry <ArrowRight className="w-5 h-5" />
+                </a>
+                <a href="https://wa.me/60166062534" class="bg-transparent border border-indigo-500/50 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/5 transition flex items-center justify-center gap-2">
+                    WhatsApp Us
+                </a>
+            </div>
+        </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+</style>

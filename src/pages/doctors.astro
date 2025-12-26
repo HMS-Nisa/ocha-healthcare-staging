@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Directory from '../components/Directory.jsx';
+
+// 🔴 YOUR WEB APP URL
+const LIVE_DATA_URL = "https://script.google.com/macros/s/AKfycbyvEJvNE4Xi_qtp3vm0GFLjTooG3ES14hXSRlaf0vxm6voCiwKTdEDxH2sYw6mtDPqakw/exec";
+
+let allDoctors = [];
+let error = false;
+
+try {
+  const response = await fetch(LIVE_DATA_URL);
+  if (!response.ok) throw new Error('Network response was not ok');
+  
+  const rawData = await response.json();
+  
+  // Create safe IDs for each doctor
+  allDoctors = rawData.map(doc => ({
+    ...doc,
+    id: doc.name ? doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : 'unknown'
+  }));
+
+} catch (e) {
+  console.error("Fetch failed:", e);
+  error = true;
+}
+---
+
+<Layout title="Find a Specialist | Ocha Healthcare">
+  
+  <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
+
+  <main class="relative min-h-screen pt-32 pb-20">
+    
+    {/* === PAGE HEADER === */}
+    <div class="max-w-4xl mx-auto px-6 text-center mb-12">
+        <span class="inline-block py-1 px-3 rounded-full bg-blue-50 border border-blue-100 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6">
+          Directory
+        </span>
+        <h1 class="font-serif text-4xl md:text-5xl text-slate-900 mb-6">
+          Find a Verified Specialist
+        </h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+          Search our network of experienced doctors across Malaysia's top hospitals. 
+          Filter by specialty, location, or name to find the right care.
+        </p>
+    </div>
+
+    {/* === DIRECTORY COMPONENT === */}
+    <section id="directory" class="max-w-7xl mx-auto px-4 sm:px-6">
+      {error ? (
+        <div class="p-8 bg-red-50 text-red-600 rounded-xl text-center border border-red-100 max-w-2xl mx-auto">
+          <p class="font-bold">System Maintenance</p>
+          <p class="text-sm">We are currently syncing our database. Please try again shortly.</p>
+        </div>
+      ) : (
+        /* The Directory component handles the Search Bar, Filters, and Cards */
+        <Directory client:load doctors={allDoctors} />
+      )}
+    </section>
+
+  </main>
+</Layout>
