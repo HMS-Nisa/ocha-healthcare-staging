@@ -1,0 +1,27 @@
+---
+import { Clock, ShieldCheck, HeartHandshake } from 'lucide-react';
+---
+
+<section class="py-24 bg-slate-50">
+  <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl font-medium text-slate-900 mb-4">Why patients choose Ocha</h2>
+          <p class="text-slate-500">We replace the confusion of medical travel with clarity and care.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+          {[
+              { icon: Clock, title: "Speed", desc: "Traditional agencies take days to reply. Ocha's AI and team provide options and quotes in hours." },
+              { icon: ShieldCheck, title: "Safety", desc: "We only partner with JCI-accredited hospitals and verified specialists with 10+ years experience." },
+              { icon: HeartHandshake, title: "Support", desc: "You are never alone. Our local team meets you at the airport and supports you throughout your stay." }
+          ].map((item) => (
+              <div class="bg-white p-8 rounded-2xl border border-slate-100 hover:border-indigo-200 transition duration-300 shadow-sm">
+                  <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-6">
+                      <item.icon className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <h3 class="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                  <p class="text-slate-500 leading-relaxed">{item.desc}</p>
+              </div>
+          ))}
+      </div>
+  </div>
+</section>

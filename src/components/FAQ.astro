@@ -1,0 +1,41 @@
+---
+import { ChevronDown } from 'lucide-react';
+
+const FAQS = [
+    { q: "Is Ocha's service really free?", a: "Yes. We are funded by our partner hospitals to manage international patients. You pay the hospital directly. No markups." },
+    { q: "How quickly can I get an appointment?", a: "Typically, we can secure appointments within 24-48 hours, even for senior specialists." },
+    { q: "Do you help with insurance claims?", a: "We provide all necessary medical reports and itemized billing required for your insurance claims." },
+    { q: "Can you arrange airport pickup?", a: "Absolutely. Our concierge team arranges airport transfers to your hotel or hospital." }
+];
+---
+
+<section class="py-24 bg-white">
+  <div class="max-w-3xl mx-auto px-6">
+      <h2 class="font-serif text-3xl font-medium text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+          {FAQS.map((faq) => (
+              <details class="group bg-slate-50 rounded-xl border border-slate-100 open:bg-white open:shadow-sm transition-all duration-300">
+                  <summary class="flex justify-between items-center cursor-pointer p-6 list-none text-slate-900 font-medium text-lg">
+                      {faq.q}
+                      <span class="transform group-open:rotate-180 transition-transform duration-300 text-slate-400">
+                          <ChevronDown className="w-5 h-5" />
+                      </span>
+                  </summary>
+                  <div class="px-6 pb-6 text-slate-500 leading-relaxed animate-fade-in">
+                      {faq.a}
+                  </div>
+              </details>
+          ))}
+      </div>
+  </div>
+</section>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+</style>

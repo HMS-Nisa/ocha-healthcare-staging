@@ -1,0 +1,32 @@
+---
+import { Star } from 'lucide-react';
+
+const TESTIMONIALS = [
+    { id: 1, name: "Sarah Jenkins", location: "Perth, Australia", text: "I was overwhelmed by the options in Penang. Ocha's team narrowed it down to two specialists in seconds and handled the booking.", rating: 5 },
+    { id: 2, name: "Budi Santoso", location: "Medan, Indonesia", text: "Sangat membantu. Saya bisa bandingkan harga paket jantung di Melaka dan KL langsung dari HP.", rating: 5 },
+    { id: 3, name: "Michael Chen", location: "Hong Kong", text: "Professional service. They handled my hotel booking near Gleneagles and the airport transfer was seamless.", rating: 5 }
+];
+---
+
+<section class="py-24 bg-[#10273d] relative overflow-hidden">
+  <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <h2 class="font-serif text-3xl md:text-4xl font-medium text-white text-center mb-16">Stories from our patients</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+          {TESTIMONIALS.map((t) => (
+              <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10 hover:bg-white/15 transition duration-300">
+                  <div class="flex gap-1 mb-6">
+                      {[...Array(t.rating)].map((_) => (
+                          <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                      ))}
+                  </div>
+                  <p class="text-indigo-50 leading-relaxed mb-6 font-serif italic text-lg">"{t.text}"</p>
+                  <div>
+                      <div class="text-white font-semibold text-sm">{t.name}</div>
+                      <div class="text-indigo-200 text-xs">{t.location}</div>
+                  </div>
+              </div>
+          ))}
+      </div>
+  </div>
+</section>
