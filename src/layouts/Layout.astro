@@ -1,6 +1,9 @@
 ---
 import { Menu, X, Search } from 'lucide-react';
-const { title } = Astro.props;
+
+// 👇 UPDATED: Now accepts 'description' for SEO
+const { title, description } = Astro.props;
+
 const currentPath = Astro.url.pathname;
 const WA_LINK = "https://wa.me/60166062534";
 ---
@@ -9,8 +12,13 @@ const WA_LINK = "https://wa.me/60166062534";
 <html lang="en" class="scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
+		
+        {/* 👇 UPDATED: Dynamic Description Tag */}
+        <meta name="description" content={description || "Ocha Healthcare - Premium Medical Concierge services for international patients in Malaysia."} />
+        
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
 		
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

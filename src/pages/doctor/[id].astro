@@ -1,19 +1,22 @@
 ---
+// src/pages/doctor/[id].astro
 import Layout from '../../layouts/Layout.astro';
-import { MapPin, Building2, Calendar, Globe, Stethoscope, GraduationCap, ChevronLeft } from 'lucide-react';
+import { MapPin, Building2, Calendar, Globe, Stethoscope, CheckCircle2, ChevronLeft, Info } from 'lucide-react';
+import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
 
-// 1. FETCH DATA
+// 1. GENERATE STATIC PATHS
 export async function getStaticPaths() {
-  const LIVE_DATA_URL = "https://script.google.com/macros/s/AKfycbyvEJvNE4Xi_qtp3vm0GFLjTooG3ES14hXSRlaf0vxm6voCiwKTdEDxH2sYw6mtDPqakw/exec";
-  
   try {
-    const response = await fetch(LIVE_DATA_URL);
+    // Add timestamp to force fresh data build
+    const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
+    const response = await fetch(noCacheUrl);
     const data = await response.json();
     
-    return data.map(doc => ({
-      params: { 
-        id: doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') 
-      },
+    // Filter out empty rows
+    const validDoctors = data.filter(doc => doc.name && doc.id);
+
+    return validDoctors.map(doc => ({
+      params: { id: doc.id }, // Using the real ID from your sheet
       props: { doctor: doc }
     }));
   } catch (error) {
@@ -23,103 +26,34 @@ export async function getStaticPaths() {
 }
 
 const { doctor } = Astro.props;
-const WA_NUMBER = "60166062534";
-const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name}`;
+const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name} at ${doctor.hospital}`;
 
-// 2. HELPER: Parse Specialty (Waterfall Strategy)
-const parseSpecialty = (raw) => {
-    if (!raw) return { main: '', sub: '' };
-    
-    let parts = [raw];
-    
-    // Priority 1: Explicit "Subspesialis" keyword
-    if (raw.match(/subspesialis/i)) {
-        parts = raw.split(/,\s*subspesialis:?|\s+subspesialis:?/i);
-    } 
-    // Priority 2: Semicolon separator (Common: "Main; Sub")
-    else if (raw.includes(';')) {
-        parts = raw.split(';');
-    }
-    // Priority 3: Bullet point separator (Common: "Main • Sub")
-    else if (raw.includes('•')) {
-        parts = raw.split('•');
-    }
-    // Priority 4: Pipe separator
-    else if (raw.includes('|')) {
-        parts = raw.split('|');
-    }
-    
-    let main = parts[0] ? parts[0].trim() : '';
-    let sub = parts[1] ? parts[1].trim() : '';
+// Helper to format languages (replace commas if needed for UI consistency)
+const languages = doctor.languages ? doctor.languages.split(',').join(', ') : '-';
 
-    // CLEANUP: Remove trailing punctuation from Main
-    main = main.replace(/[;,:.•|]+$/, '').trim(); 
-    
-    // CLEANUP: Remove leading punctuation from Sub (e.g. "• Adult" -> "Adult")
-    sub = sub.replace(/^[;,:.•|]+\s*/, '').trim();
+// SEO Meta Data
+const pageTitle = `${doctor.name} - ${doctor.specialty} in ${doctor.location?.split(',').pop() || 'Malaysia'}`;
+const pageDescription = doctor.bio 
+  ? doctor.bio.substring(0, 160) + "..." 
+  : `Book an appointment with ${doctor.name}, a specialist in ${doctor.specialty} at ${doctor.hospital}.`;
 
-    return { main, sub };
-};
-
-const { main, sub } = parseSpecialty(doctor.specialty);
-
-// 3. HELPER: Robust Credentials Finder
-const findCredentials = (doc) => {
-    const normalizedDoc = {};
-    Object.keys(doc).forEach(key => {
-        const cleanKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        normalizedDoc[cleanKey] = doc[key];
-    });
-
-    const targetKeys = ['credentials', 'medicalbackground', 'background', 'education', 'qualifications', 'pendidikan', 'experience'];
-
-    for (const key of targetKeys) {
-        if (normalizedDoc[key] && typeof normalizedDoc[key] === 'string' && normalizedDoc[key].length > 5) {
-            return normalizedDoc[key];
-        }
-    }
-    
-    // Fallback search
-    for (const [key, val] of Object.entries(normalizedDoc)) {
-         if (typeof val === 'string' && val.length > 50 && !key.includes('image') && !key.includes('url') && !key.includes('bio')) {
-             return val;
-         }
-    }
-    return null;
-};
-
-const rawCredentials = findCredentials(doctor);
-
-// 4. HELPER: Format List
-const formatCredentials = (text) => {
-  if (!text) return [];
-  let list = [];
-  if (text.includes(';')) {
-      list = text.split(';').map(item => item.trim()).filter(Boolean);
-  } else if (text.includes('•')) {
-      list = text.split('•').map(item => item.trim()).filter(Boolean);
-  } else if (text.includes('\n')) {
-      list = text.split('\n').map(item => item.trim()).filter(Boolean);
-  } else {
-      list = [text];
-  }
-  return list;
-};
-
-const credentialsList = formatCredentials(rawCredentials);
-
-// Mock Schedule
-const schedule = [
-  { day: 'Senin', time: '09:00 - 17:00' },
-  { day: 'Selasa', time: '09:00 - 17:00' },
-  { day: 'Rabu', time: '09:00 - 17:00' },
-  { day: 'Kamis', time: '09:00 - 17:00' },
-  { day: 'Jumat', time: '09:00 - 17:00' },
-  { day: 'Sabtu', time: '09:00 - 13:00' },
-];
 ---
 
-<Layout title={`${doctor.name} | Ocha Healthcare`}>
+<Layout title={pageTitle} description={pageDescription}>
+  
+  {/* JSON-LD Schema for Google */}
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Physician",
+    "name": doctor.name,
+    "medicalSpecialty": doctor.specialty,
+    "hospitalAffiliation": {
+      "@type": "Hospital",
+      "name": doctor.hospital
+    },
+    "description": doctor.bio
+  })} />
+
   <div class="bg-slate-50 min-h-screen pb-20 pt-28">
     
     {/* BREADCRUMB */}
@@ -135,33 +69,35 @@ const schedule = [
       {/* LEFT COLUMN: Main Profile */}
       <div class="lg:col-span-2 space-y-6">
         
-        {/* 1. HEADER CARD (Improved Layout) */}
+        {/* HEADER CARD */}
         <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start gap-8">
           <div class="relative shrink-0 mx-auto md:mx-0">
              <img 
                 src={doctor.image} 
                 alt={doctor.name}
-                class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover object-top border-4 border-slate-50 shadow-md"
+                class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover object-top border-4 border-slate-50 shadow-md bg-slate-100"
                 onError={(e) => { e.target.src = 'https://placehold.co/200?text=Dr'; }} 
              />
-             <div class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+             <div class="absolute bottom-2 right-2 p-1 bg-green-500 border-4 border-white rounded-full text-white" title="Verified">
+                <CheckCircle2 className="w-4 h-4" />
+             </div>
           </div>
           
           <div class="flex-1 text-center md:text-left">
             <div class="mb-5">
                <h1 class="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-3">{doctor.name}</h1>
                
-               {/* === STACKED SPECIALTY UI === */}
-               <div class="flex flex-col items-center md:items-start gap-1">
-                 {/* Main Specialty: Badge Style */}
+               <div class="flex flex-col items-center md:items-start gap-2">
+                 {/* Main Specialty */}
                  <span class="inline-block font-bold text-[#276CA1] uppercase tracking-widest text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
-                    {main}
+                    {doctor.specialty}
                  </span>
                  
-                 {/* Sub Specialty: Clean Text */}
-                 {sub && (
-                   <span class="font-medium text-slate-500 text-sm leading-snug max-w-lg mt-1 block">
-                     {sub}
+                 {/* Subspecialty (If exists) */}
+                 {doctor.subspecialty && (
+                   <span class="font-medium text-slate-500 text-sm flex items-center gap-1">
+                     <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                     {doctor.subspecialty}
                    </span>
                  )}
                </div>
@@ -169,24 +105,24 @@ const schedule = [
 
             <div class="space-y-2 text-slate-600 border-t border-slate-50 pt-4 mt-4">
                <div class="flex items-center justify-center md:justify-start gap-2">
-                 <Building2 className="w-4 h-4 text-slate-400" />
+                 <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
                  <span class="text-sm font-medium">{doctor.hospital}</span>
                </div>
                <div class="flex items-center justify-center md:justify-start gap-2">
-                 <MapPin className="w-4 h-4 text-slate-400" />
-                 <span class="text-sm font-medium">{doctor.location || 'Malaysia'}</span>
+                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                 <span class="text-sm font-medium">{doctor.location}</span>
                </div>
-               {doctor.languages && (
+               {languages && (
                   <div class="flex items-center justify-center md:justify-start gap-2">
-                    <Globe className="w-4 h-4 text-slate-400" />
-                    <span class="text-sm font-medium">{doctor.languages.replace(/\|/g, ', ')}</span>
+                    <Globe className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span class="text-sm font-medium">{languages}</span>
                   </div>
                )}
             </div>
           </div>
         </div>
 
-        {/* 2. ABOUT SECTION */}
+        {/* ABOUT / BIO SECTION */}
         <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
            <div class="flex items-center gap-3 mb-6">
              <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
@@ -194,53 +130,15 @@ const schedule = [
              </div>
              <h2 class="font-serif text-xl font-bold text-slate-900">About the Specialist</h2>
            </div>
-           <p class="text-slate-600 leading-relaxed font-normal">
-             {doctor.name} is a highly experienced {main.toLowerCase()} practicing at {doctor.hospital}. 
-             {sub ? `They specialize in ${sub.toLowerCase()} and are` : 'They are'} dedicated to providing comprehensive care for international patients.
-           </p>
-        </div>
-
-        {/* 3. MEDICAL BACKGROUND & CREDENTIALS */}
-        {(credentialsList.length > 0) && (
-          <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
-             <div class="flex items-center gap-3 mb-6">
-               <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                 <GraduationCap className="w-5 h-5" />
-               </div>
-               <h2 class="font-serif text-xl font-bold text-slate-900">Medical Background & Credentials</h2>
+           
+           {doctor.bio ? (
+             <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
+               {doctor.bio}
              </div>
-             
-             <ul class="space-y-4">
-               {credentialsList.map((item, index) => {
-                 const hasLabel = item.includes(':');
-                 const [label, ...rest] = item.split(':');
-                 const content = rest.join(':');
-
-                 return (
-                   <li key={index} class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed">
-                     <span class="mt-2 w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0"></span>
-                     <span>
-                        {hasLabel ? (
-                          <>
-                            <strong class="text-slate-900 block mb-1 text-base">{label}:</strong>
-                            <span class="text-slate-600">{content}</span>
-                          </>
-                        ) : (
-                          item
-                        )}
-                     </span>
-                   </li>
-                 );
-               })}
-             </ul>
-          </div>
-        )}
-        
-        {(!credentialsList.length) && (
-            <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-100 text-yellow-700 text-sm text-center">
-                Detailed credentials are currently being updated for this profile.
-            </div>
-        )}
+           ) : (
+             <p class="text-slate-400 italic">Profile information is currently being updated.</p>
+           )}
+        </div>
 
       </div>
 
@@ -251,7 +149,7 @@ const schedule = [
         <div class="bg-white rounded-2xl p-6 shadow-lg shadow-indigo-900/5 border border-slate-100 sticky top-24">
            <h3 class="font-serif text-lg font-bold text-slate-900 mb-2">Ready to consult?</h3>
            <p class="text-slate-500 text-sm mb-6 leading-relaxed">
-             Book a slot with {doctor.name} easily via our concierge service.
+             Get a cost estimate and check availability via our concierge.
            </p>
            
            <a 
@@ -269,14 +167,22 @@ const schedule = [
               </div>
               
               <div class="space-y-3">
-                 {schedule.map((slot, i) => (
-                   <div key={i} class="flex justify-between items-center text-sm p-3 rounded-lg bg-slate-50 border border-slate-100">
-                      <span class="font-medium text-slate-700">{slot.day}</span>
-                      <span class="text-slate-500 font-medium">{slot.time}</span>
-                   </div>
-                 ))}
+                 {/* SCHEDULE LOGIC: Check if real array exists */}
+                 {Array.isArray(doctor.schedule) && doctor.schedule.length > 0 ? (
+                    doctor.schedule.map((slot, i) => (
+                      <div key={i} class="flex justify-between items-center text-sm p-3 rounded-lg bg-slate-50 border border-slate-100">
+                          <span class="font-medium text-slate-700">{slot.day}</span>
+                          <span class="text-slate-500 font-medium">{slot.time}</span>
+                      </div>
+                    ))
+                 ) : (
+                    <div class="p-4 bg-slate-50 rounded-lg text-center">
+                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
+                        <span class="text-xs text-slate-500">Contact us for availability.</span>
+                    </div>
+                 )}
               </div>
-              <p class="text-xs text-slate-400 mt-4 text-center">Times are subject to change.</p>
+              <p class="text-[10px] text-slate-400 mt-4 text-center">Schedules are subject to change.</p>
            </div>
         </div>
 

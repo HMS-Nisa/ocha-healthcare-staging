@@ -1,39 +1,34 @@
 ---
+// src/pages/doctors.astro
 import Layout from '../layouts/Layout.astro';
 import Directory from '../components/Directory.jsx';
+import { GOOGLE_SHEET_URL } from '../config';
 
-// 🔴 YOUR WEB APP URL
-const LIVE_DATA_URL = "https://script.google.com/macros/s/AKfycbyR555dQuq2B6U4t7bSQzLEvjp0zkr3XwbnYHghzYXXfc6vsHcG5m08dv4FRkhu_yAr/exec";
-
+// 🚀 FETCH DATA AT BUILD TIME (SERVER-SIDE)
+// We add '?t=timestamp' to trick the server into thinking it's a new request.
+// This forces a fresh download of your Google Sheet data.
 let allDoctors = [];
-let error = false;
-
 try {
-  const response = await fetch(LIVE_DATA_URL);
-  if (!response.ok) throw new Error('Network response was not ok');
+  const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
+  const response = await fetch(noCacheUrl);
+  allDoctors = await response.json();
   
-  const rawData = await response.json();
-  
-  // Create safe IDs for each doctor
-  allDoctors = rawData.map(doc => ({
-    ...doc,
-    id: doc.name ? doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : 'unknown'
-  }));
-
-} catch (e) {
-  console.error("Fetch failed:", e);
-  error = true;
+  // You will see this message in your VS Code / StackBlitz terminal
+  console.log(`✅ Fetched ${allDoctors.length} doctors at ${new Date().toLocaleTimeString()}`);
+} catch (error) {
+  console.error("Build-time fetch failed:", error);
 }
 ---
 
-<Layout title="Find a Specialist | Ocha Healthcare">
+<Layout title="Find a Specialist | Ocha Healthcare" description="Browse our complete list of verified specialists in Malaysia. Filter by location, hospital, and specialty.">
   
+  {/* Background Texture */}
   <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
 
   <main class="relative min-h-screen pt-32 pb-20">
     
     {/* === PAGE HEADER === */}
-    <div class="max-w-4xl mx-auto px-6 text-center mb-12">
+    <div class="max-w-4xl mx-auto px-6 text-center mb-12 relative z-10">
         <span class="inline-block py-1 px-3 rounded-full bg-blue-50 border border-blue-100 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6">
           Directory
         </span>
@@ -47,16 +42,9 @@ try {
     </div>
 
     {/* === DIRECTORY COMPONENT === */}
-    <section id="directory" class="max-w-7xl mx-auto px-4 sm:px-6">
-      {error ? (
-        <div class="p-8 bg-red-50 text-red-600 rounded-xl text-center border border-red-100 max-w-2xl mx-auto">
-          <p class="font-bold">System Maintenance</p>
-          <p class="text-sm">We are currently syncing our database. Please try again shortly.</p>
-        </div>
-      ) : (
-        /* The Directory component handles the Search Bar, Filters, and Cards */
-        <Directory client:load doctors={allDoctors} />
-      )}
+    {/* We pass the fresh 'allDoctors' data here so it loads instantly */}
+    <section id="directory" class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <Directory client:load preloadedDoctors={allDoctors} />
     </section>
 
   </main>
