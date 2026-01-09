@@ -1,22 +1,23 @@
 ---
 // src/pages/doctor/[id].astro
 import Layout from '../../layouts/Layout.astro';
-import { MapPin, Building2, Calendar, Globe, Stethoscope, CheckCircle2, ChevronLeft, Info } from 'lucide-react';
+import { 
+  MapPin, Building2, Calendar, Globe, Stethoscope, CheckCircle2, 
+  ChevronLeft, Info, Clock, Wallet, HeartHandshake, ShieldCheck, Phone 
+} from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
 
 // 1. GENERATE STATIC PATHS
 export async function getStaticPaths() {
   try {
-    // Add timestamp to force fresh data build
     const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
     const response = await fetch(noCacheUrl);
     const data = await response.json();
     
-    // Filter out empty rows
     const validDoctors = data.filter(doc => doc.name && doc.id);
 
     return validDoctors.map(doc => ({
-      params: { id: doc.id }, // Using the real ID from your sheet
+      params: { id: doc.id },
       props: { doctor: doc }
     }));
   } catch (error) {
@@ -28,20 +29,37 @@ export async function getStaticPaths() {
 const { doctor } = Astro.props;
 const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name} at ${doctor.hospital}`;
 
-// Helper to format languages (replace commas if needed for UI consistency)
 const languages = doctor.languages ? doctor.languages.split(',').join(', ') : '-';
 
-// SEO Meta Data
 const pageTitle = `${doctor.name} - ${doctor.specialty} in ${doctor.location?.split(',').pop() || 'Malaysia'}`;
-const pageDescription = doctor.bio 
-  ? doctor.bio.substring(0, 160) + "..." 
+
+// 🚀 SMART PARSER
+const parseBio = (rawBio) => {
+  if (!rawBio) return { part1: "", part2: "" };
+  
+  const strictMatch = rawBio.match(/\{english=(.*?),\s*bahasa_indonesia=(.*?)\}/s);
+  if (strictMatch) {
+    return { part1: strictMatch[1].trim(), part2: strictMatch[2].trim() };
+  }
+
+  const splitMatch = rawBio.split(/\n+\s*(?:={3,}|-{3,})\s*\n+/);
+  if (splitMatch.length > 1) {
+    return { part1: splitMatch[0].trim(), part2: splitMatch[1].trim() };
+  }
+  
+  return { part1: rawBio, part2: null };
+};
+
+const { part1, part2 } = parseBio(doctor.bio);
+
+const pageDescription = part1 
+  ? part1.substring(0, 160) + "..." 
   : `Book an appointment with ${doctor.name}, a specialist in ${doctor.specialty} at ${doctor.hospital}.`;
 
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
   
-  {/* JSON-LD Schema for Google */}
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Physician",
@@ -51,10 +69,11 @@ const pageDescription = doctor.bio
       "@type": "Hospital",
       "name": doctor.hospital
     },
-    "description": doctor.bio
+    "description": part1
   })} />
 
-  <div class="bg-slate-50 min-h-screen pb-20 pt-28">
+  {/* 🚀 PADDING UPDATE: Reduced from pt-28 to pt-20 (mobile) and lg:pt-24 (desktop) */}
+  <div class="bg-slate-50 min-h-screen pb-20 pt-20 lg:pt-24">
     
     {/* BREADCRUMB */}
     <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
@@ -66,11 +85,11 @@ const pageDescription = doctor.bio
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-3 gap-8">
       
-      {/* LEFT COLUMN: Main Profile */}
+      {/* LEFT COLUMN: Main Content */}
       <div class="lg:col-span-2 space-y-6">
         
-        {/* HEADER CARD */}
-        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start gap-8">
+        {/* 1. HEADER CARD */}
+        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start gap-6 md:gap-8">
           <div class="relative shrink-0 mx-auto md:mx-0">
              <img 
                 src={doctor.image} 
@@ -82,18 +101,13 @@ const pageDescription = doctor.bio
                 <CheckCircle2 className="w-4 h-4" />
              </div>
           </div>
-          
-          <div class="flex-1 text-center md:text-left">
+          <div class="flex-1 w-full text-left">
             <div class="mb-5">
-               <h1 class="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-3">{doctor.name}</h1>
-               
+               <h1 class="font-serif text-2xl md:text-4xl font-bold text-slate-900 mb-3 text-center md:text-left">{doctor.name}</h1>
                <div class="flex flex-col items-center md:items-start gap-2">
-                 {/* Main Specialty */}
-                 <span class="inline-block font-bold text-[#276CA1] uppercase tracking-widest text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                 <span class="inline-block font-bold text-[#276CA1] uppercase tracking-widest text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 text-center md:text-left">
                     {doctor.specialty}
                  </span>
-                 
-                 {/* Subspecialty (If exists) */}
                  {doctor.subspecialty && (
                    <span class="font-medium text-slate-500 text-sm flex items-center gap-1">
                      <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -102,27 +116,51 @@ const pageDescription = doctor.bio
                  )}
                </div>
             </div>
-
-            <div class="space-y-2 text-slate-600 border-t border-slate-50 pt-4 mt-4">
-               <div class="flex items-center justify-center md:justify-start gap-2">
-                 <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
-                 <span class="text-sm font-medium">{doctor.hospital}</span>
+            <div class="space-y-3 text-slate-600 border-t border-slate-50 pt-4 mt-4">
+               <div class="flex items-start gap-3">
+                 <Building2 className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+                 <span class="text-sm font-medium leading-relaxed">{doctor.hospital}</span>
                </div>
-               <div class="flex items-center justify-center md:justify-start gap-2">
-                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                 <span class="text-sm font-medium">{doctor.location}</span>
+               <div class="flex items-start gap-3">
+                 <MapPin className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+                 <span class="text-sm font-medium leading-relaxed">{doctor.location}</span>
                </div>
                {languages && (
-                  <div class="flex items-center justify-center md:justify-start gap-2">
-                    <Globe className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span class="text-sm font-medium">{languages}</span>
+                  <div class="flex items-start gap-3">
+                    <Globe className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+                    <span class="text-sm font-medium leading-relaxed">{languages}</span>
                   </div>
                )}
             </div>
           </div>
         </div>
 
-        {/* ABOUT / BIO SECTION */}
+        {/* 2. VALUE PROPOSITION */}
+        <div class="grid sm:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg mb-3">
+                    <Clock className="w-5 h-5" />
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">Fast Track</h3>
+                <p class="text-xs text-slate-500">Priority appointment slots available.</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg mb-3">
+                    <Wallet className="w-5 h-5" />
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">Cost Estimate</h3>
+                <p class="text-xs text-slate-500">Get estimated treatment costs upfront.</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg mb-3">
+                    <HeartHandshake className="w-5 h-5" />
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">Free Service</h3>
+                <p class="text-xs text-slate-500">Our concierge service is 100% free.</p>
+            </div>
+        </div>
+
+        {/* 3. BIO SECTION */}
         <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
            <div class="flex items-center gap-3 mb-6">
              <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
@@ -131,21 +169,61 @@ const pageDescription = doctor.bio
              <h2 class="font-serif text-xl font-bold text-slate-900">About the Specialist</h2>
            </div>
            
-           {doctor.bio ? (
-             <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
-               {doctor.bio}
-             </div>
-           ) : (
-             <p class="text-slate-400 italic">Profile information is currently being updated.</p>
-           )}
+           <div class="space-y-6">
+             {part1 ? (
+               <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
+                 {part1}
+               </div>
+             ) : (
+               <p class="text-slate-400 italic">Profile information is currently being updated.</p>
+             )}
+             {part2 && (
+               <>
+                 <div class="h-px bg-slate-200 my-6"></div>
+                 <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line italic">
+                   {part2}
+                 </div>
+               </>
+             )}
+           </div>
+        </div>
+
+        {/* 4. FAQ SECTION */}
+        <div class="bg-slate-100 rounded-2xl p-8">
+            <div class="flex items-center gap-2 mb-6">
+                <ShieldCheck className="w-5 h-5 text-slate-500" />
+                <h2 class="font-bold text-slate-700">Frequently Asked Questions</h2>
+            </div>
+            <div class="space-y-4">
+                <details class="group bg-white rounded-xl border border-slate-200 open:border-indigo-200 open:ring-2 open:ring-indigo-50 transition-all">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-slate-700">
+                        <span>Is there a fee to book?</span>
+                        <span class="transition group-open:rotate-180">
+                            <ChevronLeft className="w-4 h-4 -rotate-90" />
+                        </span>
+                    </summary>
+                    <div class="text-slate-600 px-4 pb-4 text-sm leading-relaxed">
+                        No, Ocha Healthcare is a free concierge service for patients. You only pay the hospital directly for your medical treatment.
+                    </div>
+                </details>
+                <details class="group bg-white rounded-xl border border-slate-200 open:border-indigo-200 open:ring-2 open:ring-indigo-50 transition-all">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-slate-700">
+                        <span>How fast can I get an appointment?</span>
+                        <span class="transition group-open:rotate-180">
+                            <ChevronLeft className="w-4 h-4 -rotate-90" />
+                        </span>
+                    </summary>
+                    <div class="text-slate-600 px-4 pb-4 text-sm leading-relaxed">
+                        We usually receive a reply from the hospital within 24 hours. For urgent cases, we can help expedite the process via our dedicated lane.
+                    </div>
+                </details>
+            </div>
         </div>
 
       </div>
 
-      {/* RIGHT COLUMN: Action & Schedule */}
-      <div class="space-y-6">
-        
-        {/* CTA CARD */}
+      {/* RIGHT COLUMN: Desktop Sticky CTA */}
+      <div class="space-y-6 hidden lg:block">
         <div class="bg-white rounded-2xl p-6 shadow-lg shadow-indigo-900/5 border border-slate-100 sticky top-24">
            <h3 class="font-serif text-lg font-bold text-slate-900 mb-2">Ready to consult?</h3>
            <p class="text-slate-500 text-sm mb-6 leading-relaxed">
@@ -165,9 +243,7 @@ const pageDescription = doctor.bio
                  <Calendar className="w-4 h-4 text-slate-400" />
                  <span class="font-bold text-slate-900 text-sm">Clinic Schedule</span>
               </div>
-              
               <div class="space-y-3">
-                 {/* SCHEDULE LOGIC: Check if real array exists */}
                  {Array.isArray(doctor.schedule) && doctor.schedule.length > 0 ? (
                     doctor.schedule.map((slot, i) => (
                       <div key={i} class="flex justify-between items-center text-sm p-3 rounded-lg bg-slate-50 border border-slate-100">
@@ -185,9 +261,25 @@ const pageDescription = doctor.bio
               <p class="text-[10px] text-slate-400 mt-4 text-center">Schedules are subject to change.</p>
            </div>
         </div>
-
       </div>
 
     </div>
   </div>
+
+  {/* 5. MOBILE STICKY CTA */}
+  <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50 lg:hidden flex items-center gap-3">
+      <div class="flex-1">
+          <p class="text-xs text-slate-500">Consult with</p>
+          <p class="text-sm font-bold text-slate-900 truncate">{doctor.name}</p>
+      </div>
+      <a 
+        href={waLink} 
+        target="_blank"
+        class="bg-[#276CA1] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2"
+      >
+        <Phone className="w-4 h-4" />
+        Book Now
+      </a>
+  </div>
+
 </Layout>

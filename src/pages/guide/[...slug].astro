@@ -1,0 +1,140 @@
+---
+// src/pages/guide/[...slug].astro
+import { getCollection } from 'astro:content';
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import { CheckCircle2, MessageCircle, FileText, ArrowDown } from 'lucide-react';
+import { WA_NUMBER } from '../../config';
+
+export async function getStaticPaths() {
+  const magnets = await getCollection('magnets');
+  return magnets.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+
+// Logic for fallback button
+const destinationUrl = entry.data.formUrl || `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya mau request "${entry.data.title}".`;
+const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
+---
+
+<LandingLayout title={entry.data.title} description={entry.data.subheadline}>
+  
+  {/* Background decoration */}
+  <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10"></div>
+  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10"></div>
+
+  <main class="min-h-screen flex items-center justify-center relative z-10 pt-16 pb-32 md:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 w-full">
+        
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+            
+            {/* === LEFT COLUMN: The Pitch + THE FORM === */}
+            <div class="text-center lg:text-left pt-4">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6 border border-blue-200">
+                    Free Resource
+                </span>
+                <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-[1.1]">
+                    {entry.data.headline}
+                </h1>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                    {entry.data.subheadline}
+                </p>
+
+                {/* Benefits List */}
+                <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-100 shadow-sm mb-10 text-left inline-block w-full">
+                    <h3 class="font-bold text-slate-900 mb-4 uppercase tracking-wide text-xs">Kenapa checklist ini penting:</h3>
+                    <ul class="space-y-4">
+                        {entry.data.benefits.map(benefit => (
+                            <li class="flex items-start gap-3">
+                                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                                <span class="text-slate-700 font-medium">{benefit}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* 🚀 FORM IS NOW HERE (LEFT COLUMN) */}
+                <div id="download-form" class="scroll-mt-24 text-left">
+                    {entry.data.formId ? (
+                        // 🅰️ OPTION A: EMBEDDED FORM
+                        <div class="bg-white rounded-2xl shadow-2xl shadow-blue-900/10 border border-slate-200 overflow-hidden relative z-20">
+                            <div class="bg-slate-50 p-4 border-b border-slate-100 text-center">
+                                <p class="font-bold text-slate-900 text-sm">Isi formulir untuk akses instan</p>
+                            </div>
+                            <div class="p-1 h-[600px] w-full bg-white">
+                                <iframe
+                                    src={`https://link.healthmetrics.com/widget/form/${entry.data.formId}`}
+                                    style="width:100%;height:100%;border:none;border-radius:3px"
+                                    id={`inline-${entry.data.formId}`} 
+                                    data-layout="{'id':'INLINE'}"
+                                    data-trigger-type="alwaysShow"
+                                    data-trigger-value=""
+                                    data-activation-type="alwaysActivated"
+                                    data-activation-value=""
+                                    data-deactivation-type="neverDeactivate"
+                                    data-deactivation-value=""
+                                    data-form-name="Lead Magnet Form"
+                                    data-height="530"
+                                    data-layout-iframe-id={`inline-${entry.data.formId}`}
+                                    data-form-id={entry.data.formId}
+                                    title="Lead Magnet Form"
+                                >
+                                </iframe>
+                                <script src="https://link.healthmetrics.com/js/form_embed.js"></script>
+                            </div>
+                        </div>
+                    ) : (
+                        // 🅱️ OPTION B: FALLBACK (BUTTON ONLY)
+                        <div class="bg-white p-6 rounded-2xl shadow-xl shadow-blue-900/10 border border-slate-100 text-center relative z-20">
+                            <a 
+                                href={destinationUrl} 
+                                target="_blank"
+                                class="block w-full py-4 bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                            >
+                                <ButtonIcon className="w-5 h-5" />
+                                {entry.data.ctaText}
+                            </a>
+                        </div>
+                    )}
+                </div>
+
+            </div>
+
+            {/* === RIGHT COLUMN: BIG VISUAL IMAGE (Sticky) === */}
+            <div class="relative mx-auto w-full max-w-md lg:max-w-full hidden lg:block sticky top-8">
+                
+                <div class="relative group cursor-pointer perspective-1000">
+                    <div class="absolute inset-0 bg-indigo-600 rounded-[2rem] blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
+                    <img 
+                        src={entry.data.coverImage} 
+                        alt="Guide Cover" 
+                        class="relative rounded-[2rem] border-4 border-white shadow-2xl transform transition-transform duration-500 group-hover:-translate-y-2 group-hover:rotate-1 w-full object-cover aspect-[4/5]" 
+                    />
+                    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-400 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm uppercase tracking-widest rotate-12 shadow-xl border-4 border-white z-10">
+                        Free <br/> PDF
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {/* 📱 MOBILE STICKY ANCHOR BAR */}
+    <div class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 md:hidden z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex items-center justify-between gap-4">
+        <div class="text-xs font-medium text-slate-500">
+            Free Resource
+            <p class="text-slate-900 font-bold text-sm truncate max-w-[150px]">{entry.data.ctaText}</p>
+        </div>
+        <a href="#download-form" class="bg-[#276CA1] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-[#1f5682] transition active:scale-95">
+            Download
+            <ArrowDown className="w-4 h-4" />
+        </a>
+    </div>
+
+  </main>
+</LandingLayout>

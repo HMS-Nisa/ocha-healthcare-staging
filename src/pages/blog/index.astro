@@ -1,0 +1,68 @@
+---
+// src/pages/blog/index.astro
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ArrowRight, Calendar } from 'lucide-react';
+
+// Get all blog posts and sort by date
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Layout title="Health Guides | Ocha Healthcare" description="Expert medical guides and cost estimates for healthcare in Malaysia.">
+    <div class="bg-slate-50 min-h-screen pt-20 pb-20 lg:pt-28">
+        
+        {/* HERO HEADER */}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-16 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-6">
+                Medical Resources
+            </span>
+            <h1 class="font-serif text-4xl md:text-5xl text-slate-900 mb-6">
+                Health Guides & Insights
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                Navigate your medical journey with confidence. Read expert articles on procedures, costs, and recovery in Malaysia.
+            </p>
+        </div>
+
+        {/* GRID */}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+                <article class="bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-xl hover:shadow-indigo-900/5 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full group">
+                    <a href={`/blog/${post.slug}`} class="block overflow-hidden h-56 relative">
+                         <img src={post.data.image} alt={post.data.title} class="w-full h-full object-cover transition duration-500 group-hover:scale-105" />
+                         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+                             {post.data.category}
+                         </div>
+                    </a>
+                    
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex items-center gap-3 text-xs text-slate-400 mb-3">
+                             <span class="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                             </span>
+                             <span>•</span>
+                             <span>{post.data.readTime}</span>
+                        </div>
+
+                        <h3 class="font-serif text-xl font-bold text-slate-900 mb-3 leading-tight group-hover:text-[#276CA1] transition-colors">
+                            <a href={`/blog/${post.slug}`}>
+                                {post.data.title}
+                            </a>
+                        </h3>
+                        
+                        <p class="text-sm text-slate-500 line-clamp-3 mb-6 flex-1">
+                            {post.data.subtitle}
+                        </p>
+
+                        <a href={`/blog/${post.slug}`} class="inline-flex items-center text-sm font-bold text-[#276CA1] hover:text-[#1f5682]">
+                            Read Article <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                        </a>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+</Layout>

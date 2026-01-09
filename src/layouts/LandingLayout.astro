@@ -1,0 +1,43 @@
+---
+// src/layouts/LandingLayout.astro
+import { ShieldCheck } from 'lucide-react';
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{title}</title>
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+	</head>
+	<body class="bg-slate-50 font-sans text-slate-900 antialiased">
+        
+        {/* SIMPLE HEADER: Logo Only */}
+        <header class="absolute top-0 w-full py-6 z-50">
+            <div class="max-w-7xl mx-auto px-6 flex justify-center md:justify-start">
+                <a href="/" class="flex items-center gap-2">
+                    <img src="/assets/logo.png" alt="Ocha Healthcare" class="h-10 w-auto" />
+                </a>
+            </div>
+        </header>
+
+		<slot />
+
+        {/* SIMPLE FOOTER: Trust & Legal Only */}
+        <footer class="bg-white border-t border-slate-100 py-8 mt-auto">
+            <div class="max-w-7xl mx-auto px-6 text-center text-slate-400 text-sm">
+                <div class="flex items-center justify-center gap-2 mb-4 text-emerald-600 font-medium">
+                     <ShieldCheck className="w-4 h-4" />
+                     <span>Your data is secure. We never spam.</span>
+                </div>
+                <p>© {new Date().getFullYear()} Ocha Healthcare. Not a medical provider.</p>
+            </div>
+        </footer>
+
+	</body>
+</html>

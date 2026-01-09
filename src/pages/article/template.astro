@@ -1,0 +1,214 @@
+---
+// src/pages/article/template.astro
+import Layout from '../../layouts/Layout.astro';
+import { 
+  Calendar, Clock, User, ChevronLeft, Share2, 
+  CheckCircle2, ArrowRight, MessageCircle, ShieldCheck 
+} from 'lucide-react';
+import { WA_NUMBER } from '../../config';
+
+// --- MOCK DATA (We will replace this with Google Sheet data later) ---
+const article = {
+  title: "Heart Bypass Surgery in Malaysia: Costs, Recovery, and Top Hospitals (2025 Guide)",
+  subtitle: "Everything you need to know about CABG surgery in Kuala Lumpur and Penang, including estimated costs and insurance coverage.",
+  author: "Dr. Sarah Lee",
+  reviewer: "Dr. Patrick Tiau",
+  date: "October 24, 2025",
+  readTime: "8 min read",
+  category: "Heart & Vascular",
+  image: "https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=2664&auto=format&fit=crop",
+};
+
+const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I read the article about ${article.title} and want to know more.`;
+---
+
+<Layout title={article.title} description={article.subtitle}>
+  
+  {/* Progress Bar (Optional nice touch) */}
+  <div class="fixed top-0 left-0 w-full h-1 bg-slate-200 z-50">
+    <div class="h-full bg-[#276CA1] w-[40%]"></div> {/* Mock progress */}
+  </div>
+
+  <div class="bg-white min-h-screen pb-32 pt-24 lg:pt-32">
+    
+    {/* 1. BREADCRUMB */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+      <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">
+        <ChevronLeft className="w-4 h-4 mr-1" />
+        Back to Home
+      </a>
+    </div>
+
+    {/* 2. HERO SECTION */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12">
+      
+      {/* MAIN CONTENT (8 Cols) */}
+      <div class="lg:col-span-8">
+        
+        {/* Category Badge */}
+        <span class="inline-block py-1 px-3 rounded-full bg-blue-50 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6">
+          {article.category}
+        </span>
+
+        {/* Title & Subtitle */}
+        <h1 class="font-serif text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+          {article.title}
+        </h1>
+        <p class="text-xl text-slate-500 leading-relaxed mb-8">
+          {article.subtitle}
+        </p>
+
+        {/* Author Metadata */}
+        <div class="flex flex-wrap items-center gap-6 text-sm text-slate-500 border-b border-slate-100 pb-8 mb-10">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
+                    <img src="https://placehold.co/100x100" alt="Author" />
+                </div>
+                <div>
+                    <p class="text-slate-900 font-bold">{article.author}</p>
+                    <p class="text-xs">Medical Writer</p>
+                </div>
+            </div>
+            
+            <div class="hidden sm:block w-px h-8 bg-slate-200"></div>
+
+            <div class="flex items-center gap-2 text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                <ShieldCheck className="w-4 h-4" />
+                <span class="font-medium">Medically Reviewed by {article.reviewer}</span>
+            </div>
+
+            <div class="w-full sm:w-auto mt-4 sm:mt-0 ml-auto flex items-center gap-4 text-xs text-slate-400 font-medium uppercase tracking-wide">
+                <span class="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {article.date}</span>
+                <span class="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {article.readTime}</span>
+            </div>
+        </div>
+
+        {/* Featured Image */}
+        <div class="relative rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 mb-12 group">
+            <img src={article.image} alt={article.title} class="w-full h-[400px] object-cover transition transform group-hover:scale-105 duration-700" />
+        </div>
+
+        {/* ARTICLE BODY (Prose) */}
+        <article class="prose prose-lg prose-slate max-w-none 
+            prose-headings:font-serif prose-headings:font-bold prose-headings:text-slate-900 
+            prose-p:text-slate-600 prose-p:leading-8
+            prose-a:text-[#276CA1] prose-a:font-bold prose-a:no-underline hover:prose-a:underline
+            prose-li:text-slate-600
+            prose-img:rounded-2xl prose-img:shadow-md">
+            
+            <p>
+                Heart bypass surgery, also known as coronary artery bypass grafting (CABG), is a major procedure used to treat coronary artery disease. For many international patients, Malaysia has become a top destination due to its world-class medical facilities and cost-effectiveness.
+            </p>
+
+            <h3>Why Choose Malaysia for Heart Surgery?</h3>
+            <p>
+                Malaysia's healthcare system is renowned for its high standards. Hospitals like <strong>Sunway Medical Centre</strong> and <strong>IJN (National Heart Institute)</strong> are equipped with the latest technology and staffed by surgeons trained in the UK and Australia.
+            </p>
+            <ul>
+                <li><strong>Cost Savings:</strong> Up to 70% cheaper than the US or Singapore.</li>
+                <li><strong>No Waiting Lists:</strong> Appointments can be scheduled within days.</li>
+                <li><strong>Language:</strong> English is widely spoken by all medical staff.</li>
+            </ul>
+
+            <blockquote>
+                "The quality of care I received in Kuala Lumpur was indistinguishable from what I would expect in London, but at a fraction of the cost." — John D., Patient from Australia.
+            </blockquote>
+
+            <h3>Estimated Costs (2025)</h3>
+            <p>
+                The cost of CABG in Malaysia varies depending on the hospital and complexity of the case. On average, you can expect:
+            </p>
+            <div class="not-prose bg-slate-50 border border-slate-200 rounded-xl p-6 my-8">
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider font-bold">Standard Procedure</p>
+                        <p class="text-2xl font-bold text-slate-900">RM 60,000</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 uppercase tracking-wider font-bold">Complex/Robotic</p>
+                        <p class="text-2xl font-bold text-slate-900">RM 85,000+</p>
+                    </div>
+                </div>
+                <p class="text-xs text-center text-slate-400 mt-4">*Estimates only. Includes hospital stay and surgeon fees.</p>
+            </div>
+
+            <h3>Recovery and Aftercare</h3>
+            <p>
+                Most patients spend 5-7 days in the hospital. Ocha Healthcare provides comprehensive aftercare support, including arranging accommodation for your recovery period before you fly home.
+            </p>
+
+        </article>
+
+        {/* Share Section */}
+        <div class="border-t border-slate-100 mt-12 pt-8 flex items-center justify-between">
+            <span class="font-bold text-slate-900">Share this article:</span>
+            <div class="flex gap-2">
+                <button class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-100 hover:text-blue-600 transition"><Share2 className="w-4 h-4" /></button>
+            </div>
+        </div>
+
+      </div>
+
+      {/* SIDEBAR (Sticky - 4 Cols) */}
+      <div class="lg:col-span-4 space-y-8">
+        
+        {/* STICKY CTA CARD */}
+        <div class="sticky top-32">
+            <div class="bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-slate-100 p-6 overflow-hidden relative group">
+                {/* Decoration */}
+                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-bl-[100px] -z-10 transition group-hover:scale-110"></div>
+
+                <div class="mb-6">
+                    <span class="inline-block py-1 px-3 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-4">
+                        Free Concierge
+                    </span>
+                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-2">Need advice on Heart Surgery?</h3>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        Our team can help you get cost estimates and doctor recommendations in 24 hours.
+                    </p>
+                </div>
+
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-start gap-3 text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Compare hospital quotes</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Book priority slots</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-600">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Arrange Guarantee Letters</span>
+                    </li>
+                </ul>
+
+                <a href={waLink} target="_blank" class="block w-full py-4 bg-[#276CA1] hover:bg-[#1f5682] text-white text-center font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    Chat with Concierge
+                </a>
+                <p class="text-[10px] text-center text-slate-400 mt-3">No fees. Direct hospital payment.</p>
+            </div>
+
+            {/* Related Articles Mini */}
+            <div class="mt-8">
+                <h4 class="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Related Guides</h4>
+                <div class="space-y-4">
+                    <a href="#" class="block group">
+                        <h5 class="font-bold text-slate-700 text-sm group-hover:text-[#276CA1] transition">Top 5 Cancer Hospitals in Malaysia</h5>
+                        <p class="text-xs text-slate-400 mt-1">5 min read</p>
+                    </a>
+                    <div class="h-px bg-slate-100"></div>
+                    <a href="#" class="block group">
+                        <h5 class="font-bold text-slate-700 text-sm group-hover:text-[#276CA1] transition">Orthopedic Surgery Cost Breakdown</h5>
+                        <p class="text-xs text-slate-400 mt-1">4 min read</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</Layout>

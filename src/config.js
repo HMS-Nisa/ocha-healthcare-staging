@@ -1,3 +1,3 @@
-export const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxPtvehWwl7jIo_o1W-MLEtwkfforUWgW7UN2JkcWkpeMsxwIf1oDlY_RhD5z9tvUTS/exec";
+export const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxpYv7PC7Iqz8dpkeXwgmmKYVg0S9VUd651suQe-SaK6NwGdT8hEdM8DiHJ11fSzQmIIA/exec";
 
-export const WA_NUMBER = "60166062534";
+export const WA_NUMBER = "60125525544";
