@@ -5,6 +5,10 @@ import { WA_NUMBER } from '../config';
 
 const { title, description } = Astro.props;
 const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I need assistance with medical arrangements.`;
+
+// 🔴 TODO: REPLACE THESE WITH YOUR ACTUAL IDS
+const GA_MEASUREMENT_ID = 'G-WL0KG6Y6B8'; // Example: G-1234567890
+const CLARITY_PROJECT_ID = 'v0p5vbt2q2';  // Example: gy78923
 ---
 
 <!doctype html>
@@ -16,6 +20,25 @@ const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I need assistance with 
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>{title}</title>
 		<link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
+		{/* 📊 1. GOOGLE ANALYTICS 4 (GA4) */}
+		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+		<script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', GA_MEASUREMENT_ID);
+		</script>
+
+		{/* 📊 2. MICROSOFT CLARITY */}
+		<script is:inline define:vars={{ CLARITY_PROJECT_ID }}>
+			(function(c,l,a,r,i,t,y){
+				c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+				t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+			})(window, document, "clarity", "script", CLARITY_PROJECT_ID);
+		</script>
+
 	</head>
 	<body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen">
 		

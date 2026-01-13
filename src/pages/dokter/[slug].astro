@@ -1,0 +1,186 @@
+---
+// src/pages/dokter/[slug].astro
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import { MapPin, Building2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
+
+// 1. THE DICTIONARY: Maps Database English -> SEO Indonesian Keywords
+const SPECIALTY_TRANSLATIONS = {
+  'Cardiology': 'jantung',
+  'Cardiothoracic Surgery': 'bedah-thoraks-kardio',
+  'Orthopaedics': 'tulang-orthopedi',
+  'Paediatrics': 'anak',
+  'Obstetrics & Gynaecology': 'kandungan-obgyn',
+  'Oncology': 'kanker-onkologi',
+  'Neurology': 'saraf',
+  'Neurosurgery': 'bedah-saraf',
+  'Urology': 'urologi-ginjal',
+  'Gastroenterology': 'pencernaan-gastro',
+  'ENT': 'tht',
+  'Ophthalmology': 'mata',
+  'General Surgery': 'bedah-umum',
+  'Internal Medicine': 'penyakit-dalam',
+  'Fertility': 'bayi-tabung-ivf'
+};
+
+// 2. GENERATE ALL PAGES (The Engine)
+export async function getStaticPaths() {
+  // A. Fetch Data
+  const response = await fetch(GOOGLE_SHEET_URL);
+  const data = await response.json();
+
+  // B. Clean & Process Data (Expanded for Future Cities)
+  const cleanDoctors = data.filter(d => d.name && d.specialty && d.location).map(doc => {
+     let cleanState = 'Malaysia';
+     const lowerAddr = doc.location.toLowerCase();
+
+     // Major Medical Hubs
+     if (lowerAddr.includes('penang') || lowerAddr.includes('pulau pinang')) cleanState = 'Penang';
+     else if (lowerAddr.includes('kuala lumpur') || lowerAddr.includes('kl') || lowerAddr.includes('bukit jalil')) cleanState = 'Kuala-Lumpur';
+     else if (lowerAddr.includes('selangor') || lowerAddr.includes('subang') || lowerAddr.includes('petaling') || lowerAddr.includes('sunway')) cleanState = 'Selangor';
+     else if (lowerAddr.includes('melaka') || lowerAddr.includes('malacca')) cleanState = 'Melaka';
+     else if (lowerAddr.includes('johor') || lowerAddr.includes('jb')) cleanState = 'Johor';
+     
+     // 🚀 Future Cities (Dynamic Support)
+     else if (lowerAddr.includes('kuantan') || lowerAddr.includes('pahang')) cleanState = 'Kuantan';
+     else if (lowerAddr.includes('ipoh') || lowerAddr.includes('perak')) cleanState = 'Ipoh';
+     else if (lowerAddr.includes('kuching') || lowerAddr.includes('sarawak')) cleanState = 'Sarawak';
+     else if (lowerAddr.includes('kota kinabalu') || lowerAddr.includes('sabah')) cleanState = 'Sabah';
+     else if (lowerAddr.includes('negeri sembilan') || lowerAddr.includes('seremban')) cleanState = 'Seremban';
+
+     return { ...doc, cleanState };
+  });
+
+  // C. Group Unique Combinations (Specialty + City)
+  const combinations = new Map();
+
+  cleanDoctors.forEach(doc => {
+     // Use translation if available, otherwise slugify the English term safely
+     const specialtySlug = SPECIALTY_TRANSLATIONS[doc.specialty.trim()] || doc.specialty.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
+     const citySlug = doc.cleanState.toLowerCase();
+     const comboKey = `${specialtySlug}-${citySlug}`;
+
+     if (!combinations.has(comboKey)) {
+        combinations.set(comboKey, {
+           slug: comboKey,
+           specialtyName: doc.specialty, // Keep original English for display
+           city: doc.cleanState.replace('-', ' '),
+           doctors: []
+        });
+     }
+     combinations.get(comboKey).doctors.push(doc);
+  });
+
+  // D. Return Paths for Astro to Build
+  return Array.from(combinations.values()).map(combo => ({
+    params: { slug: combo.slug },
+    props: { 
+      doctors: combo.doctors, 
+      specialty: combo.specialtyName, 
+      city: combo.city
+    }
+  }));
+}
+
+const { doctors, specialty, city } = Astro.props;
+
+// SEO Title Logic
+const doctorCount = doctors.length;
+const pageTitle = `${doctorCount} Dokter ${specialty} Terbaik di ${city} (Rekomendasi 2026)`;
+const pageDesc = `Cari dokter ${specialty} di ${city}? Lihat daftar lengkap ${doctorCount} spesialis terpercaya, jadwal praktek, dan estimasi biaya. Konsultasi gratis via WhatsApp.`;
+---
+
+<LandingLayout title={pageTitle} description={pageDesc}>
+  
+  {/* HERO SECTION */}
+  <section class="bg-slate-50 py-12 md:py-20 border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 text-center md:text-left">
+       <span class="text-[#276CA1] font-bold tracking-wider text-xs uppercase mb-2 block">
+          Direktori Medis Malaysia
+       </span>
+       <h1 class="font-serif text-3xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
+          Dokter <span class="text-[#276CA1]">{specialty}</span> di {city}
+       </h1>
+       <p class="text-slate-600 text-lg max-w-2xl">
+          Kami telah memverifikasi <strong>{doctorCount} spesialis</strong> yang sesuai dengan kriteria Anda. Gunakan daftar ini untuk membandingkan profil dan rumah sakit.
+       </p>
+    </div>
+  </section>
+
+  {/* DOCTOR GRID */}
+  <section class="py-12 md:py-16">
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+       
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {doctors.map((doctor) => {
+             const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin buat janji dengan ${doctor.name} (${doctor.hospital}).`;
+             // Generate ID for profile link
+             const docId = doctor.id || doctor.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+             return (
+              <div class="bg-white rounded-[20px] border border-slate-100 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group relative overflow-hidden">
+                {/* Decorative Top Border */}
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#276CA1] to-blue-300"></div>
+
+                <div class="flex items-start gap-4 mb-5">
+                  <div class="relative shrink-0">
+                    <img 
+                      src={doctor.image} alt={doctor.name}
+                      class="w-16 h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
+                      onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                    />
+                  </div>
+                  <div class="min-w-0">
+                    <h2 class="font-serif text-lg font-bold text-slate-900 leading-tight mb-1">{doctor.name}</h2>
+                    <p class="text-xs font-bold text-[#276CA1] uppercase tracking-wide truncate">{doctor.specialty}</p>
+                    {doctor.subspecialty && (
+                       <p class="text-xs text-slate-500 truncate mt-0.5">{doctor.subspecialty}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div class="space-y-2 mb-6 border-t border-slate-50 pt-4">
+                   <div class="flex items-center gap-2 text-slate-600 text-sm">
+                      <Building2 class="w-4 h-4 text-slate-400 shrink-0" />
+                      <span class="truncate font-medium">{doctor.hospital}</span>
+                   </div>
+                   <div class="flex items-center gap-2 text-slate-500 text-sm">
+                      <MapPin class="w-4 h-4 text-slate-400 shrink-0" />
+                      <span class="truncate">{doctor.cleanState}</span>
+                   </div>
+                </div>
+
+                <div class="mt-auto flex gap-3">
+                  <a href={`/doctor/${docId}`} class="flex-1 py-2.5 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl text-xs transition-colors">
+                     Lihat Profil
+                  </a>
+                  <a href={waLink} target="_blank" class="flex-1 py-2.5 flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl text-xs shadow-lg shadow-blue-900/10 transition-colors">
+                     Buat Janji
+                  </a>
+                </div>
+              </div>
+             );
+          })}
+       </div>
+
+       {/* LEAD MAGNET CARD (SEO BOOSTER) */}
+       <div class="mt-16 bg-blue-900 rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+          <div class="relative z-10 max-w-2xl mx-auto">
+             <h3 class="text-2xl md:text-3xl font-serif font-bold mb-4">Butuh Estimasi Biaya {specialty}?</h3>
+             <p class="text-blue-100 mb-8 text-lg">
+                Jangan tebak-tebakan. Dapatkan rincian biaya resmi dari rumah sakit di {city}, termasuk biaya dokter, kamar, dan tindakan.
+             </p>
+             <a href="/guide/checklist-biaya-berobat-2026" class="inline-flex items-center gap-2 bg-white text-blue-900 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-colors">
+                Download Estimasi Biaya
+                <ArrowRight class="w-4 h-4" />
+             </a>
+          </div>
+          {/* Background pattern */}
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-500 opacity-20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+       </div>
+
+    </div>
+  </section>
+
+</LandingLayout>
