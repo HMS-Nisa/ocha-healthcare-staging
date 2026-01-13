@@ -21,46 +21,53 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
 
 <LandingLayout title={entry.data.title} description={entry.data.subheadline}>
   
-  {/* Background decoration */}
-  <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
-  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10"></div>
-  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10"></div>
+  {/* 🚀 UPDATE 1: Added 'overflow-x-hidden' to prevent background blobs from stretching the page width */}
+  <main class="min-h-screen relative z-10 pt-8 pb-40 md:py-20 px-4 md:px-6 overflow-x-hidden">
+    
+    {/* Background decoration (Now clipped by the overflow-hidden above) */}
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-100/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10 translate-x-1/2 lg:translate-x-0"></div>
+    <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50/50 rounded-full blur-3xl mix-blend-multiply opacity-50 -z-10 -translate-x-1/2 lg:translate-x-0"></div>
 
-  <main class="min-h-screen flex items-center justify-center relative z-10 pt-16 pb-32 md:py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 w-full">
+    <div class="max-w-6xl mx-auto w-full">
         
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        {/* 🚀 UPDATE 2: Changed 'grid' to 'flex flex-col' for mobile safety */}
+        {/* This ensures mobile content is just a simple vertical stack with no grid weirdness */}
+        <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-20 items-start">
             
             {/* === LEFT COLUMN: The Pitch + THE FORM === */}
-            <div class="text-center lg:text-left pt-4">
-                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6 border border-blue-200">
+            <div class="text-center lg:text-left pt-2 w-full">
+                
+                <span class="inline-block py-1.5 px-4 rounded-full bg-blue-100 text-[#276CA1] text-[10px] font-extrabold uppercase tracking-wider mb-4 border border-blue-200 shadow-sm">
                     Free Resource
                 </span>
-                <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-[1.1]">
+                
+                <h1 class="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 leading-tight">
                     {entry.data.headline}
                 </h1>
-                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                
+                <p class="text-base md:text-lg text-slate-600 mb-8 leading-relaxed w-full">
                     {entry.data.subheadline}
                 </p>
 
-                {/* Benefits List */}
-                <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-100 shadow-sm mb-10 text-left inline-block w-full">
-                    <h3 class="font-bold text-slate-900 mb-4 uppercase tracking-wide text-xs">Kenapa checklist ini penting:</h3>
-                    <ul class="space-y-4">
+                {/* Benefits Box */}
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl p-5 md:p-6 border border-slate-100 shadow-lg shadow-blue-900/5 mb-8 text-left w-full mx-auto lg:mx-0">
+                    <h3 class="font-bold text-slate-900 mb-3 uppercase tracking-wide text-xs border-b border-slate-100 pb-2">Kenapa checklist ini penting:</h3>
+                    <ul class="space-y-3">
                         {entry.data.benefits.map(benefit => (
                             <li class="flex items-start gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                                <span class="text-slate-700 font-medium">{benefit}</span>
+                                <span class="text-slate-700 text-sm md:text-base font-medium leading-snug">{benefit}</span>
                             </li>
                         ))}
                     </ul>
                 </div>
 
-                {/* 🚀 FORM IS NOW HERE (LEFT COLUMN) */}
-                <div id="download-form" class="scroll-mt-24 text-left">
+                {/* FORM SECTION */}
+                <div id="download-form" class="scroll-mt-32 text-left w-full mx-auto lg:mx-0">
                     {entry.data.formId ? (
                         // 🅰️ OPTION A: EMBEDDED FORM
-                        <div class="bg-white rounded-2xl shadow-2xl shadow-blue-900/10 border border-slate-200 overflow-hidden relative z-20">
+                        <div class="bg-white rounded-2xl shadow-2xl shadow-blue-900/10 border border-slate-200 overflow-hidden relative z-20 w-full">
                             <div class="bg-slate-50 p-4 border-b border-slate-100 text-center">
                                 <p class="font-bold text-slate-900 text-sm">Isi formulir untuk akses instan</p>
                             </div>
@@ -88,7 +95,7 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
                         </div>
                     ) : (
                         // 🅱️ OPTION B: FALLBACK (BUTTON ONLY)
-                        <div class="bg-white p-6 rounded-2xl shadow-xl shadow-blue-900/10 border border-slate-100 text-center relative z-20">
+                        <div class="bg-white p-6 rounded-2xl shadow-xl shadow-blue-900/10 border border-slate-100 text-center relative z-20 w-full">
                             <a 
                                 href={destinationUrl} 
                                 target="_blank"
@@ -103,9 +110,8 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
 
             </div>
 
-            {/* === RIGHT COLUMN: BIG VISUAL IMAGE (Sticky) === */}
-            <div class="relative mx-auto w-full max-w-md lg:max-w-full hidden lg:block sticky top-8">
-                
+            {/* === RIGHT COLUMN: BIG VISUAL IMAGE (Sticky - Desktop Only) === */}
+            <div class="relative mx-auto w-full max-w-md lg:max-w-full hidden lg:block sticky top-24">
                 <div class="relative group cursor-pointer perspective-1000">
                     <div class="absolute inset-0 bg-indigo-600 rounded-[2rem] blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
                     <img 
@@ -117,7 +123,6 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
                         Exclusive <br/> Content
                     </div>
                 </div>
-
             </div>
 
         </div>
@@ -125,12 +130,12 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
     </div>
 
     {/* 📱 MOBILE STICKY ANCHOR BAR */}
-    <div class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 md:hidden z-50 shadow-[0_-5px_20px_rgba(0,0,0,0.1)] flex items-center justify-between gap-4">
+    <div class="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-lg border-t border-slate-200 px-6 py-4 pb-8 md:hidden z-50 shadow-[0_-5px_30px_rgba(0,0,0,0.08)] flex items-center justify-between gap-4">
         <div class="text-xs font-medium text-slate-500">
             Free Resource
-            <p class="text-slate-900 font-bold text-sm truncate max-w-[150px]">{entry.data.ctaText}</p>
+            <p class="text-slate-900 font-bold text-sm truncate max-w-[150px] leading-tight">{entry.data.ctaText}</p>
         </div>
-        <a href="#download-form" class="bg-[#276CA1] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-[#1f5682] transition active:scale-95">
+        <a href="#download-form" class="bg-[#276CA1] text-white px-5 py-3 rounded-xl font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-[#1f5682] transition active:scale-95 shrink-0">
             Download
             <ArrowDown className="w-4 h-4" />
         </a>

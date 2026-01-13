@@ -1,6 +1,6 @@
 // src/components/Directory.jsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, MapPin, Filter, Building2, Loader2 } from 'lucide-react';
+import { Search, MapPin, Filter, Building2, Loader2, ChevronDown } from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../config'; 
 
 // --- HELPER FUNCTIONS ---
@@ -15,18 +15,13 @@ const getStateFromLocation = (fullAddress) => {
   return 'Malaysia';
 };
 
-// 👇 UPDATED LOGIC: Use 'subspecialty' directly from JSON
 const processDoctors = (data) => {
     return data
-        .filter(doc => doc.name && doc.id) // Remove empty rows
+        .filter(doc => doc.name && doc.id) 
         .map(doc => {
             const cleanState = getStateFromLocation(doc.location);
-            
-            // Use direct columns, no parsing needed
             const parsedMain = doc.specialty ? doc.specialty.trim() : '';
             const parsedSub = doc.subspecialty ? doc.subspecialty.trim() : '';
-            
-            // Use ID from JSON, fallback to manual generation if missing
             const docId = doc.id || (doc.name ? doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : 'unknown');
 
             return { ...doc, cleanState, parsedMain, parsedSub, docId };
@@ -49,6 +44,10 @@ export default function Directory({ preloadedDoctors = [] }) {
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [selectedHospital, setSelectedHospital] = useState('All');
 
+  // 🚀 PAGINATION STATE
+  const ITEMS_PER_PAGE = 16;
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
   // DROPDOWN OPTIONS
   const initialOptions = useMemo(() => {
      if (doctors.length === 0) return { locations: ['All'], specialties: ['All'], hospitals: ['All'] };
@@ -67,12 +66,15 @@ export default function Directory({ preloadedDoctors = [] }) {
       }
   }, [preloadedDoctors, initialOptions]);
 
+  // 🚀 RESET PAGINATION WHEN FILTERS CHANGE
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
 
   // 2. FALLBACK FETCH
   useEffect(() => {
     if (preloadedDoctors.length > 0) return; 
 
-    // Add cache buster ?t=...
     const urlWithCacheBuster = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
 
     fetch(urlWithCacheBuster)
@@ -115,6 +117,9 @@ export default function Directory({ preloadedDoctors = [] }) {
       return matchesSearch && matchesSpecialty && matchesLocation && matchesHospital;
     });
   }, [doctors, searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
+
+  // 🚀 GET VISIBLE DOCTORS
+  const visibleDoctors = filteredDoctors.slice(0, visibleCount);
 
   if (loading) {
       return (
@@ -194,51 +199,69 @@ export default function Directory({ preloadedDoctors = [] }) {
 
       {/* RESULTS GRID */}
       {filteredDoctors.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDoctors.map((doctor, index) => {
-            const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name}`;
-            return (
-              <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
-                <div className="flex items-start gap-5 mb-5">
-                  <div className="relative shrink-0">
-                    <img 
-                      src={doctor.image} alt={doctor.name}
-                      className="w-16 h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
-                      onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-serif text-lg font-bold text-slate-900 leading-tight mb-1 truncate">{doctor.name}</h3>
-                    <div className="mb-3">
-                        <p className="text-[10px] font-bold text-[#276CA1] uppercase tracking-widest truncate">{doctor.parsedMain}</p>
-                        {/* SHOW SUBSPECIALTY IF EXISTS */}
-                        {doctor.parsedSub && (
-                        <p className="text-[10px] font-semibold text-slate-500 flex items-start gap-1 mt-1 leading-snug line-clamp-2">
-                            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0 mt-1"></span>{doctor.parsedSub}
-                        </p>
+        <>
+            {/* 🚀 Render Sliced Array */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {visibleDoctors.map((doctor, index) => {
+                const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name}`;
+                return (
+                <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+                    <div className="flex items-start gap-5 mb-5">
+                    <div className="relative shrink-0">
+                        <img 
+                        src={doctor.image} alt={doctor.name}
+                        className="w-16 h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
+                        onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <h3 className="font-serif text-lg font-bold text-slate-900 leading-tight mb-1 truncate">{doctor.name}</h3>
+                        <div className="mb-3">
+                            <p className="text-[10px] font-bold text-[#276CA1] uppercase tracking-widest truncate">{doctor.parsedMain}</p>
+                            {doctor.parsedSub && (
+                            <p className="text-[10px] font-semibold text-slate-500 flex items-start gap-1 mt-1 leading-snug line-clamp-2">
+                                <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0 mt-1"></span>{doctor.parsedSub}
+                            </p>
+                            )}
+                        </div>
+                        <div className="space-y-1.5 border-t border-slate-50 pt-2">
+                        <div className="flex items-center gap-2 text-slate-500 text-xs">
+                            <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{doctor.hospital}</span>
+                        </div>
+                        {doctor.cleanState && (
+                            <div className="flex items-center gap-2 text-slate-500 text-xs">
+                                <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate font-medium text-slate-600">{doctor.cleanState}</span>
+                            </div>
                         )}
+                        </div>
                     </div>
-                    <div className="space-y-1.5 border-t border-slate-50 pt-2">
-                       <div className="flex items-center gap-2 text-slate-500 text-xs">
-                          <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{doctor.hospital}</span>
-                       </div>
-                       {doctor.cleanState && (
-                         <div className="flex items-center gap-2 text-slate-500 text-xs">
-                            <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate font-medium text-slate-600">{doctor.cleanState}</span>
-                         </div>
-                       )}
                     </div>
-                  </div>
+                    <div className="mt-auto pt-5 border-t border-slate-50 flex gap-3">
+                    <a href={`/doctor/${doctor.docId}`} className="w-[35%] py-2.5 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs">Profile</a>
+                    <a href={waLink} target="_blank" rel="noopener noreferrer" className="w-[65%] py-2.5 flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20">Book Appointment</a>
+                    </div>
                 </div>
-                <div className="mt-auto pt-5 border-t border-slate-50 flex gap-3">
-                  <a href={`/doctor/${doctor.docId}`} className="w-[35%] py-2.5 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs">Profile</a>
-                  <a href={waLink} target="_blank" rel="noopener noreferrer" className="w-[65%] py-2.5 flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20">Book Appointment</a>
+                );
+            })}
+            </div>
+
+            {/* 🚀 LOAD MORE BUTTON */}
+            {visibleCount < filteredDoctors.length && (
+                <div className="mt-12 flex justify-center">
+                    <button 
+                        onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
+                        className="group flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-full text-slate-600 font-bold hover:border-indigo-200 hover:text-indigo-600 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md"
+                    >
+                        Load More Doctors
+                        <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                    </button>
+                    <p className="hidden text-xs text-slate-400 mt-2">
+                        Showing {visibleDoctors.length} of {filteredDoctors.length}
+                    </p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+            )}
+        </>
       ) : (
         <div className="text-center py-24 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
           <p className="text-slate-400 font-medium mb-4">No specialists found.</p>
