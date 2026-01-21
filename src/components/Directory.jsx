@@ -44,7 +44,7 @@ export default function Directory({ preloadedDoctors = [] }) {
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [selectedHospital, setSelectedHospital] = useState('All');
 
-  // 🚀 PAGINATION STATE
+  // PAGINATION
   const ITEMS_PER_PAGE = 16;
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
@@ -66,7 +66,7 @@ export default function Directory({ preloadedDoctors = [] }) {
       }
   }, [preloadedDoctors, initialOptions]);
 
-  // 🚀 RESET PAGINATION WHEN FILTERS CHANGE
+  // RESET PAGINATION
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE);
   }, [searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
@@ -118,7 +118,6 @@ export default function Directory({ preloadedDoctors = [] }) {
     });
   }, [doctors, searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
 
-  // 🚀 GET VISIBLE DOCTORS
   const visibleDoctors = filteredDoctors.slice(0, visibleCount);
 
   if (loading) {
@@ -143,7 +142,7 @@ export default function Directory({ preloadedDoctors = [] }) {
     <div className="w-full relative">
       
       {/* FILTER BAR */}
-      <div className="bg-white p-2 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 mb-12 flex flex-col lg:flex-row gap-2 max-w-6xl mx-auto">
+      <div className="bg-white p-2 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 mb-8 md:mb-12 flex flex-col lg:flex-row gap-2 max-w-6xl mx-auto">
         
         {/* 1. SEARCH INPUT */}
         <div className="relative flex-1 min-w-[200px]">
@@ -200,53 +199,56 @@ export default function Directory({ preloadedDoctors = [] }) {
       {/* RESULTS GRID */}
       {filteredDoctors.length > 0 ? (
         <>
-            {/* 🚀 Render Sliced Array */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {visibleDoctors.map((doctor, index) => {
                 const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name}`;
                 return (
-                <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
-                    <div className="flex items-start gap-5 mb-5">
-                    <div className="relative shrink-0">
-                        <img 
-                        src={doctor.image} alt={doctor.name}
-                        className="w-16 h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
-                        onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
-                        />
-                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                        <h3 className="font-serif text-lg font-bold text-slate-900 leading-tight mb-1 truncate">{doctor.name}</h3>
-                        <div className="mb-3">
-                            <p className="text-[10px] font-bold text-[#276CA1] uppercase tracking-widest truncate">{doctor.parsedMain}</p>
-                            {doctor.parsedSub && (
-                            <p className="text-[10px] font-semibold text-slate-500 flex items-start gap-1 mt-1 leading-snug line-clamp-2">
-                                <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0 mt-1"></span>{doctor.parsedSub}
-                            </p>
-                            )}
+                // 🚀 UPDATE 1: Added 'overflow-hidden' to clip any internal elements
+                <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-4 md:p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group overflow-hidden">
+                    
+                    <div className="flex items-start gap-4 md:gap-5 mb-5">
+                        <div className="relative shrink-0">
+                            <img 
+                            src={doctor.image} alt={doctor.name}
+                            className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
+                            onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                            />
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-green-500 border-2 border-white rounded-full"></div>
                         </div>
-                        <div className="space-y-1.5 border-t border-slate-50 pt-2">
-                        <div className="flex items-center gap-2 text-slate-500 text-xs">
-                            <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{doctor.hospital}</span>
-                        </div>
-                        {doctor.cleanState && (
-                            <div className="flex items-center gap-2 text-slate-500 text-xs">
-                                <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate font-medium text-slate-600">{doctor.cleanState}</span>
+                        <div className="min-w-0 flex-1">
+                            <h3 className="font-serif text-lg font-bold text-slate-900 leading-tight mb-1 truncate">{doctor.name}</h3>
+                            <div className="mb-3">
+                                <p className="text-[10px] font-bold text-[#276CA1] uppercase tracking-widest truncate">{doctor.parsedMain}</p>
+                                {doctor.parsedSub && (
+                                <p className="text-[10px] font-semibold text-slate-500 flex items-start gap-1 mt-1 leading-snug line-clamp-2">
+                                    <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0 mt-1"></span>{doctor.parsedSub}
+                                </p>
+                                )}
                             </div>
-                        )}
+                            <div className="space-y-1.5 border-t border-slate-50 pt-2">
+                            <div className="flex items-center gap-2 text-slate-500 text-xs">
+                                <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{doctor.hospital}</span>
+                            </div>
+                            {doctor.cleanState && (
+                                <div className="flex items-center gap-2 text-slate-500 text-xs">
+                                    <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate font-medium text-slate-600">{doctor.cleanState}</span>
+                                </div>
+                            )}
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    <div className="mt-auto pt-5 border-t border-slate-50 flex gap-3">
-                    <a href={`/doctor/${doctor.docId}`} className="w-[35%] py-2.5 flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs">Profile</a>
-                    <a href={waLink} target="_blank" rel="noopener noreferrer" className="w-[65%] py-2.5 flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20">Book Appointment</a>
+                    
+                    {/* 🚀 UPDATE 2: Switched to Grid. Reduced gap to 'gap-2'. Guarantee fit. */}
+                    <div className="mt-auto pt-4 md:pt-5 border-t border-slate-50 grid grid-cols-[1fr_2fr] gap-2">
+                        <a href={`/doctor/${doctor.docId}`} className="flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs py-2.5">Profile</a>
+                        <a href={waLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20 py-2.5">Book Appointment</a>
                     </div>
                 </div>
                 );
             })}
             </div>
 
-            {/* 🚀 LOAD MORE BUTTON */}
+            {/* LOAD MORE BUTTON */}
             {visibleCount < filteredDoctors.length && (
                 <div className="mt-12 flex justify-center">
                     <button 
@@ -256,9 +258,6 @@ export default function Directory({ preloadedDoctors = [] }) {
                         Load More Doctors
                         <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
                     </button>
-                    <p className="hidden text-xs text-slate-400 mt-2">
-                        Showing {visibleDoctors.length} of {filteredDoctors.length}
-                    </p>
                 </div>
             )}
         </>

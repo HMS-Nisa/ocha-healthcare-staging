@@ -1,7 +1,7 @@
 ---
 // src/layouts/LandingLayout.astro
-import { Search } from 'lucide-react';
-import Footer from '../components/Footer.astro'; // 👈 Import the new component
+import { Search, Menu, X } from 'lucide-react'; // 👈 Added Menu & X icons
+import Footer from '../components/Footer.astro';
 import { WA_NUMBER } from '../config'; 
 
 const { title, description } = Astro.props;
@@ -50,15 +50,15 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                 {/* 1. LEFT: Logo */}
                 <div class="relative z-20 flex-shrink-0">
                     <a href="/" class="flex items-center gap-2">
-                        <img src="/assets/logo.jpg" alt="Ocha Healthcare" class="h-10 w-auto mix-blend-multiply" />
+                        <img src="/assets/logo.png" alt="Ocha Healthcare" class="h-10 w-auto mix-blend-multiply" />
                     </a>
                 </div>
 
-                {/* 2. CENTER: Menu Links */}
+                {/* 2. CENTER: Desktop Menu (Hidden on Mobile) */}
                 <nav class="hidden md:flex absolute inset-0 w-full h-full items-center justify-center pointer-events-none z-10">
                     <div class="flex items-center gap-8 font-medium text-slate-600 pointer-events-auto">
                         <a href="/" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Home</a>
-                        <a href="/directory" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Doctors</a>
+                        <a href="/doctors" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Doctors</a>
                         <a href="/blog" class="hover:text-[#276CA1] transition-colors text-sm font-bold flex items-center gap-2">
                             Guides 
                             <span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
@@ -66,9 +66,9 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                     </div>
                 </nav>
 
-                {/* 3. RIGHT: Actions */}
-                <div class="relative z-20 flex-shrink-0 flex items-center gap-3">
-                    <a href="/directory" class="hidden lg:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition-all">
+                {/* 3. RIGHT: Desktop Actions (Hidden on Mobile) */}
+                <div class="hidden md:flex relative z-20 flex-shrink-0 items-center gap-3">
+                    <a href="/doctors" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition-all">
                         <Search className="w-4 h-4" />
                         <span>Find Specialist</span>
                     </a>
@@ -82,14 +82,51 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                     </a>
                 </div>
 
+                {/* 📱 4. MOBILE HAMBURGER BUTTON (Visible only on Mobile) */}
+                <button id="mobile-menu-btn" class="md:hidden relative z-20 p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <Menu className="w-6 h-6" />
+                </button>
+
             </div>
+
+            {/* 📱 MOBILE MENU DROPDOWN (Hidden by default) */}
+            <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-xl flex flex-col p-6 gap-4 md:hidden">
+                <a href="/" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50">Home</a>
+                <a href="/doctors" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50">Doctors</a>
+                <a href="/blog" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50 flex items-center justify-between">
+                    Guides
+                    <span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
+                </a>
+                
+                {/* Mobile Actions */}
+                <div class="flex flex-col gap-3 mt-4">
+                    <a href="/doctors" class="flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600">
+                        <Search className="w-4 h-4" />
+                        Find Specialist
+                    </a>
+                    <a href={waLink} target="_blank" class="flex items-center justify-center px-4 py-3 bg-[#276CA1] text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-900/10">
+                        Book Consultation
+                    </a>
+                </div>
+            </div>
+
         </header>
         {/* 🚀 NAVBAR END */}
 
         <slot />
 
-        {/* 🚀 MODULAR FOOTER */}
         <Footer />
         
+        {/* 📱 MOBILE MENU SCRIPT */}
+        <script is:inline>
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('hidden');
+                });
+            }
+        </script>
     </body>
 </html>
