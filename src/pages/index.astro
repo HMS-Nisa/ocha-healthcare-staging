@@ -1,5 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
+// src/pages/index.astro
+// 🚀 CHANGE: Import LandingLayout (which has the Footer, Navbar & Tracking)
+import LandingLayout from '../layouts/LandingLayout.astro';
 import Hero from '../components/Hero.astro';
 import Features from '../components/Features.astro';
 import Testimonials from '../components/Testimonials.astro';
@@ -10,7 +12,11 @@ import CTA from '../components/CTA.astro';
 import MedicalHubs from '../components/MedicalHubs.jsx';
 ---
 
-<Layout title="Ocha Healthcare | AI-Powered Medical Concierge">
+{/* 🚀 CHANGE: Use <LandingLayout> instead of <Layout> */}
+<LandingLayout 
+  title="Ocha Healthcare | AI-Powered Medical Concierge"
+  description="Your trusted AI medical concierge for treatment in Malaysia. Get free doctor recommendations, cost estimates, and appointment booking."
+>
   <main>
     <Hero />
     
@@ -24,4 +30,4 @@ import MedicalHubs from '../components/MedicalHubs.jsx';
     
     <CTA />
   </main>
-</Layout>
+</LandingLayout>

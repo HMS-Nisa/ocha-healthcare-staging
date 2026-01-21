@@ -1,0 +1,64 @@
+---
+// src/pages/privacy.astro
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { ShieldCheck } from 'lucide-react';
+
+const lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<LandingLayout title="Privacy Policy - Ocha Healthcare" description="How we collect, use, and protect your data.">
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    
+    <div class="text-center mb-16">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-4">
+        <ShieldCheck className="w-4 h-4" />
+        Legal
+      </span>
+      <h1 class="font-serif text-4xl md:text-5xl font-bold text-slate-900 mb-4">Privacy Policy</h1>
+      <p class="text-slate-500">Last updated: {lastUpdated}</p>
+    </div>
+
+    <div class="prose prose-slate max-w-none prose-headings:font-serif prose-a:text-[#276CA1]">
+      
+      <h3>1. Introduction</h3>
+      <p>
+        Welcome to Ocha Healthcare ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. 
+        This privacy policy explains how we look after your personal data when you visit our website (ocha.health) and tell you about your privacy rights.
+      </p>
+
+      <h3>2. Information We Collect</h3>
+      <p>We may collect, use, store, and transfer different kinds of personal data about you which we have grouped together follows:</p>
+      <ul>
+        <li><strong>Identity Data:</strong> Name, username, or similar identifier provided via WhatsApp or forms.</li>
+        <li><strong>Contact Data:</strong> Phone number and email address.</li>
+        <li><strong>Health Data:</strong> Limited medical information you voluntarily share (e.g., "I need a heart specialist") to help us connect you with the right doctor.</li>
+        <li><strong>Usage Data:</strong> Information about how you use our website, tracked via Microsoft Clarity and Google Analytics.</li>
+      </ul>
+
+      <h3>3. How We Use Your Data</h3>
+      <p>We strictly use your data to:</p>
+      <ul>
+        <li>Connect you with medical providers (Hospitals/Doctors) at your request.</li>
+        <li>Send you the guides or cost estimates you requested.</li>
+        <li>Improve our website experience using heatmaps and usage metrics (Microsoft Clarity).</li>
+      </ul>
+      <p><strong>We never sell your data to third-party advertisers.</strong></p>
+
+      <h3>4. Cookies and Tracking</h3>
+      <p>
+        We use cookies and similar tracking technologies (such as <strong>Microsoft Clarity</strong> and <strong>Google Analytics</strong>) to track the activity on our Service and store certain information. 
+        These tools help us understand how users interact with our site (e.g., which pages are most popular) to improve our user experience.
+      </p>
+
+      <h3>5. Third-Party Links</h3>
+      <p>
+        Our website may contain links to third-party websites (e.g., Hospital official sites, WhatsApp). Clicking on those links may allow third parties to collect or share data about you. 
+        We do not control these third-party websites and are not responsible for their privacy statements.
+      </p>
+
+      <h3>6. Contact Us</h3>
+      <p>If you have any questions about this Privacy Policy, please contact us via WhatsApp or email.</p>
+
+    </div>
+  </main>
+</LandingLayout>

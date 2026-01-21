@@ -1,106 +1,95 @@
 ---
 // src/layouts/LandingLayout.astro
-import { ShieldCheck, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
+import Footer from '../components/Footer.astro'; // 👈 Import the new component
 import { WA_NUMBER } from '../config'; 
 
 const { title, description } = Astro.props;
 const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I need assistance with medical arrangements.`;
 
-// 🔴 TODO: REPLACE THESE WITH YOUR ACTUAL IDS
-const GA_MEASUREMENT_ID = 'G-WL0KG6Y6B8'; // Example: G-1234567890
-const CLARITY_PROJECT_ID = 'v0p5vbt2q2';  // Example: gy78923
+// 🔴 YOUR IDs (PRESERVED)
+const GA_MEASUREMENT_ID = 'G-WL0KG6Y6B8'; 
+const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
 ---
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<title>{title}</title>
-		<link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content={description} />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <title>{title}</title>
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
 
-		{/* 📊 1. GOOGLE ANALYTICS 4 (GA4) */}
-		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
-		<script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', GA_MEASUREMENT_ID);
-		</script>
+        {/* 📊 1. GOOGLE ANALYTICS 4 (GA4) */}
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+        <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', GA_MEASUREMENT_ID);
+        </script>
 
-		{/* 📊 2. MICROSOFT CLARITY */}
-		<script is:inline define:vars={{ CLARITY_PROJECT_ID }}>
-			(function(c,l,a,r,i,t,y){
-				c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-				t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-			})(window, document, "clarity", "script", CLARITY_PROJECT_ID);
-		</script>
+        {/* 📊 2. MICROSOFT CLARITY */}
+        <script is:inline define:vars={{ CLARITY_PROJECT_ID }}>
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", CLARITY_PROJECT_ID);
+        </script>
 
-	</head>
-	<body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen">
-		
-		{/* 🚀 NAVBAR START */}
-		<header class="sticky top-0 w-full bg-slate-50/80 backdrop-blur-md z-50 border-b border-slate-100/50">
-			<div class="max-w-7xl mx-auto px-6 h-20 relative flex items-center justify-between">
-				
-				{/* 1. LEFT: Logo (Relative + z-index to sit on top) */}
-				<div class="relative z-20 flex-shrink-0">
-					<a href="/" class="flex items-center gap-2">
-						<img src="/assets/logo.jpg" alt="Ocha Healthcare" class="h-10 w-auto mix-blend-multiply" />
-					</a>
-				</div>
+    </head>
+    <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen">
+        
+        {/* 🚀 NAVBAR START */}
+        <header class="sticky top-0 w-full bg-slate-50/80 backdrop-blur-md z-50 border-b border-slate-100/50">
+            <div class="max-w-7xl mx-auto px-6 h-20 relative flex items-center justify-between">
+                
+                {/* 1. LEFT: Logo */}
+                <div class="relative z-20 flex-shrink-0">
+                    <a href="/" class="flex items-center gap-2">
+                        <img src="/assets/logo.jpg" alt="Ocha Healthcare" class="h-10 w-auto mix-blend-multiply" />
+                    </a>
+                </div>
 
-				{/* 2. CENTER: Menu Links (ABSOLUTE FULL WIDTH) */}
-				{/* "inset-0" stretches this box to fill the whole header */}
-				{/* "justify-center" locks text in the exact middle */}
-				{/* "pointer-events-none" ensures invisible parts don't block clicks on logo/buttons */}
-				<nav class="hidden md:flex absolute inset-0 w-full h-full items-center justify-center pointer-events-none z-10">
-					<div class="flex items-center gap-8 font-medium text-slate-600 pointer-events-auto">
-						<a href="/" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Home</a>
-						<a href="/directory" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Doctors</a>
-						<a href="/blog" class="hover:text-[#276CA1] transition-colors text-sm font-bold flex items-center gap-2">
-							Guides 
-							<span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
-						</a>
-					</div>
-				</nav>
+                {/* 2. CENTER: Menu Links */}
+                <nav class="hidden md:flex absolute inset-0 w-full h-full items-center justify-center pointer-events-none z-10">
+                    <div class="flex items-center gap-8 font-medium text-slate-600 pointer-events-auto">
+                        <a href="/" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Home</a>
+                        <a href="/directory" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Doctors</a>
+                        <a href="/blog" class="hover:text-[#276CA1] transition-colors text-sm font-bold flex items-center gap-2">
+                            Guides 
+                            <span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
+                        </a>
+                    </div>
+                </nav>
 
-				{/* 3. RIGHT: Actions (Relative + z-index to sit on top) */}
-				<div class="relative z-20 flex-shrink-0 flex items-center gap-3">
-					
-					{/* Search Button */}
-					<a href="/directory" class="hidden lg:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition-all">
-						<Search className="w-4 h-4" />
-						<span>Find Specialist</span>
-					</a>
+                {/* 3. RIGHT: Actions */}
+                <div class="relative z-20 flex-shrink-0 flex items-center gap-3">
+                    <a href="/directory" class="hidden lg:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition-all">
+                        <Search className="w-4 h-4" />
+                        <span>Find Specialist</span>
+                    </a>
 
-					{/* CTA Button */}
-					<a 
-						href={waLink} 
-						target="_blank" 
-						class="px-5 py-2.5 bg-[#276CA1] text-white font-bold rounded-full text-sm hover:bg-[#1f5682] transition-colors shadow-lg shadow-blue-900/10"
-					>
-						Book Consultation
-					</a>
-				</div>
+                    <a 
+                        href={waLink} 
+                        target="_blank" 
+                        class="px-5 py-2.5 bg-[#276CA1] text-white font-bold rounded-full text-sm hover:bg-[#1f5682] transition-colors shadow-lg shadow-blue-900/10"
+                    >
+                        Book Consultation
+                    </a>
+                </div>
 
-			</div>
-		</header>
-		{/* 🚀 NAVBAR END */}
+            </div>
+        </header>
+        {/* 🚀 NAVBAR END */}
 
-		<slot />
+        <slot />
 
-		<footer class="bg-white border-t border-slate-100 py-8 mt-auto">
-			<div class="max-w-7xl mx-auto px-6 text-center text-slate-400 text-sm">
-				<div class="flex items-center justify-center gap-2 mb-4 text-emerald-600 font-medium">
-					 <ShieldCheck className="w-4 h-4" />
-					 <span>Your data is secure. We never spam.</span>
-				</div>
-				<p>© {new Date().getFullYear()} Ocha Healthcare. Not a medical provider.</p>
-			</div>
-		</footer>
-	</body>
+        {/* 🚀 MODULAR FOOTER */}
+        <Footer />
+        
+    </body>
 </html>

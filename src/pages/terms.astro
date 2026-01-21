@@ -1,0 +1,62 @@
+---
+// src/pages/terms.astro
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { FileText } from 'lucide-react';
+
+const lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<LandingLayout title="Terms of Use - Ocha Healthcare" description="Rules and regulations for using the Ocha Healthcare website.">
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    
+    <div class="text-center mb-16">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-4">
+        <FileText className="w-4 h-4" />
+        Legal
+      </span>
+      <h1 class="font-serif text-4xl md:text-5xl font-bold text-slate-900 mb-4">Terms of Use</h1>
+      <p class="text-slate-500">Last updated: {lastUpdated}</p>
+    </div>
+
+    <div class="prose prose-slate max-w-none prose-headings:font-serif prose-a:text-[#276CA1]">
+      
+      <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 not-prose rounded-r-lg">
+        <h3 class="text-red-800 font-bold text-lg mb-2">Medical Disclaimer</h3>
+        <p class="text-red-700 text-sm leading-relaxed">
+          Ocha Healthcare is a <strong>medical directory and concierge service</strong>, not a medical provider. 
+          The information provided on this website is for educational and informational purposes only and <strong>does not constitute medical advice</strong>, diagnosis, or treatment. 
+          Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+        </p>
+      </div>
+
+      <h3>1. Agreement to Terms</h3>
+      <p>
+        By accessing or using our website, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
+      </p>
+
+      <h3>2. Accuracy of Information</h3>
+      <p>
+        While we strive to keep doctor schedules, hospital pricing, and credentials accurate, medical information changes rapidly. 
+        We do not warrant that the information on this website is 100% accurate, complete, or current. <strong>Always verify details directly with the hospital or doctor before travelling.</strong>
+      </p>
+
+      <h3>3. Limitation of Liability</h3>
+      <p>
+        In no event shall Ocha Healthcare, nor its directors, employees, or partners, be liable for any indirect, incidental, special, consequential or punitive damages, 
+        including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
+      </p>
+
+      <h3>4. External Links</h3>
+      <p>
+        Our Service may contain links to third-party web sites or services (such as WhatsApp for Business) that are not owned or controlled by Ocha Healthcare. 
+        We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third party web sites or services.
+      </p>
+
+      <h3>5. Governing Law</h3>
+      <p>
+        These Terms shall be governed and construed in accordance with the laws of Malaysia, without regard to its conflict of law provisions.
+      </p>
+
+    </div>
+  </main>
+</LandingLayout>
