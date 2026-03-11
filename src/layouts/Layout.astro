@@ -26,10 +26,22 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 		<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 		
 		<title>{title}</title>
+
+        {/* 📊 GOOGLE TAG MANAGER (GTM) */}
+        <script is:inline>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-P59DXCBC');
+        </script>
 	</head>
 	
 	<body class="bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen overflow-x-hidden">
 		
+        {/* 📊 GOOGLE TAG MANAGER (noscript) */}
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P59DXCBC" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
 		{/* === NAVBAR (Glassmorphism) === */}
 		<nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm">
 			<div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center relative">
@@ -118,7 +130,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 		</footer>
 
 		{/* === MOBILE MENU SCRIPT (With Outside Tap Detection) === */}
-		<script>
+		<script is:inline>
 			const menuBtn = document.getElementById('menu-btn');
 			const mobileMenu = document.getElementById('mobile-menu');
 			const overlay = document.getElementById('mobile-overlay');

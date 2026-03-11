@@ -41,10 +41,21 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
             })(window, document, "clarity", "script", CLARITY_PROJECT_ID);
         </script>
 
+        {/* 📊 3. GOOGLE TAG MANAGER (GTM) */}
+        <script is:inline>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-P59DXCBC');
+        </script>
     </head>
-    {/* 🚀 ADDED: overflow-x-hidden to prevent horizontal scrolling */}
+    
     <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
         
+        {/* 📊 GOOGLE TAG MANAGER (noscript) */}
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P59DXCBC" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
         {/* 🚀 NAVBAR START */}
         <header class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-slate-200 transition-all duration-300 shadow-sm">
             <div class="max-w-7xl mx-auto px-6 h-20 relative flex items-center justify-between">
