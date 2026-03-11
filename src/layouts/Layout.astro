@@ -14,14 +14,10 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content={description || "Ocha Healthcare - AI-Powered Medical Concierge. Expert care in Malaysia, sorted in seconds."} />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		
-		{/* 🚀 UPDATED: Favicon now points to root (since you moved it to public/) */}
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		
-		{/* 🚀 ADDED: Google Verification Tag */}
 		<meta name="google-site-verification" content="google-site-verification=J_CcoFq3Zit_9hKWH3wSgKkM1uW7tV7IqC5WpX8X9c8" />
-
 		<meta name="generator" content={Astro.generator} />
 		
 		{/* Google Fonts */}
@@ -32,7 +28,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 		<title>{title}</title>
 	</head>
 	
-	<body class="bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen">
+	<body class="bg-slate-50 font-sans text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-900 flex flex-col min-h-screen overflow-x-hidden">
 		
 		{/* === NAVBAR (Glassmorphism) === */}
 		<nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-300 shadow-sm">
@@ -40,16 +36,15 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 				
 				{/* 1. LOGO & LINKS (Left) */}
 				<div class="flex items-center gap-8">
-					<a href="/" class="flex-shrink-0 opacity-100 hover:opacity-80 transition-opacity z-50">
-						{/* Logo */}
+					<a href="/" class="flex-shrink-0 opacity-100 hover:opacity-80 active:scale-95 transition-all z-50">
 						<img src="/assets/logo.png" alt="Ocha Healthcare" class="h-12 w-auto object-contain mix-blend-multiply" />
 					</a>
 
                     {/* Desktop Navigation */}
                     <div class="hidden md:flex items-center gap-6">
-						<a href="/" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Home</a>
-						<a href="/doctors" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Doctors</a>
-						<a href="/blog" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors flex items-center gap-1">
+						<a href="/" class="text-sm font-bold text-slate-500 hover:text-[#276CA1] transition-colors">Home</a>
+						<a href="/doctors" class="text-sm font-bold text-slate-500 hover:text-[#276CA1] transition-colors">Doctors</a>
+						<a href="/blog" class="text-sm font-bold text-slate-500 hover:text-[#276CA1] transition-colors flex items-center gap-1">
 							Guides <span class="bg-blue-50 text-[#276CA1] text-[10px] px-1.5 py-0.5 rounded-full border border-blue-100">New</span>
 						</a>
 					</div>
@@ -57,21 +52,17 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 
 				{/* 2. ACTION BUTTONS (Right - Desktop Only) */}
 				<div class="hidden md:flex items-center gap-3">
-					
-					{/* Secondary Button: Find Specialist */}
-					<a href="/doctors" class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-indigo-200 transition-all group">
-						<Search className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+					<a href="/doctors" class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-blue-200 transition-all group">
+						<Search className="w-4 h-4 text-slate-400 group-hover:text-[#276CA1] transition-colors" />
 						Find Specialist
 					</a>
-
-					{/* Primary Button: Book Consultation (Updated Link) */}
-					<a href={WA_LINK} target="_blank" class="bg-indigo-600 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95 transform duration-150 flex items-center gap-2">
+					<a href={WA_LINK} target="_blank" class="bg-[#276CA1] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 active:scale-95 transform duration-150 flex items-center gap-2">
 						Book Consultation
 					</a>
 				</div>
 
 				{/* 3. MOBILE MENU TOGGLE BUTTON */}
-				<button id="menu-btn" class="md:hidden text-slate-600 p-2 z-50 focus:outline-none hover:bg-slate-100 rounded-full transition-colors">
+				<button id="menu-btn" class="md:hidden text-slate-600 p-2 z-50 focus:outline-none hover:bg-slate-100 active:scale-90 active:bg-slate-200 rounded-full transition-all duration-200">
 					<div class="icon-menu block">
 						<Menu className="w-6 h-6" />
 					</div>
@@ -82,25 +73,31 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 			</div>
 		</nav>
 
-		{/* === MOBILE MENU OVERLAY === */}
-		<div id="mobile-menu" class="fixed inset-0 z-40 bg-white transform translate-x-full transition-transform duration-300 md:hidden flex flex-col pt-28 px-6 gap-6">
-			<a href="/" class="text-xl font-medium text-slate-900 border-b border-slate-100 pb-4">
+		{/* 🚀 NEW: MOBILE MENU OVERLAY (Darkened Backdrop) */}
+		<div id="mobile-overlay" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"></div>
+
+		{/* 🚀 UPDATED: MOBILE MENU DRAWER (Slides from right, sleek touch feedback) */}
+		<div id="mobile-menu" class="fixed top-0 right-0 h-full w-[85%] max-w-[320px] z-40 bg-white transform translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden flex flex-col pt-24 px-4 gap-2 shadow-2xl overflow-y-auto pb-8">
+			
+            {/* Nav Links with active touch states */}
+			<a href="/" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all">
 				Concierge Home
 			</a>
 			
-            {/* Mobile Link */}
-            <a href="/blog" class="text-xl font-medium text-slate-900 border-b border-slate-100 pb-4 flex items-center justify-between group">
+			<a href="/blog" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
 				Health Guides 
 				<span class="bg-blue-50 text-[#276CA1] text-xs font-bold px-2 py-1 rounded-full border border-blue-100">New</span>
 			</a>
 
-			<a href="/doctors" class="text-xl font-medium text-slate-900 border-b border-slate-100 pb-4 flex items-center justify-between group">
-				Find Specialist <Search className="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+			<a href="/doctors" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
+				Find Specialist <Search className="w-5 h-5 text-slate-400" />
 			</a>
 			
-			<a href={WA_LINK} target="_blank" class="bg-indigo-600 text-white text-center py-4 rounded-xl font-bold text-lg mt-4 shadow-xl shadow-indigo-200 active:scale-95 transition-transform">
-				Book Consultation
-			</a>
+			<div class="mt-4 px-2">
+				<a href={WA_LINK} target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
+					Book Consultation
+				</a>
+			</div>
 		</div>
 
 		{/* === MAIN CONTENT === */}
@@ -112,53 +109,74 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 		<footer class="bg-white border-t border-slate-200 py-12 mt-auto">
 			<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
 				<div class="opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
-					{/* Footer Logo */}
 					<img src="/assets/logo.jpg" alt="Ocha Healthcare" class="h-10 w-auto object-contain mix-blend-multiply" />
 				</div>
 				<div class="text-slate-400 text-sm text-center md:text-right font-medium">
-					© 2026 Ocha Healthcare. All rights reserved.
+					© {new Date().getFullYear()} Ocha Healthcare. All rights reserved.
 				</div>
 			</div>
 		</footer>
 
-		{/* === MOBILE MENU SCRIPT === */}
+		{/* === MOBILE MENU SCRIPT (With Outside Tap Detection) === */}
 		<script>
 			const menuBtn = document.getElementById('menu-btn');
 			const mobileMenu = document.getElementById('mobile-menu');
+			const overlay = document.getElementById('mobile-overlay');
 			const iconMenu = document.querySelector('.icon-menu');
 			const iconClose = document.querySelector('.icon-close');
 			let isMenuOpen = false;
 
-			if (menuBtn && mobileMenu && iconMenu && iconClose) {
-				menuBtn.addEventListener('click', () => {
-					isMenuOpen = !isMenuOpen;
-					if (isMenuOpen) {
-						mobileMenu.classList.remove('translate-x-full');
-						mobileMenu.classList.add('translate-x-0');
-						document.body.classList.add('overflow-hidden');
-						iconMenu.classList.remove('block');
-						iconMenu.classList.add('hidden');
-						iconClose.classList.remove('hidden');
-						iconClose.classList.add('block');
-					} else {
-						mobileMenu.classList.remove('translate-x-0');
-						mobileMenu.classList.add('translate-x-full');
-						document.body.classList.remove('overflow-hidden');
-						iconMenu.classList.remove('hidden');
-						iconMenu.classList.add('block');
-						iconClose.classList.remove('block');
-						iconClose.classList.add('hidden');
-					}
+			const toggleMenu = () => {
+				isMenuOpen = !isMenuOpen;
+				if (isMenuOpen) {
+					// Open Menu
+					mobileMenu.classList.remove('translate-x-full');
+					mobileMenu.classList.add('translate-x-0');
+					
+					// Show Overlay
+					overlay.classList.remove('opacity-0', 'pointer-events-none');
+					overlay.classList.add('opacity-100', 'pointer-events-auto');
+					
+					document.body.classList.add('overflow-hidden');
+					
+					// Swap Icons
+					iconMenu.classList.remove('block');
+					iconMenu.classList.add('hidden');
+					iconClose.classList.remove('hidden');
+					iconClose.classList.add('block');
+				} else {
+					// Close Menu
+					mobileMenu.classList.remove('translate-x-0');
+					mobileMenu.classList.add('translate-x-full');
+					
+					// Hide Overlay
+					overlay.classList.remove('opacity-100', 'pointer-events-auto');
+					overlay.classList.add('opacity-0', 'pointer-events-none');
+					
+					document.body.classList.remove('overflow-hidden');
+					
+					// Swap Icons
+					iconMenu.classList.remove('hidden');
+					iconMenu.classList.add('block');
+					iconClose.classList.remove('block');
+					iconClose.classList.add('hidden');
+				}
+			};
+
+			if (menuBtn && mobileMenu && overlay && iconMenu && iconClose) {
+				// Toggle via button
+				menuBtn.addEventListener('click', toggleMenu);
+				
+				// 🚀 Auto-close when tapping outside (the overlay)
+				overlay.addEventListener('click', () => {
+					if (isMenuOpen) toggleMenu();
 				});
+
+				// Close menu when a link is clicked
 				const links = mobileMenu.querySelectorAll('a');
 				links.forEach(link => {
 					link.addEventListener('click', () => {
-						isMenuOpen = false;
-						mobileMenu.classList.add('translate-x-full');
-						document.body.classList.remove('overflow-hidden');
-						iconMenu.classList.add('block');
-						iconMenu.classList.remove('hidden');
-						iconClose.classList.add('hidden');
+						if (isMenuOpen) toggleMenu();
 					});
 				});
 			}

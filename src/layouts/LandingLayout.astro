@@ -1,6 +1,6 @@
 ---
 // src/layouts/LandingLayout.astro
-import { Search, Menu, X } from 'lucide-react'; // 👈 Added Menu & X icons
+import { Search, Menu, X } from 'lucide-react';
 import Footer from '../components/Footer.astro';
 import { WA_NUMBER } from '../config'; 
 
@@ -17,7 +17,8 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
     <head>
         <meta charset="UTF-8" />
         <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width" />
+        {/* 🚀 ADDED: Prevent scaling on input focus for a more app-like feel */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <title>{title}</title>
         <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
@@ -41,15 +42,16 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
         </script>
 
     </head>
-    <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen">
+    {/* 🚀 ADDED: overflow-x-hidden to prevent horizontal scrolling */}
+    <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
         
         {/* 🚀 NAVBAR START */}
-        <header class="sticky top-0 w-full bg-slate-50/80 backdrop-blur-md z-50 border-b border-slate-100/50">
+        <header class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-slate-200 transition-all duration-300 shadow-sm">
             <div class="max-w-7xl mx-auto px-6 h-20 relative flex items-center justify-between">
                 
                 {/* 1. LEFT: Logo */}
                 <div class="relative z-20 flex-shrink-0">
-                    <a href="/" class="flex items-center gap-2">
+                    <a href="/" class="flex items-center gap-2 hover:opacity-80 active:scale-95 transition-all">
                         <img src="/assets/logo.png" alt="Ocha Healthcare" class="h-10 w-auto mix-blend-multiply" />
                     </a>
                 </div>
@@ -61,70 +63,137 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                         <a href="/doctors" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Doctors</a>
                         <a href="/blog" class="hover:text-[#276CA1] transition-colors text-sm font-bold flex items-center gap-2">
                             Guides 
-                            <span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
+                            <span class="bg-blue-50 border border-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
                         </a>
                     </div>
                 </nav>
 
                 {/* 3. RIGHT: Desktop Actions (Hidden on Mobile) */}
                 <div class="hidden md:flex relative z-20 flex-shrink-0 items-center gap-3">
-                    <a href="/doctors" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition-all">
-                        <Search className="w-4 h-4" />
+                    <a href="/doctors" class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-blue-200 hover:text-[#276CA1] transition-all active:scale-95 group">
+                        <Search className="w-4 h-4 text-slate-400 group-hover:text-[#276CA1] transition-colors" />
                         <span>Find Specialist</span>
                     </a>
 
                     <a 
                         href={waLink} 
                         target="_blank" 
-                        class="px-5 py-2.5 bg-[#276CA1] text-white font-bold rounded-full text-sm hover:bg-[#1f5682] transition-colors shadow-lg shadow-blue-900/10"
+                        class="px-5 py-2.5 bg-[#276CA1] text-white font-bold rounded-full text-sm hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 active:scale-95 transform duration-150 flex items-center gap-2"
                     >
                         Book Consultation
                     </a>
                 </div>
 
-                {/* 📱 4. MOBILE HAMBURGER BUTTON (Visible only on Mobile) */}
-                <button id="mobile-menu-btn" class="md:hidden relative z-20 p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
-                    <Menu className="w-6 h-6" />
+                {/* 📱 4. MOBILE HAMBURGER BUTTON */}
+                <button id="mobile-menu-btn" class="md:hidden relative z-50 p-2 text-slate-600 hover:bg-slate-100 active:scale-90 active:bg-slate-200 rounded-full transition-all duration-200 focus:outline-none">
+                    <div class="icon-menu block">
+                        <Menu className="w-6 h-6" />
+                    </div>
+                    <div class="icon-close hidden">
+                        <X className="w-6 h-6" />
+                    </div>
                 </button>
 
             </div>
-
-            {/* 📱 MOBILE MENU DROPDOWN (Hidden by default) */}
-            <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white border-b border-slate-100 shadow-xl flex flex-col p-6 gap-4 md:hidden">
-                <a href="/" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50">Home</a>
-                <a href="/doctors" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50">Doctors</a>
-                <a href="/blog" class="text-slate-600 font-bold text-lg py-2 border-b border-slate-50 flex items-center justify-between">
-                    Guides
-                    <span class="bg-blue-100 text-[#276CA1] text-[10px] px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide">New</span>
-                </a>
-                
-                {/* Mobile Actions */}
-                <div class="flex flex-col gap-3 mt-4">
-                    <a href="/doctors" class="flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-600">
-                        <Search className="w-4 h-4" />
-                        Find Specialist
-                    </a>
-                    <a href={waLink} target="_blank" class="flex items-center justify-center px-4 py-3 bg-[#276CA1] text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-900/10">
-                        Book Consultation
-                    </a>
-                </div>
-            </div>
-
         </header>
+
+        {/* 🚀 NEW: MOBILE MENU OVERLAY (Darkened Backdrop) */}
+        <div id="mobile-overlay" class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"></div>
+
+        {/* 🚀 NEW: MOBILE MENU DRAWER (Slides from right) */}
+        <div id="mobile-menu" class="fixed top-0 right-0 h-full w-[85%] max-w-[320px] z-40 bg-white transform translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden flex flex-col pt-24 px-4 gap-2 shadow-2xl overflow-y-auto pb-8">
+            
+            <a href="/" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all">
+                Home
+            </a>
+            
+            <a href="/doctors" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
+                Doctors
+                <Search className="w-5 h-5 text-slate-400" />
+            </a>
+
+            <a href="/blog" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
+                Guides 
+                <span class="bg-blue-50 text-[#276CA1] text-xs font-bold px-2 py-1 rounded-full border border-blue-100">New</span>
+            </a>
+            
+            <div class="mt-4 px-2">
+                <a href={waLink} target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
+                    Book Consultation
+                </a>
+            </div>
+        </div>
         {/* 🚀 NAVBAR END */}
 
-        <slot />
+        {/* Push content down so it's not hidden behind the fixed header */}
+        <div class="pt-20 flex-grow">
+            <slot />
+        </div>
 
+        {/* 🚀 MODULAR FOOTER */}
         <Footer />
         
-        {/* 📱 MOBILE MENU SCRIPT */}
+        {/* 📱 MOBILE MENU SCRIPT (With Outside Tap Detection) */}
         <script is:inline>
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-overlay');
+            const iconMenu = document.querySelector('.icon-menu');
+            const iconClose = document.querySelector('.icon-close');
+            let isMenuOpen = false;
 
-            if (btn && menu) {
-                btn.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
+            const toggleMenu = () => {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    // Open Menu
+                    mobileMenu.classList.remove('translate-x-full');
+                    mobileMenu.classList.add('translate-x-0');
+                    
+                    // Show Overlay
+                    overlay.classList.remove('opacity-0', 'pointer-events-none');
+                    overlay.classList.add('opacity-100', 'pointer-events-auto');
+                    
+                    document.body.classList.add('overflow-hidden');
+                    
+                    // Swap Icons
+                    iconMenu.classList.remove('block');
+                    iconMenu.classList.add('hidden');
+                    iconClose.classList.remove('hidden');
+                    iconClose.classList.add('block');
+                } else {
+                    // Close Menu
+                    mobileMenu.classList.remove('translate-x-0');
+                    mobileMenu.classList.add('translate-x-full');
+                    
+                    // Hide Overlay
+                    overlay.classList.remove('opacity-100', 'pointer-events-auto');
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                    
+                    document.body.classList.remove('overflow-hidden');
+                    
+                    // Swap Icons
+                    iconMenu.classList.remove('hidden');
+                    iconMenu.classList.add('block');
+                    iconClose.classList.remove('block');
+                    iconClose.classList.add('hidden');
+                }
+            };
+
+            if (menuBtn && mobileMenu && overlay && iconMenu && iconClose) {
+                // Toggle via button
+                menuBtn.addEventListener('click', toggleMenu);
+                
+                // Auto-close when tapping outside (the overlay)
+                overlay.addEventListener('click', () => {
+                    if (isMenuOpen) toggleMenu();
+                });
+
+                // Close menu when a link is clicked
+                const links = mobileMenu.querySelectorAll('a');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (isMenuOpen) toggleMenu();
+                    });
                 });
             }
         </script>

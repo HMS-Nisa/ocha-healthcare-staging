@@ -1,193 +1,378 @@
 ---
 // src/pages/doctor/[id].astro
-import Layout from '../../layouts/Layout.astro';
-import { MapPin, Building2, Calendar, Globe, Stethoscope, CheckCircle2, ChevronLeft, Info } from 'lucide-react';
+import LandingLayout from '../../layouts/LandingLayout.astro';
+import { 
+  MapPin, Building2, Calendar, Globe, Stethoscope, 
+  CheckCircle2, ChevronLeft, Info, 
+  Clock, ShieldCheck, Star, ArrowRight, MessageCircle
+} from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
 
-// 1. GENERATE STATIC PATHS
+// 1. GENERATE STATIC PATHS & PASS RELATED DOCTORS
 export async function getStaticPaths() {
   try {
-    // Add timestamp to force fresh data build
     const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
     const response = await fetch(noCacheUrl);
     const data = await response.json();
     
-    // Filter out empty rows
     const validDoctors = data.filter(doc => doc.name && doc.id);
 
-    return validDoctors.map(doc => ({
-      params: { id: doc.id }, // Using the real ID from your sheet
-      props: { doctor: doc }
-    }));
+    return validDoctors.map(doc => {
+      const related = validDoctors
+        .filter(d => d.id !== doc.id && (d.specialty === doc.specialty || d.location?.includes(doc.location?.split(',').pop())))
+        .slice(0, 3);
+
+      return {
+        params: { id: doc.id }, 
+        props: { doctor: doc, relatedDoctors: related }
+      };
+    });
   } catch (error) {
     console.error("Error fetching doctors:", error);
     return [];
   }
 }
 
-const { doctor } = Astro.props;
-const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name} at ${doctor.hospital}`;
+const { doctor, relatedDoctors } = Astro.props;
+const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin konsultasi dan minta estimasi biaya dengan ${doctor.name} di ${doctor.hospital}.`;
 
-// Helper to format languages (replace commas if needed for UI consistency)
-const languages = doctor.languages ? doctor.languages.split(',').join(', ') : '-';
+// --- DATA PARSERS ---
 
-// SEO Meta Data
-const pageTitle = `${doctor.name} - ${doctor.specialty} in ${doctor.location?.split(',').pop() || 'Malaysia'}`;
-const pageDescription = doctor.bio 
-  ? doctor.bio.substring(0, 160) + "..." 
-  : `Book an appointment with ${doctor.name}, a specialist in ${doctor.specialty} at ${doctor.hospital}.`;
+const languages = doctor.languages ? doctor.languages.split(',').map(l => l.trim()).join(', ') : 'English, Bahasa Melayu';
 
+const locLower = doctor.location?.toLowerCase() || '';
+const locationName = locLower.includes('penang') ? 'Penang' :
+                     locLower.includes('kuala lumpur') || locLower.includes('kl') ? 'Kuala Lumpur' :
+                     locLower.includes('selangor') ? 'Selangor' :
+                     locLower.includes('melaka') ? 'Melaka' :
+                     locLower.includes('johor') ? 'Johor' : 'Malaysia';
+
+// 2. BULLETPROOF SCHEDULE PARSER
+let parsedSchedule = [];
+if (doctor.schedule) {
+    let rawArray = [];
+    
+    if (Array.isArray(doctor.schedule)) {
+        rawArray = doctor.schedule;
+    } else if (typeof doctor.schedule === 'string') {
+        const trimmedStr = doctor.schedule.trim();
+        if (trimmedStr.startsWith('[')) {
+            try { rawArray = JSON.parse(trimmedStr); } catch(e) { rawArray = [trimmedStr]; }
+        } else {
+            rawArray = trimmedStr.split(/[,;\n]/);
+        }
+    }
+
+    const scheduleMap = {};
+    
+    rawArray.forEach(slot => {
+        let day = '';
+        let time = '-';
+        
+        if (typeof slot === 'object' && slot !== null) {
+            day = slot.day || slot.Day || slot.hari || slot.Hari || Object.keys(slot)[0] || '';
+            time = slot.time || slot.Time || slot.jam || slot.Jam || Object.values(slot)[0] || '-';
+        } else {
+            let text = String(slot).trim().replace(/^"|"$/g, '').trim();
+            const match = text.match(/^([a-zA-Z\s]+)[\s:]+(.*)$/);
+            if (match) {
+                day = match[1].trim();
+                time = match[2].trim();
+            } else {
+                day = text;
+            }
+        }
+        
+        day = String(day).trim();
+        time = String(time).trim();
+
+        if (day && day.length > 1 && day !== '[object Object]') {
+            if (scheduleMap[day]) {
+                if (!scheduleMap[day].includes(time)) {
+                    scheduleMap[day].push(time);
+                }
+            } else {
+                scheduleMap[day] = [time];
+            }
+        }
+    });
+
+    parsedSchedule = Object.keys(scheduleMap).map(day => ({
+        day,
+        times: scheduleMap[day]
+    }));
+}
+
+const pageTitle = `${doctor.name} - Dokter ${doctor.specialty} di ${doctor.hospital} | Ocha`;
+const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spesialis ${doctor.specialty} di ${doctor.hospital}. Dapatkan estimasi biaya berobat ke Malaysia via Ocha.`;
 ---
 
-<Layout title={pageTitle} description={pageDescription}>
+<LandingLayout title={pageTitle} description={pageDescription}>
   
-  {/* JSON-LD Schema for Google */}
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Physician",
     "name": doctor.name,
     "medicalSpecialty": doctor.specialty,
-    "hospitalAffiliation": {
-      "@type": "Hospital",
-      "name": doctor.hospital
-    },
-    "description": doctor.bio
+    "hospitalAffiliation": { "@type": "Hospital", "name": doctor.hospital },
+    "description": doctor.bio || `Spesialis ${doctor.specialty} di ${doctor.hospital}`
   })} />
 
-  <div class="bg-slate-50 min-h-screen pb-20 pt-28">
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-50/50 rounded-full blur-3xl mix-blend-multiply opacity-50 pointer-events-none -z-10 translate-x-1/3"></div>
+
+  <div class="bg-transparent min-h-screen pb-28 lg:pb-20 pt-8 md:pt-16">
     
-    {/* BREADCRUMB */}
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
-      <a href="/doctors" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8 relative z-10">
+      <a href="/doctors" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-[#276CA1] transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
         <ChevronLeft className="w-4 h-4 mr-1" />
-        Back to Directory
+        Kembali ke Direktori
       </a>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-3 gap-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-3 gap-8 relative z-10">
       
-      {/* LEFT COLUMN: Main Profile */}
-      <div class="lg:col-span-2 space-y-6">
+      {/* === LEFT COLUMN: Main Profile === */}
+      <div class="lg:col-span-2 space-y-8">
         
-        {/* HEADER CARD */}
-        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 flex flex-col md:flex-row items-start gap-8">
-          <div class="relative shrink-0 mx-auto md:mx-0">
+        {/* HEADER & QUICK FACTS CARD */}
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-blue-900/5 border border-slate-100 flex flex-col sm:flex-row items-center sm:items-start gap-8">
+          
+          <div class="relative shrink-0">
+             <div class="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 transform translate-y-2"></div>
              <img 
                 src={doctor.image} 
                 alt={doctor.name}
-                class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover object-top border-4 border-slate-50 shadow-md bg-slate-100"
+                class="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover object-top border-4 border-white shadow-lg bg-slate-50"
                 onError={(e) => { e.target.src = 'https://placehold.co/200?text=Dr'; }} 
              />
-             <div class="absolute bottom-2 right-2 p-1 bg-green-500 border-4 border-white rounded-full text-white" title="Verified">
-                <CheckCircle2 className="w-4 h-4" />
+             <div class="absolute bottom-3 right-3 p-1.5 bg-green-500 border-4 border-white rounded-full text-white shadow-md" title="Verified Specialist">
+                <CheckCircle2 className="w-5 h-5" />
              </div>
           </div>
           
-          <div class="flex-1 text-center md:text-left">
-            <div class="mb-5">
-               <h1 class="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-3">{doctor.name}</h1>
-               
-               <div class="flex flex-col items-center md:items-start gap-2">
-                 {/* Main Specialty */}
-                 <span class="inline-block font-bold text-[#276CA1] uppercase tracking-widest text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
-                    {doctor.specialty}
-                 </span>
-                 
-                 {/* Subspecialty (If exists) */}
-                 {doctor.subspecialty && (
-                   <span class="font-medium text-slate-500 text-sm flex items-center gap-1">
-                     <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                     {doctor.subspecialty}
-                   </span>
-                 )}
-               </div>
+          <div class="flex-1 w-full text-center sm:text-left">
+            <h1 class="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-3">{doctor.name}</h1>
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-6">
+                <span class="inline-block font-bold text-[#276CA1] uppercase tracking-widest text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 shadow-sm">
+                {doctor.specialty}
+                </span>
+                {doctor.subspecialty && (
+                <span class="font-medium text-slate-600 text-xs flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    {doctor.subspecialty}
+                </span>
+                )}
             </div>
 
-            <div class="space-y-2 text-slate-600 border-t border-slate-50 pt-4 mt-4">
-               <div class="flex items-center justify-center md:justify-start gap-2">
-                 <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
-                 <span class="text-sm font-medium">{doctor.hospital}</span>
-               </div>
-               <div class="flex items-center justify-center md:justify-start gap-2">
-                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                 <span class="text-sm font-medium">{doctor.location}</span>
-               </div>
-               {languages && (
-                  <div class="flex items-center justify-center md:justify-start gap-2">
-                    <Globe className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span class="text-sm font-medium">{languages}</span>
-                  </div>
-               )}
+            <div class="space-y-4 text-left border-t border-slate-100 pt-6">
+                <div class="flex items-start gap-4">
+                    <div class="p-2.5 bg-blue-50 text-[#276CA1] rounded-xl shrink-0">
+                        <Building2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Praktek Di</p>
+                        <p class="font-bold text-slate-800 text-[15px]">{doctor.hospital}</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="p-2.5 bg-blue-50 text-[#276CA1] rounded-xl shrink-0">
+                        <Globe className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Bahasa</p>
+                        <p class="font-medium text-slate-700 text-[15px]">{languages}</p>
+                    </div>
+                </div>
             </div>
           </div>
         </div>
 
         {/* ABOUT / BIO SECTION */}
-        <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
-           <div class="flex items-center gap-3 mb-6">
-             <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+           <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+             <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
                <Stethoscope className="w-5 h-5" />
              </div>
-             <h2 class="font-serif text-xl font-bold text-slate-900">About the Specialist</h2>
+             <h2 class="font-serif text-2xl font-bold text-slate-900">Profil Medis</h2>
            </div>
            
            {doctor.bio ? (
-             <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line">
+             <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line text-[15px] md:text-base">
                {doctor.bio}
              </div>
            ) : (
-             <p class="text-slate-400 italic">Profile information is currently being updated.</p>
+             <p class="text-slate-500 italic">Informasi profil sedang dalam pembaruan tim medis kami.</p>
            )}
         </div>
 
-      </div>
+        {/* TRUST SIGNALS: Testimonials */}
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border border-blue-100/50">
+            <h2 class="font-serif text-2xl font-bold text-slate-900 mb-6">Ulasan Pasien Ocha</h2>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100/50 relative">
+                    <div class="flex text-amber-400 mb-3 gap-0.5"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Sangat bersyukur bisa ditangani oleh beliau. Penjelasannya detail dan proses pengobatan berjalan lancar. Pengurusan via Ocha juga sangat membantu."</p>
+                    <p class="text-xs font-bold text-slate-900">Pasien via Ocha Healthcare</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100/50 relative">
+                    <div class="flex text-amber-400 mb-3 gap-0.5"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Dokter sangat ramah dan sabar menjawab semua pertanyaan. Dapat jadwal tepat waktu tanpa harus antri berjam-jam."</p>
+                    <p class="text-xs font-bold text-slate-900">Pasien dari Indonesia</p>
+                </div>
+            </div>
+        </div>
 
-      {/* RIGHT COLUMN: Action & Schedule */}
-      <div class="space-y-6">
-        
-        {/* CTA CARD */}
-        <div class="bg-white rounded-2xl p-6 shadow-lg shadow-indigo-900/5 border border-slate-100 sticky top-24">
-           <h3 class="font-serif text-lg font-bold text-slate-900 mb-2">Ready to consult?</h3>
-           <p class="text-slate-500 text-sm mb-6 leading-relaxed">
-             Get a cost estimate and check availability via our concierge.
-           </p>
-           
-           <a 
-             href={waLink}
-             target="_blank"
-             class="block w-full py-3.5 bg-[#276CA1] hover:bg-[#1f5682] text-white text-center font-bold rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-           >
-             Book Appointment
-           </a>
-
-           <div class="mt-8">
-              <div class="flex items-center gap-2 mb-4">
-                 <Calendar className="w-4 h-4 text-slate-400" />
-                 <span class="font-bold text-slate-900 text-sm">Clinic Schedule</span>
+        {/* DYNAMIC FAQ FOR SEO */}
+        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+           <h2 class="font-serif text-2xl font-bold text-slate-900 mb-6">FAQ tentang {doctor.name}</h2>
+           <div class="space-y-4">
+              <div class="border-b border-slate-100 pb-4">
+                 <h3 class="font-bold text-slate-800 text-[15px]">Di rumah sakit mana {doctor.name} praktek?</h3>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">{doctor.name} saat ini aktif melayani pasien di {doctor.hospital}, {locationName}, Malaysia.</p>
               </div>
-              
-              <div class="space-y-3">
-                 {/* SCHEDULE LOGIC: Check if real array exists */}
-                 {Array.isArray(doctor.schedule) && doctor.schedule.length > 0 ? (
-                    doctor.schedule.map((slot, i) => (
-                      <div key={i} class="flex justify-between items-center text-sm p-3 rounded-lg bg-slate-50 border border-slate-100">
-                          <span class="font-medium text-slate-700">{slot.day}</span>
-                          <span class="text-slate-500 font-medium">{slot.time}</span>
-                      </div>
-                    ))
-                 ) : (
-                    <div class="p-4 bg-slate-50 rounded-lg text-center">
-                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
-                        <span class="text-xs text-slate-500">Contact us for availability.</span>
-                    </div>
-                 )}
+              <div class="border-b border-slate-100 pb-4">
+                 <h3 class="font-bold text-slate-800 text-[15px]">Berapa biaya konsultasi & tindakan dengan {doctor.name}?</h3>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Biaya dapat bervariasi tergantung pada jenis tindakan dan kondisi pasien. Silakan tekan tombol "Buat Janji" untuk mendapatkan estimasi biaya terbaru secara gratis dari tim Ocha.</p>
               </div>
-              <p class="text-[10px] text-slate-400 mt-4 text-center">Schedules are subject to change.</p>
+              <div>
+                 <h3 class="font-bold text-slate-800 text-[15px]">Bagaimana cara daftar berobat ke {doctor.name}?</h3>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Anda dapat mengamankan jadwal (appointment) dengan mudah melalui WhatsApp Ocha Healthcare. Kami juga membantu urusan jemputan bandara hingga rekomendasi hotel di {locationName}.</p>
+              </div>
            </div>
         </div>
 
       </div>
 
+      {/* === RIGHT COLUMN: Action & Schedule === */}
+      <div class="space-y-6">
+        
+        {/* CTA CARD (Sticky on Desktop) */}
+        <div class="bg-white rounded-3xl p-6 shadow-2xl shadow-blue-900/10 border border-slate-100 lg:sticky lg:top-24 hidden lg:block">
+           
+           <div class="text-center mb-6">
+              <div class="inline-flex items-center justify-center p-4 bg-[#25D366]/10 rounded-full mb-4">
+                 <MessageCircle className="w-8 h-8 text-[#25D366]" />
+              </div>
+              <h3 class="font-serif text-2xl font-bold text-slate-900 mb-2">Buat Janji Temu</h3>
+              <p class="text-slate-500 text-sm leading-relaxed">
+                Konsultasi gratis, cek jadwal dokter, dan dapatkan estimasi biaya tindakan.
+              </p>
+           </div>
+           
+           <div class="space-y-3 mb-8">
+               <a 
+                 href={waLink}
+                 target="_blank"
+                 class="w-full py-4 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-[15px]"
+               >
+                 <MessageCircle className="w-5 h-5 fill-current" />
+                 Tanya Jadwal & Buat Janji
+               </a>
+           </div>
+
+           {/* CLINIC SCHEDULE */}
+           <div>
+              <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                 <Clock className="w-5 h-5 text-[#276CA1]" />
+                 <span class="font-bold text-slate-900">Jadwal Praktek</span>
+              </div>
+              
+              <div class="space-y-2">
+                 {parsedSchedule.length > 0 ? (
+                    parsedSchedule.map((slot, i) => (
+                      <div key={i} class="flex justify-between items-start text-sm py-3 px-3 rounded-lg bg-slate-50 border border-slate-100/50">
+                          <span class="font-bold text-slate-700 mt-1">{slot.day}</span>
+                          <div class="flex flex-col gap-1 items-end">
+                            {slot.times.map(t => (
+                                <span class="text-[#276CA1] text-xs font-bold bg-white px-2.5 py-1 rounded shadow-sm border border-slate-100">{t}</span>
+                            ))}
+                          </div>
+                      </div>
+                    ))
+                 ) : (
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
+                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
+                        <span class="text-sm text-slate-600 font-medium">Jadwal belum tersedia.</span>
+                        <p class="text-xs text-slate-400 mt-1">Hubungi kami untuk informasi lengkap.</p>
+                    </div>
+                 )}
+              </div>
+              <p class="text-[10px] text-slate-400 mt-4 text-center bg-slate-50 p-2 rounded-lg">*Jadwal dapat berubah sewaktu-waktu. Harap konfirmasi ketersediaan dokter sebelum keberangkatan.</p>
+           </div>
+        </div>
+
+        {/* MOBILE VISIBLE SCHEDULE ONLY */}
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 lg:hidden mt-8">
+             <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                 <Clock className="w-5 h-5 text-[#276CA1]" />
+                 <span class="font-bold text-slate-900 text-lg">Jadwal Praktek</span>
+              </div>
+              
+              <div class="space-y-2">
+                 {parsedSchedule.length > 0 ? (
+                    parsedSchedule.map((slot, i) => (
+                      <div key={i} class="flex justify-between items-start text-sm py-3 px-3 rounded-lg bg-slate-50 border border-slate-100/50">
+                          <span class="font-bold text-slate-700 mt-1">{slot.day}</span>
+                          <div class="flex flex-col gap-1 items-end">
+                            {slot.times.map(t => (
+                                <span class="text-[#276CA1] text-xs font-bold bg-white px-2.5 py-1 rounded shadow-sm border border-slate-100">{t}</span>
+                            ))}
+                          </div>
+                      </div>
+                    ))
+                 ) : (
+                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
+                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
+                        <span class="text-sm text-slate-600 font-medium">Jadwal belum tersedia.</span>
+                    </div>
+                 )}
+              </div>
+              <p class="text-[10px] text-slate-400 mt-4 text-center bg-slate-50 p-2 rounded-lg">*Jadwal dapat berubah sewaktu-waktu.</p>
+        </div>
+
+      </div>
     </div>
+
+    {/* === BOTTOM SECTION: RELATED DOCTORS === */}
+    {relatedDoctors.length > 0 && (
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-16 relative z-10">
+        <h2 class="font-serif text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-4">
+            Rekomendasi Dokter {doctor.specialty} di {locationName}
+        </h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            {relatedDoctors.map((relDoc) => (
+                <a href={`/doctor/${relDoc.id}`} class="group bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all border border-slate-100 flex items-start gap-4">
+                    <img 
+                        src={relDoc.image} 
+                        alt={relDoc.name}
+                        class="w-16 h-16 rounded-full object-cover border-2 border-slate-50"
+                        onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                    />
+                    <div>
+                        <h3 class="font-bold text-slate-900 group-hover:text-[#276CA1] transition-colors">{relDoc.name}</h3>
+                        <p class="text-xs text-slate-500 mt-1 line-clamp-1">{relDoc.hospital}</p>
+                        <div class="mt-2 inline-flex items-center text-xs font-bold text-[#276CA1]">
+                            Lihat Profil <ArrowRight className="w-3 h-3 ml-1" />
+                        </div>
+                    </div>
+                </a>
+            ))}
+        </div>
+    </div>
+    )}
+
   </div>
-</Layout>
+
+  {/* MOBILE STICKY BOTTOM BAR */}
+  <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 pb-6 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+      <a 
+        href={waLink}
+        target="_blank"
+        class="w-full py-3.5 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl transition-colors shadow-lg text-[15px]"
+      >
+        <MessageCircle className="w-5 h-5 fill-current" />
+        Tanya Jadwal & Buat Janji
+      </a>
+  </div>
+
+</LandingLayout>
