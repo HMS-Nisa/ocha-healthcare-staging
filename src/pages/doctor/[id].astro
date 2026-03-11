@@ -12,7 +12,17 @@ import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
 export async function getStaticPaths() {
   try {
     const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
-    const response = await fetch(noCacheUrl);
+    
+    // 🚀 OMEGA CACHE-BUSTER: Forces the server to download fresh data
+    const response = await fetch(noCacheUrl, {
+        cache: 'no-store',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+    });
+    
     const data = await response.json();
     
     const validDoctors = data.filter(doc => doc.name && doc.id);
@@ -38,8 +48,7 @@ const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin konsultasi
 
 // --- DATA PARSERS ---
 
-// 🚀 OMEGA-BULLETPROOF BIO EXTRACTOR
-// Finds any column header that contains the word "bio" or "profil"
+// 🚀 BULLETPROOF BIO EXTRACTOR
 let bioText = '';
 for (const key in doctor) {
     const lowerKey = key.toLowerCase();
