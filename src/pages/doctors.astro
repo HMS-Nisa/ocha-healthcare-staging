@@ -8,9 +8,17 @@ import { GOOGLE_SHEET_URL } from '../config';
 let allDoctors = [];
 try {
   const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
-  const response = await fetch(noCacheUrl);
-  allDoctors = await response.json();
-  console.log(`✅ Fetched ${allDoctors.length} doctors at ${new Date().toLocaleTimeString()}`);
+  const response = await fetch(noCacheUrl, { cache: 'no-store' });
+  const rawData = await response.json();
+
+  // 🛡️ BULLETPROOF FILTER & DEDUPLICATOR
+  // 1. Remove any blank/empty rows
+  const validDoctors = rawData.filter(doc => doc.name && doc.id);
+  
+  // 2. Force uniqueness by ID (If the scraper makes 4 rows, this shrinks it back to 1!)
+  allDoctors = Array.from(new Map(validDoctors.map(doc => [doc.id, doc])).values());
+
+  console.log(`✅ Fetched ${allDoctors.length} unique doctors at ${new Date().toLocaleTimeString()}`);
 } catch (error) {
   console.error("Build-time fetch failed:", error);
 }
