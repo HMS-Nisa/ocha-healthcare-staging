@@ -2,11 +2,12 @@
 // src/pages/doctor/[id].astro
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import { 
-  MapPin, Building2, Calendar, Globe, Stethoscope, 
-  CheckCircle2, ChevronLeft, Info, 
-  Clock, ShieldCheck, Star, ArrowRight, MessageCircle
+  Building2, Calendar, Globe, Stethoscope, 
+  CheckCircle2, ChevronLeft, 
+  Star, ArrowRight
 } from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
+import BookingWidget from '../../components/BookingWidget.jsx';
 
 // 1. GENERATE STATIC PATHS & PASS RELATED DOCTORS
 export async function getStaticPaths() {
@@ -44,7 +45,6 @@ export async function getStaticPaths() {
 }
 
 const { doctor, relatedDoctors } = Astro.props;
-const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin konsultasi dan minta estimasi biaya dengan ${doctor.name} di ${doctor.hospital}.`;
 
 // --- DATA PARSERS ---
 
@@ -147,17 +147,14 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
   
   <div class="bg-transparent min-h-screen pb-28 lg:pb-20 pt-8 md:pt-16">
     
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 mb-8 relative z-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 mb-8 relative z-10">
       <a href="/doctors" class="inline-flex items-center text-sm font-bold text-slate-500 hover:text-[#276CA1] transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200">
         <ChevronLeft className="w-4 h-4 mr-1" />
         Kembali ke Direktori
       </a>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-3 gap-8 relative z-10">
-      
-      {/* === LEFT COLUMN: Main Profile === */}
-      <div class="lg:col-span-2 space-y-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 relative z-10">
         
         {/* HEADER & QUICK FACTS CARD */}
         <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-blue-900/5 border border-slate-100 flex flex-col sm:flex-row items-center sm:items-start gap-8">
@@ -230,6 +227,22 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
            )}
         </div>
 
+        {/* BOOKING WIDGET */}
+        <div id="booking" class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-blue-900/5 border border-slate-100 scroll-mt-20">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="p-2.5 bg-[#276CA1]/10 rounded-xl">
+              <Calendar className="w-5 h-5 text-[#276CA1]" />
+            </div>
+            <h2 class="font-serif text-xl font-bold text-slate-900">Buat Janji Temu</h2>
+          </div>
+          <BookingWidget
+            doctorName={doctor.name}
+            hospital={doctor.hospital}
+            waNumber={WA_NUMBER}
+            client:load
+          />
+        </div>
+
         {/* TRUST SIGNALS: Testimonials */}
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border border-blue-100/50">
             <h2 class="font-serif text-2xl font-bold text-slate-900 mb-6">Ulasan Pasien Ocha</h2>
@@ -266,96 +279,6 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
            </div>
         </div>
 
-      </div>
-
-      {/* === RIGHT COLUMN: Action & Schedule === */}
-      <div class="space-y-6">
-        
-        {/* CTA CARD (Sticky on Desktop) */}
-        <div class="bg-white rounded-3xl p-6 shadow-2xl shadow-blue-900/10 border border-slate-100 lg:sticky lg:top-24 hidden lg:block">
-           
-           <div class="text-center mb-6">
-              <div class="inline-flex items-center justify-center p-4 bg-[#25D366]/10 rounded-full mb-4">
-                 <MessageCircle className="w-8 h-8 text-[#25D366]" />
-              </div>
-              <h3 class="font-serif text-2xl font-bold text-slate-900 mb-2">Buat Janji Temu</h3>
-              <p class="text-slate-500 text-sm leading-relaxed">
-                Konsultasi gratis, cek jadwal dokter, dan dapatkan estimasi biaya tindakan.
-              </p>
-           </div>
-           
-           <div class="space-y-3 mb-8">
-               <a 
-                 href={waLink}
-                 target="_blank"
-                 class="w-full py-4 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-[15px]"
-               >
-                 <MessageCircle className="w-5 h-5 fill-current" />
-                 Tanya Jadwal & Buat Janji
-               </a>
-           </div>
-
-           {/* CLINIC SCHEDULE */}
-           <div>
-              <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
-                 <Clock className="w-5 h-5 text-[#276CA1]" />
-                 <span class="font-bold text-slate-900">Jadwal Praktek</span>
-              </div>
-              
-              <div class="space-y-2">
-                 {parsedSchedule.length > 0 ? (
-                    parsedSchedule.map((slot, i) => (
-                      <div key={i} class="flex justify-between items-start text-sm py-3 px-3 rounded-lg bg-slate-50 border border-slate-100/50">
-                          <span class="font-bold text-slate-700 mt-1">{slot.day}</span>
-                          <div class="flex flex-col gap-1 items-end">
-                            {slot.times.map(t => (
-                                <span class="text-[#276CA1] text-xs font-bold bg-white px-2.5 py-1 rounded shadow-sm border border-slate-100">{t}</span>
-                            ))}
-                          </div>
-                      </div>
-                    ))
-                 ) : (
-                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
-                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
-                        <span class="text-sm text-slate-600 font-medium">Jadwal belum tersedia.</span>
-                        <p class="text-xs text-slate-400 mt-1">Hubungi kami untuk informasi lengkap.</p>
-                    </div>
-                 )}
-              </div>
-              <p class="text-[10px] text-slate-400 mt-4 text-center bg-slate-50 p-2 rounded-lg">*Jadwal dapat berubah sewaktu-waktu. Harap konfirmasi ketersediaan dokter sebelum keberangkatan.</p>
-           </div>
-        </div>
-
-        {/* MOBILE VISIBLE SCHEDULE ONLY */}
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 lg:hidden mt-8">
-             <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
-                 <Clock className="w-5 h-5 text-[#276CA1]" />
-                 <span class="font-bold text-slate-900 text-lg">Jadwal Praktek</span>
-              </div>
-              
-              <div class="space-y-2">
-                 {parsedSchedule.length > 0 ? (
-                    parsedSchedule.map((slot, i) => (
-                      <div key={i} class="flex justify-between items-start text-sm py-3 px-3 rounded-lg bg-slate-50 border border-slate-100/50">
-                          <span class="font-bold text-slate-700 mt-1">{slot.day}</span>
-                          <div class="flex flex-col gap-1 items-end">
-                            {slot.times.map(t => (
-                                <span class="text-[#276CA1] text-xs font-bold bg-white px-2.5 py-1 rounded shadow-sm border border-slate-100">{t}</span>
-                            ))}
-                          </div>
-                      </div>
-                    ))
-                 ) : (
-                    <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl text-center">
-                        <Info className="w-5 h-5 text-slate-400 mx-auto mb-2" />
-                        <span class="text-sm text-slate-600 font-medium">Jadwal belum tersedia.</span>
-                    </div>
-                 )}
-              </div>
-              <p class="text-[10px] text-slate-400 mt-4 text-center bg-slate-50 p-2 rounded-lg">*Jadwal dapat berubah sewaktu-waktu.</p>
-        </div>
-
-      </div>
     </div>
 
     {/* === BOTTOM SECTION: RELATED DOCTORS === */}
@@ -388,16 +311,17 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
 
   </div>
 
-  {/* MOBILE STICKY BOTTOM BAR */}
-  <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 pb-6 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+  {/* STICKY BOTTOM BAR */}
+  <div class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 px-4 py-3 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+    <div class="max-w-4xl mx-auto">
       <a 
-        href={waLink}
-        target="_blank"
-        class="w-full py-3.5 flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-xl transition-colors shadow-lg text-[15px]"
+        href="#booking"
+        class="w-full py-3 flex items-center justify-center gap-2 bg-[#276CA1] hover:bg-[#1e5a87] text-white font-bold rounded-xl transition-colors text-[15px]"
       >
-        <MessageCircle className="w-5 h-5 fill-current" />
-        Tanya Jadwal & Buat Janji
+        <Calendar className="w-5 h-5" />
+        Buat Janji Temu
       </a>
+    </div>
   </div>
 
 </LandingLayout>
