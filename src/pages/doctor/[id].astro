@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
 import BookingWidget from '../../components/BookingWidget.jsx';
+import { isDoctorIndexable } from '../../lib/indexability.js';
+import { absoluteUrl } from '../../lib/seo.js';
 
 // 1. GENERATE STATIC PATHS & PASS RELATED DOCTORS
 export async function getStaticPaths() {
@@ -23,13 +25,21 @@ export async function getStaticPaths() {
             'Expires': '0'
         }
     });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     
     const data = await response.json();
     
     const validDoctors = data.filter(doc => doc.name && doc.id);
+    const deduplicatedDoctors = Array.from(
+      new Map(validDoctors.map(doc => [String(doc.id), doc])).values()
+    );
+    const normalizedIds = deduplicatedDoctors.map(doc => String(doc.id).trim().toLowerCase());
+    if (new Set(normalizedIds).size !== normalizedIds.length) {
+      throw new Error('Duplicate doctor IDs remain after normalization');
+    }
 
-    return validDoctors.map(doc => {
-      const related = validDoctors
+    return deduplicatedDoctors.map(doc => {
+      const related = deduplicatedDoctors
         .filter(d => d.id !== doc.id && (d.specialty === doc.specialty || d.location?.includes(doc.location?.split(',').pop())))
         .slice(0, 3);
 
@@ -39,8 +49,7 @@ export async function getStaticPaths() {
       };
     });
   } catch (error) {
-    console.error("Error fetching doctors:", error);
-    return [];
+    throw new Error(`Doctor data fetch failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -60,7 +69,11 @@ for (const key in doctor) {
     }
 }
 
-const languages = doctor.languages ? doctor.languages.split(',').map(l => l.trim()).join(', ') : 'English, Bahasa Melayu';
+const languages = doctor.languages
+  ? (Array.isArray(doctor.languages) ? doctor.languages : String(doctor.languages).split(','))
+      .map(language => String(language).trim())
+      .filter(Boolean)
+  : [];
 
 const locLower = doctor.location?.toLowerCase() || '';
 const locationName = locLower.includes('penang') ? 'Penang' :
@@ -126,19 +139,31 @@ if (doctor.schedule) {
 }
 
 const pageTitle = `${doctor.name} - Dokter ${doctor.specialty} di ${doctor.hospital} | Ocha`;
-const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spesialis ${doctor.specialty} di ${doctor.hospital}. Dapatkan estimasi biaya berobat ke Malaysia via Ocha.`;
+const pageDescription = `Lihat profil ${doctor.name}, spesialis ${doctor.specialty} di ${doctor.hospital}, dan hubungi Ocha untuk koordinasi janji temu.`;
+const indexable = isDoctorIndexable(doctor);
+const doctorImage = doctor.image || '/assets/doctor-placeholder.png';
+const physicianSchema = indexable ? {
+  '@context': 'https://schema.org',
+  '@type': 'Physician',
+  name: doctor.name,
+  url: absoluteUrl(`/doctor/${doctor.id}/`),
+  image: String(doctorImage).startsWith('http') ? doctorImage : absoluteUrl(doctorImage),
+  medicalSpecialty: doctor.specialty,
+  hospitalAffiliation: { '@type': 'Hospital', name: doctor.hospital },
+  address: doctor.location,
+  ...(languages.length > 0 ? { availableLanguage: languages } : {}),
+  ...(bioText ? { description: bioText } : {}),
+} : null;
 ---
 
-<LandingLayout title={pageTitle} description={pageDescription}>
-  
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Physician",
-    "name": doctor.name,
-    "medicalSpecialty": doctor.specialty,
-    "hospitalAffiliation": { "@type": "Hospital", "name": doctor.hospital },
-    "description": bioText || `Spesialis ${doctor.specialty} di ${doctor.hospital}`
-  })} />
+<LandingLayout
+  title={pageTitle}
+  description={pageDescription}
+  robots={indexable ? 'index,follow' : 'noindex,follow'}
+  canonicalPath={`/doctor/${doctor.id}/`}
+  image={doctorImage}
+  schemas={[physicianSchema]}
+>
 
 {/* 🚀 FIX: Locked the background blob inside a hidden overflow container so it doesn't cause horizontal scrolling on mobile */}
   <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
@@ -162,10 +187,10 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
           <div class="relative shrink-0">
              <div class="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50 transform translate-y-2"></div>
              <img 
-                src={doctor.image} 
+                src={doctorImage}
                 alt={doctor.name}
                 class="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover object-top border-4 border-white shadow-lg bg-slate-50"
-                onError={(e) => { e.target.src = 'https://placehold.co/200?text=Dr'; }} 
+                onError={(e) => { e.currentTarget.src = '/assets/doctor-placeholder.png'; }}
              />
              <div class="absolute bottom-3 right-3 p-1.5 bg-green-500 border-4 border-white rounded-full text-white shadow-md" title="Verified Specialist">
                 <CheckCircle2 className="w-5 h-5" />
@@ -196,15 +221,15 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
                         <p class="font-bold text-slate-800 text-[15px]">{doctor.hospital}</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4">
+                {languages.length > 0 && <div class="flex items-start gap-4">
                     <div class="p-2.5 bg-blue-50 text-[#276CA1] rounded-xl shrink-0">
                         <Globe className="w-5 h-5" />
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Bahasa</p>
-                        <p class="font-medium text-slate-700 text-[15px]">{languages}</p>
+                        <p class="font-medium text-slate-700 text-[15px]">{languages.join(', ')}</p>
                     </div>
-                </div>
+                </div>}
             </div>
           </div>
         </div>
@@ -223,7 +248,7 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
                {bioText}
              </div>
            ) : (
-             <p class="text-slate-500 italic">Informasi profil sedang dalam pembaruan tim medis kami.</p>
+             <p class="text-slate-500 italic">Informasi profil belum tersedia dari sumber rumah sakit mitra.</p>
            )}
         </div>
 
@@ -245,16 +270,16 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
 
         {/* TRUST SIGNALS: Testimonials */}
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border border-blue-100/50">
-            <h2 class="font-serif text-2xl font-bold text-slate-900 mb-6">Ulasan Pasien Ocha</h2>
+            <h2 class="font-serif text-2xl font-bold text-slate-900 mb-6">Pengalaman pasien yang dibantu Ocha</h2>
             <div class="grid sm:grid-cols-2 gap-4">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100/50 relative">
                     <div class="flex text-amber-400 mb-3 gap-0.5"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
-                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Sangat bersyukur bisa ditangani oleh beliau. Penjelasannya detail dan proses pengobatan berjalan lancar. Pengurusan via Ocha juga sangat membantu."</p>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Sangat bersyukur mendapat bantuan Ocha. Penjelasan prosesnya detail dan koordinasi janji temu sangat membantu."</p>
                     <p class="text-xs font-bold text-slate-900">Pasien via Ocha Healthcare</p>
                 </div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100/50 relative">
                     <div class="flex text-amber-400 mb-3 gap-0.5"><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/><Star className="w-4 h-4 fill-current"/></div>
-                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Dokter sangat ramah dan sabar menjawab semua pertanyaan. Dapat jadwal tepat waktu tanpa harus antri berjam-jam."</p>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">"Tim Ocha ramah dan sabar menjawab pertanyaan. Proses membuat janji dengan rumah sakit menjadi lebih jelas."</p>
                     <p class="text-xs font-bold text-slate-900">Pasien dari Indonesia</p>
                 </div>
             </div>
@@ -266,15 +291,15 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
            <div class="space-y-4">
               <div class="border-b border-slate-100 pb-4">
                  <h3 class="font-bold text-slate-800 text-[15px]">Di rumah sakit mana {doctor.name} praktek?</h3>
-                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">{doctor.name} saat ini aktif melayani pasien di {doctor.hospital}, {locationName}, Malaysia.</p>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Berdasarkan informasi rumah sakit mitra, {doctor.name} berpraktik di {doctor.hospital}{doctor.location ? `, ${doctor.location}` : ''}.</p>
               </div>
               <div class="border-b border-slate-100 pb-4">
                  <h3 class="font-bold text-slate-800 text-[15px]">Berapa biaya konsultasi & tindakan dengan {doctor.name}?</h3>
-                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Biaya dapat bervariasi tergantung pada jenis tindakan dan kondisi pasien. Silakan tekan tombol "Buat Janji" untuk mendapatkan estimasi biaya terbaru secara gratis dari tim Ocha.</p>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Biaya ditentukan oleh dokter dan rumah sakit setelah kebutuhan pasien dinilai. Ocha dapat membantu menghubungkan Anda untuk meminta janji temu dan informasi administratif.</p>
               </div>
               <div>
                  <h3 class="font-bold text-slate-800 text-[15px]">Bagaimana cara daftar berobat ke {doctor.name}?</h3>
-                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Anda dapat mengamankan jadwal (appointment) dengan mudah melalui WhatsApp Ocha Healthcare. Kami juga membantu urusan jemputan bandara hingga rekomendasi hotel di {locationName}.</p>
+                 <p class="text-slate-600 mt-2 text-sm leading-relaxed">Pilih jadwal pada formulir janji temu. Setelah itu, lanjutkan ke WhatsApp agar agen Ocha dapat mengoordinasikan permintaan Anda dengan rumah sakit mitra.</p>
               </div>
            </div>
         </div>
@@ -291,10 +316,10 @@ const pageDescription = `Jadwal praktek & buat janji dengan ${doctor.name}, spes
             {relatedDoctors.map((relDoc) => (
                 <a href={`/doctor/${relDoc.id}`} class="group bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all border border-slate-100 flex items-start gap-4">
                     <img 
-                        src={relDoc.image} 
+                        src={relDoc.image || '/assets/doctor-placeholder.png'}
                         alt={relDoc.name}
                         class="w-16 h-16 rounded-full object-cover border-2 border-slate-50"
-                        onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                        onError={(e) => { e.currentTarget.src = '/assets/doctor-placeholder.png'; }}
                     />
                     <div>
                         <h3 class="font-bold text-slate-900 group-hover:text-[#276CA1] transition-colors">{relDoc.name}</h3>

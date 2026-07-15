@@ -9,24 +9,29 @@ let allDoctors = [];
 try {
   const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
   const response = await fetch(noCacheUrl, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const rawData = await response.json();
 
   // 🛡️ BULLETPROOF FILTER & DEDUPLICATOR
   // 1. Remove any blank/empty rows
   const validDoctors = rawData.filter(doc => doc.name && doc.id);
   
-  // 2. Force uniqueness by ID (If the scraper makes 4 rows, this shrinks it back to 1!)
-  allDoctors = Array.from(new Map(validDoctors.map(doc => [doc.id, doc])).values());
+  // 2. Deduplicate exact IDs, then reject normalized ID collisions.
+  allDoctors = Array.from(new Map(validDoctors.map(doc => [String(doc.id), doc])).values());
+  const normalizedIds = allDoctors.map(doc => String(doc.id).trim().toLowerCase());
+  if (new Set(normalizedIds).size !== normalizedIds.length) {
+    throw new Error('Duplicate doctor IDs remain after normalization');
+  }
 
   console.log(`✅ Fetched ${allDoctors.length} unique doctors at ${new Date().toLocaleTimeString()}`);
 } catch (error) {
-  console.error("Build-time fetch failed:", error);
+  throw new Error(`Doctor data fetch failed: ${error instanceof Error ? error.message : String(error)}`);
 }
 ---
 
 <LandingLayout 
-  title="Find a Specialist | Ocha Healthcare" 
-  description="Browse our complete list of verified specialists in Malaysia. Filter by location, hospital, and specialty."
+  title="Cari Dokter Spesialis di Malaysia | Ocha Healthcare"
+  description="Jelajahi dokter spesialis dalam jaringan mitra terverifikasi Ocha di Malaysia. Cari berdasarkan lokasi, rumah sakit, dan spesialisasi."
 >
   
   {/* Background Texture */}
@@ -38,14 +43,14 @@ try {
     {/* === PAGE HEADER === */}
     <div class="max-w-4xl mx-auto px-6 text-center mb-12 relative z-10">
         <span class="inline-block py-1 px-3 rounded-full bg-blue-50 border border-blue-100 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-6">
-          Directory
+          Direktori
         </span>
         <h1 class="font-serif text-4xl md:text-5xl text-slate-900 mb-6 leading-tight">
-          Find a Verified Specialist
+          Cari Dokter Spesialis Terverifikasi
         </h1>
         <p class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-          Search our network of experienced doctors across Malaysia's top hospitals. 
-          Filter by specialty, location, or name to find the right care.
+          Cari dokter dalam jaringan rumah sakit mitra Ocha di Malaysia berdasarkan
+          spesialisasi, lokasi, rumah sakit, atau nama.
         </p>
     </div>
 

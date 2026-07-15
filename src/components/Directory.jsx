@@ -124,7 +124,7 @@ export default function Directory({ preloadedDoctors = [] }) {
       return (
           <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-400">
               <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#276CA1]" />
-              <p className="text-sm font-medium">Loading directory...</p>
+              <p className="text-sm font-medium">Memuat direktori...</p>
           </div>
       );
   }
@@ -132,8 +132,8 @@ export default function Directory({ preloadedDoctors = [] }) {
   if (error) {
       return (
           <div className="text-center py-20 bg-red-50 rounded-3xl border border-red-100 text-red-600">
-              <p className="font-bold mb-2">System Error</p>
-              <p className="text-sm">Could not load the doctor's list. Please refresh.</p>
+              <p className="font-bold mb-2">Direktori tidak dapat dimuat</p>
+              <p className="text-sm">Silakan muat ulang halaman.</p>
           </div>
       );
   }
@@ -149,7 +149,7 @@ export default function Directory({ preloadedDoctors = [] }) {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search specialist, hospital..."
+            placeholder="Cari dokter spesialis atau rumah sakit..."
             className="w-full pl-12 pr-4 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 transition-colors text-slate-800 placeholder-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -164,7 +164,7 @@ export default function Directory({ preloadedDoctors = [] }) {
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            {filterOptions.locations.map((loc, idx) => (<option key={idx} value={loc}>{loc === 'All' ? 'All Locations' : loc}</option>))}
+            {filterOptions.locations.map((loc, idx) => (<option key={idx} value={loc}>{loc === 'All' ? 'Semua Lokasi' : loc}</option>))}
           </select>
           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
@@ -177,7 +177,7 @@ export default function Directory({ preloadedDoctors = [] }) {
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedHospital} onChange={(e) => setSelectedHospital(e.target.value)}
           >
-            {filterOptions.hospitals.map((hosp, idx) => (<option key={idx} value={hosp}>{hosp === 'All' ? 'All Hospitals' : hosp}</option>))}
+            {filterOptions.hospitals.map((hosp, idx) => (<option key={idx} value={hosp}>{hosp === 'All' ? 'Semua Rumah Sakit' : hosp}</option>))}
           </select>
           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
@@ -190,7 +190,7 @@ export default function Directory({ preloadedDoctors = [] }) {
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)}
           >
-            {filterOptions.specialties.map((spec, idx) => (<option key={idx} value={spec}>{spec === 'All' ? 'All Specialties' : spec}</option>))}
+            {filterOptions.specialties.map((spec, idx) => (<option key={idx} value={spec}>{spec === 'All' ? 'Semua Spesialisasi' : spec}</option>))}
           </select>
            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
@@ -201,7 +201,7 @@ export default function Directory({ preloadedDoctors = [] }) {
         <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {visibleDoctors.map((doctor, index) => {
-                const waLink = `https://wa.me/${WA_NUMBER}?text=Hi Ocha, I would like to book an appointment with ${doctor.name}`;
+                const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Halo Ocha, saya ingin membuat janji dengan ${doctor.name}`)}`;
                 return (
                 // 🚀 UPDATE 1: Added 'overflow-hidden' to clip any internal elements
                 <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-4 md:p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group overflow-hidden">
@@ -209,9 +209,9 @@ export default function Directory({ preloadedDoctors = [] }) {
                     <div className="flex items-start gap-4 md:gap-5 mb-5">
                         <div className="relative shrink-0">
                             <img 
-                            src={doctor.image} alt={doctor.name}
+                            src={doctor.image || '/assets/doctor-placeholder.png'} alt={doctor.name}
                             className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover object-top border-2 border-slate-50 shadow-sm bg-slate-100"
-                            onError={(e) => { e.target.src = 'https://placehold.co/100?text=Dr'; }} 
+                            onError={(e) => { e.currentTarget.src = '/assets/doctor-placeholder.png'; }}
                             />
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-green-500 border-2 border-white rounded-full"></div>
                         </div>
@@ -240,8 +240,8 @@ export default function Directory({ preloadedDoctors = [] }) {
                     
                     {/* 🚀 UPDATE 2: Switched to Grid. Reduced gap to 'gap-2'. Guarantee fit. */}
                     <div className="mt-auto pt-4 md:pt-5 border-t border-slate-50 grid grid-cols-[1fr_2fr] gap-2">
-                        <a href={`/doctor/${doctor.docId}`} className="flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs py-2.5">Profile</a>
-                        <a href={waLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20 py-2.5">Book Appointment</a>
+                        <a href={`/doctor/${doctor.docId}`} className="flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs py-2.5">Profil</a>
+                        <a href={waLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20 py-2.5">Buat Janji</a>
                     </div>
                 </div>
                 );
@@ -255,7 +255,7 @@ export default function Directory({ preloadedDoctors = [] }) {
                         onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
                         className="group flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-full text-slate-600 font-bold hover:border-indigo-200 hover:text-indigo-600 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md"
                     >
-                        Load More Doctors
+                        Tampilkan Dokter Lain
                         <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
                     </button>
                 </div>
@@ -263,8 +263,8 @@ export default function Directory({ preloadedDoctors = [] }) {
         </>
       ) : (
         <div className="text-center py-24 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
-          <p className="text-slate-400 font-medium mb-4">No specialists found.</p>
-          <button onClick={() => { setSearchTerm(''); setSelectedSpecialty('All'); setSelectedLocation('All'); setSelectedHospital('All'); }} className="px-6 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Clear Filters</button>
+          <p className="text-slate-400 font-medium mb-4">Dokter spesialis tidak ditemukan.</p>
+          <button onClick={() => { setSearchTerm(''); setSelectedSpecialty('All'); setSelectedLocation('All'); setSelectedHospital('All'); }} className="px-6 py-2 bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">Hapus Filter</button>
         </div>
       )}
     </div>
