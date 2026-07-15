@@ -11,5 +11,11 @@ export default defineConfig({
     tailwind(), 
     react(), 
     sitemap() // 👈 ADD THIS
-  ]
+  ],
+  redirects: {
+    '/article/template/': '/blog/biaya-operasi-bypass-jantung-di-malaysia/',
+    '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/': '/dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/',
+    '/dokter/dokter-spesialis-ortopedi-tulang--penang/': '/dokter/dokter-spesialis-ortopedi-tulang-penang/',
+    '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/': '/dokter/dokter-spesialis-ortopedi-tulang-sarawak/',
+  },
 });
