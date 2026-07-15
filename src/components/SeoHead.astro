@@ -1,0 +1,36 @@
+---
+import { absoluteUrl, seoDefaults } from '../lib/seo.js';
+import { DEFAULT_LOCALE, SITE_TITLE } from '../config.js';
+
+const defaults = seoDefaults();
+const {
+  title,
+  description,
+  canonicalPath,
+  robots = defaults.robots,
+  image = defaults.image,
+  contentType = 'website',
+  schemas = [],
+} = Astro.props;
+const canonical = absoluteUrl(canonicalPath);
+const socialImage = image.startsWith('http') ? image : absoluteUrl(image);
+const fullTitle = title.includes(SITE_TITLE) ? title : `${title} | ${SITE_TITLE}`;
+---
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={robots} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content={contentType} />
+<meta property="og:locale" content={DEFAULT_LOCALE} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={socialImage} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
+{schemas.filter(Boolean).map((schema) => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

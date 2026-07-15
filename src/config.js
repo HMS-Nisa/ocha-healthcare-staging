@@ -6,6 +6,8 @@ export const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxpYv7P
 // 🚀 UPDATE: Swapped to the new WhatsApp number
 export const WA_NUMBER = "60125525544";
 
-// Optional: Add these if you want to use them in Layouts later
+export const SITE_URL = 'https://ocha.health/';
 export const SITE_TITLE = 'Ocha Healthcare';
-export const SITE_DESCRIPTION = 'AI-Powered Medical Concierge in Malaysia';
+export const SITE_DESCRIPTION = 'Concierge medis gratis yang membantu pasien Indonesia terhubung dengan dokter spesialis dan rumah sakit mitra di Malaysia.';
+export const DEFAULT_SOCIAL_IMAGE = '/assets/logo.png';
+export const DEFAULT_LOCALE = 'id_ID';
