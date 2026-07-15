@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, MapPin, Filter, Building2, Loader2, ChevronDown } from 'lucide-react';
 import { GOOGLE_SHEET_URL, WA_NUMBER } from '../config'; 
+import { normalizeDimension, track } from '../lib/analytics.js';
 
 // --- HELPER FUNCTIONS ---
 const getStateFromLocation = (fullAddress) => {
@@ -28,7 +29,7 @@ const processDoctors = (data) => {
         });
 };
 
-export default function Directory({ preloadedDoctors = [] }) {
+export default function Directory({ preloadedDoctors = [], pageType = 'doctor_directory' }) {
   
   // 1. INITIALIZE STATE
   const [doctors, setDoctors] = useState(() => 
@@ -47,6 +48,10 @@ export default function Directory({ preloadedDoctors = [] }) {
   // PAGINATION
   const ITEMS_PER_PAGE = 16;
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    track('view_doctor_directory', { page_type: pageType });
+  }, [pageType]);
 
   // DROPDOWN OPTIONS
   const initialOptions = useMemo(() => {
@@ -241,7 +246,18 @@ export default function Directory({ preloadedDoctors = [] }) {
                     {/* 🚀 UPDATE 2: Switched to Grid. Reduced gap to 'gap-2'. Guarantee fit. */}
                     <div className="mt-auto pt-4 md:pt-5 border-t border-slate-50 grid grid-cols-[1fr_2fr] gap-2">
                         <a href={`/doctor/${doctor.docId}`} className="flex items-center justify-center bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-semibold tracking-wide rounded-xl transition-all text-xs py-2.5">Profil</a>
-                        <a href={waLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20 py-2.5">Buat Janji</a>
+                        <a
+                          href={waLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => track('click_whatsapp_booking', {
+                            page_type: pageType,
+                            specialty: normalizeDimension(doctor.parsedMain),
+                            location: normalizeDimension(doctor.cleanState),
+                            cta_placement: 'doctor_card',
+                          })}
+                          className="flex items-center justify-center bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-blue-900/10 hover:shadow-blue-900/20 py-2.5"
+                        >Buat Janji</a>
                     </div>
                 </div>
                 );

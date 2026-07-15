@@ -99,6 +99,7 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
                             <a 
                                 href={destinationUrl} 
                                 target="_blank"
+                                data-whatsapp-concierge
                                 class="block w-full py-4 bg-[#276CA1] hover:bg-[#1f5682] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
                             >
                                 <ButtonIcon className="w-5 h-5" />
@@ -143,3 +144,17 @@ const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
 
   </main>
 </LandingLayout>
+
+<script>
+  import { track } from '../../lib/analytics.js';
+
+  track('view_lead_guide', { page_type: 'lead_guide' });
+  document.querySelectorAll('[data-whatsapp-concierge]').forEach((link) => {
+    link.addEventListener('click', () => {
+      track('click_whatsapp_concierge', {
+        page_type: 'lead_guide',
+        cta_placement: 'guide_primary',
+      });
+    });
+  });
+</script>

@@ -1,8 +1,9 @@
 // src/components/BookingWidget.jsx
 // Tier 1 — calendar + hourly time slots → WhatsApp deep link
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
+import { normalizeDimension, track } from '../lib/analytics.js';
 
 // ── Consultation hours ────────────────────────────────────────────────────────
 // 0 = Sunday … 6 = Saturday. null = closed.
@@ -57,7 +58,13 @@ function generateSlots(date) {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function BookingWidget({ doctorName = '', hospital = '', waNumber = '60125525544' }) {
+export default function BookingWidget({
+  doctorName = '',
+  hospital = '',
+  waNumber = '60125525544',
+  specialty = '',
+  location = '',
+}) {
   const today   = new Date(); today.setHours(0,0,0,0);
   const maxDate = new Date(today); maxDate.setDate(maxDate.getDate() + BOOKING_WINDOW_DAYS);
 
@@ -65,6 +72,16 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [selDate,   setSelDate]   = useState(null);
   const [selTime,   setSelTime]   = useState(null);
+
+  const analyticsParameters = {
+    page_type: 'doctor',
+    specialty: normalizeDimension(specialty),
+    location: normalizeDimension(location),
+  };
+
+  useEffect(() => {
+    track('view_doctor_profile', analyticsParameters);
+  }, [analyticsParameters.specialty, analyticsParameters.location]);
 
   const isAvailable = d =>
     d >= today && d <= maxDate &&
@@ -101,6 +118,10 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
   function handleBook() {
     const dayStr = `${DAYS_ID[selDate.getDay()]}, ${selDate.getDate()} ${MONTHS_SHORT[selDate.getMonth()]}`;
     const msg = `Halo Ocha, saya ingin booking konsultasi dengan ${doctorName} pada ${dayStr} pukul ${formatTime(selTime)}.`;
+    track('click_whatsapp_booking', {
+      ...analyticsParameters,
+      cta_placement: 'booking_selected_time',
+    });
     window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
@@ -150,7 +171,11 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
 
               return (
                 <button key={ymd(date)} disabled={!available}
-                  onClick={() => { setSelDate(date); setSelTime(null); }}
+                  onClick={() => {
+                    setSelDate(date);
+                    setSelTime(null);
+                    track('select_booking_date', analyticsParameters);
+                  }}
                   className={[
                     'mx-auto w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all',
                     selected
@@ -172,7 +197,7 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
           </div>
 
           <p className="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">
-            Jadwal dapat berubah sewaktu-waktu.<br />Jason akan konfirmasi ketersediaan slot Anda.
+            Pilih waktu yang Anda inginkan. Tim Ocha akan memeriksa ketersediaan dan mengonfirmasi jadwal melalui WhatsApp.
           </p>
         </div>
 
@@ -200,7 +225,10 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
               {slots.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {slots.map(t => (
-                    <button key={t} onClick={() => setSelTime(t)}
+                    <button key={t} onClick={() => {
+                      setSelTime(t);
+                      track('select_booking_time', analyticsParameters);
+                    }}
                       className={[
                         'py-3 rounded-xl text-sm font-bold border transition-all',
                         selTime === t
@@ -227,7 +255,7 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
                            text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl
                            hover:-translate-y-0.5 active:translate-y-0 text-base">
                 <MessageCircle className="w-5 h-5 fill-current flex-shrink-0" />
-                Booking via WhatsApp
+                Kirim Permintaan via WhatsApp
               </button>
               <p className="text-[11px] text-slate-400 mt-2 text-center">
                 {DAYS_ID[selDate.getDay()]}, {selDate.getDate()} {MONTHS_SHORT[selDate.getMonth()]} · {formatTime(selTime)}
@@ -235,6 +263,10 @@ export default function BookingWidget({ doctorName = '', hospital = '', waNumber
             </div>
           ) : (
             <a href={fallbackUrl} target="_blank" rel="noopener noreferrer"
+              onClick={() => track('click_whatsapp_booking', {
+                ...analyticsParameters,
+                cta_placement: 'booking_fallback',
+              })}
               className="w-full py-4 flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#128C7E]
                          text-white font-bold rounded-xl transition-colors shadow-lg text-base">
               <MessageCircle className="w-5 h-5 fill-current flex-shrink-0" />
