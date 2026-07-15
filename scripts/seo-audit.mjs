@@ -1,70 +1,180 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { filterEntries, htmlPathForUrl } from './filter-sitemap.mjs';
 
-const root = new URL('../dist/', import.meta.url);
-const requiredRoutes = ['index.html', 'tentang-ocha/index.html', 'cara-kerja/index.html', 'kebijakan-editorial/index.html', 'disclaimer-medis/index.html'];
-const trustPages = {
-  'tentang-ocha/index.html': {
-    id: 'https://ocha.health/tentang-ocha/#webpage',
-    statement: 'Ocha Healthcare Sdn Bhd membantu pasien Indonesia terhubung dengan dokter spesialis dan rumah sakit mitra di Malaysia. Layanan Ocha gratis bagi pasien; Ocha didukung melalui kemitraan yang diungkapkan dengan rumah sakit.',
-  },
-  'cara-kerja/index.html': {
-    id: 'https://ocha.health/cara-kerja/#webpage',
-    statement: 'Ocha mengumpulkan kebutuhan awal, meninjau pilihan dalam jaringan mitra, menghubungi pasien melalui WhatsApp, dan membantu mengatur janji. Pilihan jadwal adalah permintaan dan baru dikonfirmasi setelah tim Ocha memeriksa ketersediaan.',
-  },
-  'kebijakan-editorial/index.html': {
-    id: 'https://ocha.health/kebijakan-editorial/#webpage',
-    statement: 'Konten kesehatan Ocha bersifat informasional, menggunakan sumber yang dicantumkan, menampilkan tanggal pembaruan, dan tidak menggantikan konsultasi dokter. Nama peninjau medis hanya ditampilkan setelah peninjau menyetujui versi yang diterbitkan.',
-  },
-  'disclaimer-medis/index.html': {
-    id: 'https://ocha.health/disclaimer-medis/#webpage',
-    statement: 'Ocha bukan rumah sakit dan tidak memberikan diagnosis, rekomendasi pengobatan, atau layanan darurat. Dalam keadaan darurat, hubungi layanan darurat setempat.',
-  },
-};
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const dist = path.join(projectRoot, 'dist');
+const failures = [];
+const siteOrigin = 'https://ocha.health';
 
-function schemasFrom(html) {
-  return [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((match) => JSON.parse(match[1]));
+async function walk(directory) {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  const files = await Promise.all(entries.map((entry) => {
+    const target = path.join(directory, entry.name);
+    return entry.isDirectory() ? walk(target) : [target];
+  }));
+  return files.flat();
 }
 
-for (const route of requiredRoutes) {
-  const html = await fs.readFile(new URL(route, root), 'utf8');
-  if (!html.includes('<html lang="id"')) throw new Error(`${route}: missing lang=id`);
-  if (/AI-Powered|airport transfer|airport pickup|akomodasi|Guarantee Letter/i.test(html)) {
-    throw new Error(`${route}: contains out-of-scope positioning`);
+function count(html, expression) {
+  return [...html.matchAll(expression)].length;
+}
+
+function attribute(tag, name) {
+  return tag.match(new RegExp(`\\b${name}\\s*=\\s*["']([^"']*)["']`, 'i'))?.[1] || '';
+}
+
+function tags(html, tagName) {
+  return [...html.matchAll(new RegExp(`<${tagName}\\b[^>]*>`, 'gi'))].map((match) => match[0]);
+}
+
+function tagWithAttribute(html, tagName, attributeName, expectedValue) {
+  return tags(html, tagName).find((tag) => (
+    attribute(tag, attributeName).toLowerCase() === expectedValue
+  )) || '';
+}
+
+function isIndexable(html) {
+  const robotsTag = tagWithAttribute(html, 'meta', 'name', 'robots');
+  const directives = attribute(robotsTag, 'content').toLowerCase().split(',').map((value) => value.trim());
+  return directives.includes('index') && !directives.includes('noindex');
+}
+
+function outputUrl(file) {
+  const relative = path.relative(dist, file).split(path.sep).join('/');
+  const pathname = relative === 'index.html' ? '/' : `/${relative.replace(/\/index\.html$/, '/')}`;
+  return `${siteOrigin}${pathname}`;
+}
+
+function visibleHtml(html) {
+  const body = html.slice(Math.max(0, html.search(/<body\b/i)));
+  return body
+    .replace(/<!--([\s\S]*?)-->/g, '')
+    .replace(/<(script|style|noscript)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+}
+
+function internalTargets(html) {
+  return tags(html, 'a')
+    .map((tag) => attribute(tag, 'href'))
+    .filter((href) => href.startsWith('/') && !href.startsWith('//'))
+    .map((href) => href.split('#')[0].split('?')[0])
+    .filter(Boolean);
+}
+
+async function hasInternalTarget(target) {
+  if (/\.[a-z0-9]{2,8}$/i.test(target)) return true;
+  const pathname = decodeURIComponent(target).replace(/\/index\.html$/, '/');
+  const file = pathname === '/'
+    ? path.join(dist, 'index.html')
+    : path.join(dist, pathname.replace(/^\//, '').replace(/\/$/, ''), 'index.html');
+  try {
+    await fs.access(file);
+    return true;
+  } catch {
+    return false;
   }
-  if (!/<link rel="canonical" href="https:\/\/ocha\.health\//.test(html)) {
-    throw new Error(`${route}: missing canonical`);
-  }
-
-  if (route !== 'index.html') {
-    const expected = trustPages[route];
-    if (!html.includes(expected.statement)) throw new Error(`${route}: missing required trust statement`);
-    if ((html.match(/<h1(?:\s|>)/g) || []).length !== 1) throw new Error(`${route}: expected exactly one H1`);
-    const webPage = schemasFrom(html).find((schema) => schema['@type'] === 'WebPage');
-    if (!webPage || webPage['@id'] !== expected.id) throw new Error(`${route}: missing WebPage schema ID`);
-    const visibleHtml = html.slice(html.indexOf('<body'));
-    if (!webPage.description || !visibleHtml.includes(webPage.description)) throw new Error(`${route}: schema description is not visible`);
-  }
 }
 
-const homepage = await fs.readFile(new URL('index.html', root), 'utf8');
-for (const label of ['Beranda', 'Cari Dokter', 'Panduan', 'Buat Janji']) {
-  if (!homepage.includes(label)) throw new Error(`index.html: missing navigation label ${label}`);
+const allFiles = await walk(dist);
+const htmlFiles = allFiles.filter((file) => file.endsWith('.html'));
+const indexableEntries = [];
+
+for (const file of htmlFiles) {
+  const html = await fs.readFile(file, 'utf8');
+  const relative = path.relative(dist, file);
+  if (!isIndexable(html)) continue;
+
+  const required = [
+    ['lang=id', /<html[^>]+lang=["']id["']/i],
+    ['title', /<title>[^<]+<\/title>/i],
+    ['description', /<meta[^>]+name=["']description["']/i],
+    ['canonical', /<link[^>]+rel=["']canonical["']/i],
+    ['robots', /<meta[^>]+name=["']robots["']/i],
+    ['og:title', /<meta[^>]+property=["']og:title["']/i],
+    ['og:description', /<meta[^>]+property=["']og:description["']/i],
+    ['og:url', /<meta[^>]+property=["']og:url["']/i],
+    ['twitter:card', /<meta[^>]+name=["']twitter:card["']/i],
+  ];
+  for (const [label, expression] of required) {
+    if (!expression.test(html)) failures.push(`${relative}: missing ${label}`);
+  }
+
+  const canonicalTags = tags(html, 'link').filter((tag) => attribute(tag, 'rel').toLowerCase() === 'canonical');
+  if (canonicalTags.length !== 1) failures.push(`${relative}: canonical count is not 1`);
+  const canonical = attribute(canonicalTags[0] || '', 'href');
+  const expectedUrl = outputUrl(file);
+  if (canonical !== expectedUrl) failures.push(`${relative}: canonical ${canonical || '(missing)'} does not equal ${expectedUrl}`);
+  if (count(html, /<h1(?:\s|>)/gi) !== 1) failures.push(`${relative}: H1 count is not 1`);
+
+  const schemaScripts = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  for (const match of schemaScripts) {
+    try {
+      JSON.parse(match[1]);
+    } catch {
+      failures.push(`${relative}: invalid JSON-LD`);
+    }
+  }
+
+  const visible = visibleHtml(html);
+  if (/AI-Powered|airport transfer|airport pickup|accommodation support|dukungan akomodasi|Guarantee Letter/i.test(visible)) {
+    failures.push(`${relative}: out-of-scope positioning`);
+  }
+
+  const missingTargets = [];
+  for (const target of new Set(internalTargets(html))) {
+    if (!await hasInternalTarget(target)) missingTargets.push(target);
+  }
+  for (const target of missingTargets) failures.push(`${relative}: broken internal link ${target}`);
+  indexableEntries.push({ url: expectedUrl, html });
 }
-const standardLayoutPage = await fs.readFile(new URL('blog/index.html', root), 'utf8');
-for (const label of ['Beranda', 'Cari Dokter', 'Panduan', 'Buat Janji']) {
-  if (!standardLayoutPage.includes(label)) throw new Error(`blog/index.html: missing navigation label ${label}`);
+
+for (const file of allFiles.filter((candidate) => /\.(?:html|m?js)$/i.test(candidate))) {
+  const source = await fs.readFile(file, 'utf8');
+  for (const match of source.matchAll(/dataLayer\.push\(\s*\{([\s\S]{0,1000}?)\}\s*\)/g)) {
+    if (/\b(?:doctor_name|message|phone|email|diagnosis|medical_answer|free_text)\s*:/i.test(match[1])) {
+      failures.push(`${path.relative(dist, file)}: sensitive analytics event parameter`);
+    }
+  }
 }
-for (const href of ['/tentang-ocha', '/cara-kerja', '/kebijakan-editorial', '/disclaimer-medis']) {
-  if (!homepage.includes(`href="${href}"`)) throw new Error(`index.html: missing footer link ${href}`);
+
+const sitemapPath = path.join(dist, 'sitemap-0.xml');
+const sitemap = await fs.readFile(sitemapPath, 'utf8');
+const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => match[1]);
+if (sitemapUrls.length === 0) failures.push('sitemap-0.xml: contains no URLs');
+if (/\/article\/template\/|--/.test(sitemap)) failures.push('sitemap-0.xml: mock or malformed URL');
+if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap-0.xml: duplicate URL');
+
+const sitemapEntries = await Promise.all(sitemapUrls.map(async (url) => {
+  try {
+    return { url, html: await fs.readFile(htmlPathForUrl(url, dist), 'utf8') };
+  } catch {
+    return { url, html: '' };
+  }
+}));
+const allowedSitemapUrls = new Set(filterEntries(sitemapEntries).map((entry) => entry.url));
+for (const url of sitemapUrls) {
+  if (!allowedSitemapUrls.has(url)) failures.push(`sitemap-0.xml: non-indexable, redirect, or noncanonical URL ${url}`);
+  const pathname = new URL(url).pathname;
+  if (url !== url.toLowerCase() || (pathname !== '/' && !pathname.endsWith('/'))) {
+    failures.push(`sitemap-0.xml: noncanonical URL format ${url}`);
+  }
 }
-const homepageSchemas = schemasFrom(homepage);
-if (!homepageSchemas.some((schema) => schema['@type'] === 'Organization' && schema['@id'] === 'https://ocha.health/#organization')) {
-  throw new Error('index.html: missing Organization schema');
+const sitemapUrlSet = new Set(sitemapUrls);
+for (const { url, html } of indexableEntries) {
+  const canonical = attribute(tagWithAttribute(html, 'link', 'rel', 'canonical'), 'href');
+  if (canonical === url && !sitemapUrlSet.has(url)) failures.push(`sitemap-0.xml: missing indexable URL ${url}`);
 }
-if (!homepageSchemas.some((schema) => schema['@type'] === 'WebSite' && schema['@id'] === 'https://ocha.health/#website')) {
-  throw new Error('index.html: missing WebSite schema');
+
+const robots = await fs.readFile(path.join(dist, 'robots.txt'), 'utf8');
+const sitemapDeclarations = robots.match(/^Sitemap:.*$/gmi) || [];
+if (sitemapDeclarations.length !== 1 || sitemapDeclarations[0] !== 'Sitemap: https://ocha.health/sitemap-index.xml') {
+  failures.push('robots.txt: canonical sitemap declaration is invalid');
 }
-for (const claim of ['rumah sakit terakreditasi JCI', 'dokter spesialis terverifikasi dengan pengalaman lebih dari 10 tahun', 'Dipercaya oleh pasien di Asia Tenggara']) {
-  if (!homepage.includes(claim)) throw new Error(`index.html: missing approved trust claim: ${claim}`);
+
+if (failures.length) {
+  console.error(failures.join('\n'));
+  process.exitCode = 1;
+} else {
+  console.log(`SEO audit passed: ${indexableEntries.length} indexable pages, ${sitemapUrls.length} sitemap URLs.`);
 }

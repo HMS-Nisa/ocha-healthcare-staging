@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:site": "astro build",
+    "filter:sitemap": "node scripts/filter-sitemap.mjs",
+    "build:verified": "npm run build:site && npm run filter:sitemap && npm run audit:seo",
     "test": "node --test tests/*.test.mjs",
     "audit:seo": "node scripts/seo-audit.mjs",
     "preview": "astro preview",
