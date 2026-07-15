@@ -1,0 +1,414 @@
+---
+// src/pages/mm2h-pvip.astro
+// Malaysia MM2H & PVIP long-term stay support — in partnership with Daro International
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { WA_NUMBER } from '../config';
+import {
+  ShieldCheck, HeartHandshake, GraduationCap, Home, Wallet, Globe,
+  Building2, Users, CheckCircle2, MessageCircle, Plane, Briefcase,
+  FileText, ArrowRight, Sparkles, ChevronDown, HeartPulse
+} from 'lucide-react';
+
+const pageTitle = 'MM2H & PVIP Malaysia Long-Term Stay Visa Support | Ocha Healthcare';
+const pageDesc = 'Explore Malaysia My Second Home (MM2H) and the Premium Visa Programme (PVIP) with Ocha Healthcare and licensed advisor Daro International. Eligibility, requirements, application process and expert guidance for retirement, family relocation, healthcare and investment.';
+
+const waBase = `https://wa.me/${WA_NUMBER}?text=`;
+const waGeneral = waBase + encodeURIComponent("Hi Ocha, I'd like to learn more about long-term stay in Malaysia (MM2H / PVIP) with Daro International. Please share the details.");
+const waMM2H = waBase + encodeURIComponent("Hi Ocha, I'm interested in the Malaysia My Second Home (MM2H) programme. Please help me with a consultation.");
+const waPVIP = waBase + encodeURIComponent("Hi Ocha, I'm interested in the Malaysia Premium Visa Programme (PVIP). Please help me with a consultation.");
+
+// Hero background — free-license Kuala Lumpur skyline (Unsplash license, no attribution required)
+const heroImg = 'https://images.unsplash.com/photo-1566914447826-bf04e54bf1be?q=80&w=1600&auto=format&fit=crop';
+
+const whyMalaysia = [
+  { icon: ShieldCheck, title: 'Stability & Security', desc: 'A safe, peaceful and stable environment for long-term living.' },
+  { icon: Wallet, title: 'Affordable Cost of Living', desc: 'Enjoy a high quality of life at a lower cost.' },
+  { icon: HeartPulse, title: 'World-Class Healthcare', desc: 'Access modern private hospitals and specialist doctors.' },
+  { icon: GraduationCap, title: 'Quality Education', desc: 'International schools and globally recognised universities.' },
+  { icon: Home, title: 'Property Ownership', desc: 'Foreigners can purchase property in a regulated market.' },
+  { icon: Building2, title: 'Modern Infrastructure', desc: 'Reliable transport, connectivity and digital services.' },
+  { icon: Users, title: 'People & Culture', desc: 'Friendly, multicultural communities with English widely spoken.' },
+  { icon: Globe, title: 'Regional Connectivity', desc: 'A central Southeast Asian base for easy travel and mobility.' },
+];
+
+const mm2hBenefits = [
+  '5–20 year renewable multiple-entry visa',
+  'Family-friendly — bring approved dependents',
+  'Access to healthcare & education',
+  'Flexible property ownership options',
+  'Retain your nationality & home benefits',
+];
+const mm2hReqs = ['Age eligibility', 'Fixed deposit', 'Property purchase', 'Medical check-up', 'Medical insurance', 'Relationship proof', 'Income proof'];
+
+const pvipBenefits = [
+  '20-year renewable multiple-entry visa',
+  'Family-friendly — include your dependents',
+  'Healthcare, education & property access',
+  'Allowed to work & conduct business',
+  'No minimum stay requirement',
+];
+const pvipReqs = ['Participation fee', 'Fixed deposit', 'Income proof', 'Medical check-up', 'Medical insurance', 'Relationship proof'];
+
+const steps = [
+  { n: '01', title: 'Consultation & Eligibility Review', desc: 'We assess your motivation and outline an application strategy.', note: 'Typically takes a few days.' },
+  { n: '02', title: 'Document Review & Submission', desc: 'We compile and review your documents, then submit the application.', note: 'Timeline depends on client readiness and document completeness.' },
+  { n: '03', title: 'Official Review', desc: 'The authority assesses the application and may request additional information.', note: 'Processing time varies and approval is not guaranteed.' },
+  { n: '04', title: 'Endorsement', desc: 'We assist with conditional approval requirements and the visa endorsement process.', note: 'Typically completed within 2 weeks, subject to readiness.' },
+];
+
+const comparison = [
+  { label: 'Best suited for', mm2h: 'Retirees & families', pvip: 'Investors, entrepreneurs & business owners' },
+  { label: 'Visa length', mm2h: '5–20 years, renewable', pvip: '20 years, renewable' },
+  { label: 'Minimum stay', mm2h: 'Stay conditions may apply', pvip: 'No minimum stay requirement' },
+  { label: 'Work & business', mm2h: 'Focused on residency & lifestyle', pvip: 'Allowed to work & conduct business' },
+  { label: 'Primary goal', mm2h: 'Retirement, family settlement, healthcare', pvip: 'Business, investment, mobility' },
+];
+
+const daroPillars = [
+  { icon: Sparkles, title: 'Personalised Guidance', items: ['Dedicated consultant', 'Tailored application strategy', 'End-to-end application support'] },
+  { icon: HeartHandshake, title: 'Family & Lifestyle Support', items: ['Leading schools & universities', 'World-class private hospitals'] },
+  { icon: Plane, title: 'Arrival, Endorsement & Settlement', items: ['Transportation coordination', 'Banking & insurance guidance', 'Healthcare arrangements'] },
+  { icon: Briefcase, title: 'Business Network Access', items: ['Network of corporate advisors', 'Business & investment connections'] },
+];
+
+const daroSupport = [
+  'MM2H and PVIP eligibility assessment',
+  'Programme comparison and application strategy',
+  'Personalised document checklist',
+  'Application preparation and submission coordination',
+  'Follow-up with relevant authorities',
+  'Bank account, fixed deposit, medical check-up and insurance guidance',
+  'Visa endorsement and post-approval settlement support',
+];
+
+const faqs = [
+  { q: 'What is Malaysia My Second Home (MM2H)?', a: 'MM2H is a long-term stay programme for eligible foreigners who wish to live in Malaysia for an extended period. It is commonly suitable for retirees, families and individuals who want Malaysia as a second home, with access to healthcare, education and lifestyle facilities.' },
+  { q: 'What is the Premium Visa Programme (PVIP)?', a: 'PVIP is Malaysia’s premium long-term visa for qualified high-net-worth individuals, entrepreneurs, investors and global citizens who want greater flexibility to live, work and invest in Malaysia, with no minimum stay requirement.' },
+  { q: 'Which is right for me — MM2H or PVIP?', a: 'The right programme depends on your purpose, financial profile, family structure, property plans and long-term goals. MM2H suits retirement, family settlement and healthcare access, while PVIP suits business, investment and work flexibility. A consultation with Daro International helps you choose.' },
+  { q: 'Can I include my family?', a: 'Yes. Both MM2H and PVIP offer family-friendly options that allow eligible applicants to include approved dependents, subject to the applicable rules.' },
+  { q: 'Does Ocha handle the visa application?', a: 'Ocha supports your healthcare journey in Malaysia and connects you with Daro International, a licensed long-term stay advisory firm, for MM2H and PVIP application guidance and coordination.' },
+  { q: 'Is approval guaranteed?', a: 'No. Programme requirements may change from time to time and approval is subject to the relevant Malaysian authorities. Applicants should obtain updated advice based on their personal circumstances before making any decision.' },
+];
+
+const canonical = new URL('/mm2h-pvip', Astro.site).href;
+const jsonLd = [
+  { "@context": "https://schema.org", "@type": "WebPage", "name": pageTitle, "description": pageDesc, "url": canonical, "inLanguage": "en", "isPartOf": { "@type": "WebSite", "name": "Ocha Healthcare", "url": "https://ocha.health" } },
+  { "@context": "https://schema.org", "@type": "Service", "serviceType": "Malaysia long-term stay visa advisory (MM2H & PVIP)", "name": "Malaysia MM2H & PVIP Long-Term Stay Support", "description": pageDesc, "areaServed": "Malaysia", "provider": { "@type": "Organization", "name": "Ocha Healthcare", "url": "https://ocha.health" }, "offers": [ { "@type": "Offer", "name": "Malaysia My Second Home (MM2H)" }, { "@type": "Offer", "name": "Premium Visa Programme (PVIP)" } ] },
+  { "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faqs.map(f => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } })) },
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ocha.health" }, { "@type": "ListItem", "position": 2, "name": "MM2H & PVIP", "item": canonical } ] }
+];
+---
+
+<LandingLayout title={pageTitle} description={pageDesc}>
+  <main>
+
+    {/* ============ HERO ============ */}
+    <section class="relative pt-20 pb-20 lg:pt-24 lg:pb-32 overflow-hidden bg-slate-50">
+      <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0 mix-blend-soft-light"></div>
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-indigo-100/40 rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-3xl mix-blend-multiply"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
+        {/* LEFT */}
+        <div class="text-center lg:text-left">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-indigo-100 shadow-sm mb-8">
+            <span class="text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">In partnership with Daro International</span>
+          </div>
+
+          <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-slate-900 leading-[1.1] tracking-tight mb-6">
+            Make Malaysia<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">your second home.</span>
+          </h1>
+
+          <p class="text-lg md:text-xl text-slate-500 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
+            Long-term stay support for healthcare, retirement, family relocation and investment — through the <strong class="text-slate-700 font-semibold">MM2H</strong> and <strong class="text-slate-700 font-semibold">Premium Visa (PVIP)</strong> programmes.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-10">
+            <a href={waGeneral} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-indigo-600 text-white px-7 py-3.5 rounded-full font-bold text-base hover:bg-indigo-700 transition shadow-lg shadow-indigo-200/60 hover:-translate-y-0.5 active:scale-[0.98] duration-200">
+              <MessageCircle class="w-5 h-5 flex-shrink-0" /> Book a Free Consultation
+            </a>
+            <a href="#compare" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-7 py-3.5 rounded-full font-bold text-base hover:bg-slate-50 hover:border-indigo-200 active:scale-[0.98] transition duration-200">
+              Compare Programmes <ArrowRight class="w-5 h-5 flex-shrink-0" />
+            </a>
+          </div>
+
+          <div class="flex items-center justify-center lg:justify-start gap-2 text-sm text-slate-400 font-medium">
+            <ShieldCheck class="w-4 h-4 text-indigo-500" />
+            <p>Licensed &amp; authorized advisor for Malaysia long-term stay.</p>
+          </div>
+        </div>
+
+        {/* RIGHT: floating image card */}
+        <div class="relative mt-8 lg:mt-0 perspective-1000">
+          <div class="relative rounded-3xl overflow-hidden border border-white/80 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] rotate-y-6 hover:rotate-0 transition-all duration-700 ease-out">
+            <img src={heroImg} alt="Kuala Lumpur skyline with the Petronas Twin Towers" fetchpriority="high" loading="eager" class="w-full h-[360px] md:h-[440px] object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-indigo-950/60 via-indigo-900/10 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5 bg-white/90 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between shadow-lg">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Trusted advisory</div>
+                <div class="text-sm font-bold text-slate-800">MM2H &amp; PVIP specialists</div>
+              </div>
+              <div class="flex gap-4 text-center">
+                <div><div class="font-serif text-xl font-bold text-indigo-600">1,000+</div><div class="text-[10px] text-slate-400">Families</div></div>
+                <div><div class="font-serif text-xl font-bold text-indigo-600">23+</div><div class="text-[10px] text-slate-400">Countries</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-indigo-200/40 to-blue-200/40 blur-3xl rounded-full"></div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ WHY MALAYSIA ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Why Malaysia?</h2>
+          <p class="text-slate-500 leading-relaxed">With a welcoming culture, tropical lifestyle and everyday convenience, Malaysia offers many reasons to call it home.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {whyMalaysia.map((f) => (
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-md transition duration-300 shadow-sm">
+              <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-5">
+                <f.icon className="w-6 h-6 text-indigo-600" />
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">{f.title}</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ============ MM2H ============ */}
+    <section id="mm2h" class="py-24 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div>
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-indigo-100 shadow-sm mb-6">
+              <span class="text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">Programme 1</span>
+            </div>
+            <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Malaysia My Second Home <span class="text-indigo-600">(MM2H)</span></h2>
+            <p class="text-slate-500 leading-relaxed mb-8">A long-term stay programme for foreigners and their families who wish to live, retire, study or spend extended time in Malaysia. Commonly suitable for retirees, families and those focused on healthcare access and lifestyle planning.</p>
+            <ul class="space-y-3 mb-8">
+              {mm2hBenefits.map((b) => (
+                <li class="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" /><span>{b}</span></li>
+              ))}
+            </ul>
+            <a href={waMM2H} target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about MM2H <ArrowRight className="w-4 h-4" /></a>
+          </div>
+          <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center"><FileText className="w-5 h-5 text-indigo-600" /></div>
+              <h3 class="text-lg font-bold text-slate-900">Requirements</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
+              {mm2hReqs.map((r) => (
+                <div class="flex items-center gap-2.5 text-slate-600 text-sm border-b border-slate-100 pb-3"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>{r}</div>
+              ))}
+            </div>
+            <p class="text-xs text-slate-400 mt-6 leading-relaxed">Exact thresholds depend on your selected MM2H category and are set by the Malaysian authorities.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ PVIP ============ */}
+    <section id="pvip" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div class="lg:order-2">
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 shadow-sm mb-6">
+              <span class="text-xs font-bold tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-600">Programme 2 · Premium</span>
+            </div>
+            <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Malaysia Premium Visa <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">(PVIP)</span></h2>
+            <p class="text-slate-500 leading-relaxed mb-8">A premium long-term stay programme for qualified foreigners, investors and families seeking the flexibility to live, work and invest in Malaysia — with no minimum stay requirement.</p>
+            <ul class="space-y-3 mb-8">
+              {pvipBenefits.map((b) => (
+                <li class="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" /><span>{b}</span></li>
+              ))}
+            </ul>
+            <a href={waPVIP} target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about PVIP <ArrowRight className="w-4 h-4" /></a>
+          </div>
+          <div class="lg:order-1 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center"><FileText className="w-5 h-5 text-blue-500" /></div>
+              <h3 class="text-lg font-bold text-slate-900">Requirements</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
+              {pvipReqs.map((r) => (
+                <div class="flex items-center gap-2.5 text-slate-600 text-sm border-b border-slate-200 pb-3"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>{r}</div>
+              ))}
+            </div>
+            <p class="text-xs text-slate-400 mt-6 leading-relaxed">Participation fee and deposit levels are set by the Malaysian authorities and may change.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ COMPARE ============ */}
+    <section id="compare" class="py-24 bg-slate-50">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-14">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">MM2H vs PVIP</h2>
+          <p class="text-slate-500">A quick side-by-side to help you see which pathway fits your goals.</p>
+        </div>
+        <div class="overflow-hidden rounded-3xl border border-slate-100 shadow-sm bg-white">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="p-5"></th>
+                <th class="p-5 font-bold text-indigo-600 text-base">MM2H</th>
+                <th class="p-5 font-bold text-blue-500 text-base">PVIP</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparison.map((row, i) => (
+                <tr class={i % 2 ? 'bg-slate-50/60' : 'bg-white'}>
+                  <td class="p-5 font-semibold text-slate-700 align-top">{row.label}</td>
+                  <td class="p-5 text-slate-600 align-top">{row.mm2h}</td>
+                  <td class="p-5 text-slate-600 align-top">{row.pvip}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-center text-slate-500 text-sm mt-8">Not sure which suits you? <a href={waGeneral} target="_blank" rel="noopener" class="text-indigo-600 font-bold hover:underline">Get a free eligibility review →</a></p>
+      </div>
+    </section>
+
+    {/* ============ APPLICATION PROCESS ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">The application process</h2>
+          <p class="text-slate-500">A clear, guided path — from first consultation to visa endorsement.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-6">
+          {steps.map((s) => (
+            <div class="bg-white rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-md transition duration-300 shadow-sm p-7">
+              <div class="flex items-center gap-4 mb-3">
+                <span class="font-serif text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-blue-500">{s.n}</span>
+                <h3 class="text-lg font-bold text-slate-900">{s.title}</h3>
+              </div>
+              <p class="text-sm text-slate-500 leading-relaxed mb-2">{s.desc}</p>
+              <p class="text-xs italic text-indigo-500/80">{s.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ============ WHY DARO (indigo panel) ============ */}
+    <section class="py-20 px-6 bg-slate-50">
+      <div class="max-w-6xl mx-auto bg-indigo-900 rounded-[2.5rem] p-10 md:p-16 relative overflow-hidden shadow-2xl">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 opacity-20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-400 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+
+        <div class="relative z-10">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <div class="inline-flex items-center justify-center bg-white rounded-2xl px-5 py-3 mb-6 shadow-lg">
+              <img src="/assets/daro-logo.png" alt="Daro International" class="h-9 w-auto" />
+            </div>
+            <h2 class="font-serif text-3xl md:text-4xl text-white mb-4">Why Daro International?</h2>
+            <p class="text-indigo-100 leading-relaxed">A licensed Malaysia long-term stay advisory firm specialising in MM2H and PVIP applications, with end-to-end support from consultation to final visa endorsement.</p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-14 text-center">
+            <div><div class="font-serif text-4xl font-bold text-white">20+</div><div class="text-xs md:text-sm text-indigo-200 mt-1">Years of experience</div></div>
+            <div><div class="font-serif text-4xl font-bold text-white">1,000+</div><div class="text-xs md:text-sm text-indigo-200 mt-1">Families served</div></div>
+            <div><div class="font-serif text-4xl font-bold text-white">23+</div><div class="text-xs md:text-sm text-indigo-200 mt-1">Countries represented</div></div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-5">
+            {daroPillars.map((p) => (
+              <div class="bg-white/5 rounded-2xl border border-white/10 p-6 backdrop-blur-sm">
+                <div class="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-4"><p.icon className="w-5 h-5 text-indigo-200" /></div>
+                <h3 class="font-bold text-white mb-3">{p.title}</h3>
+                <ul class="space-y-1.5">
+                  {p.items.map((it) => (<li class="text-sm text-indigo-100 flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-indigo-300"></span>{it}</li>))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ HOW OCHA + DARO ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">How Ocha &amp; Daro work together</h2>
+          <p class="text-slate-500 leading-relaxed">Together we provide a complete pathway — for clients coming to Malaysia for treatment, and those considering it as a longer-term home, recovery base, retirement destination or family hub.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-slate-50 rounded-2xl border border-slate-100 p-8">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5"><HeartPulse className="w-6 h-6 text-indigo-600" /></div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Ocha — your healthcare journey</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Specialist matching, medical appointment coordination, hospital arrangements and related patient support in Malaysia.</p>
+          </div>
+          <div class="bg-slate-50 rounded-2xl border border-slate-100 p-8">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5"><Building2 className="w-6 h-6 text-blue-500" /></div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Daro — your long-term stay</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Licensed MM2H and PVIP advisory, guiding eligible clients through eligibility, application and settlement.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+          <h3 class="text-lg font-bold text-slate-900 mb-5">Daro's support includes</h3>
+          <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+            {daroSupport.map((d) => (<div class="flex items-start gap-3 text-slate-600 text-sm"><CheckCircle2 className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" /><span>{d}</span></div>))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ FAQ ============ */}
+    <section class="py-24 bg-slate-50">
+      <div class="max-w-3xl mx-auto px-6">
+        <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 text-center mb-12">Frequently asked questions</h2>
+        <div class="space-y-4">
+          {faqs.map((f) => (
+            <details class="group bg-white rounded-xl border border-slate-100 open:shadow-sm transition-all duration-300">
+              <summary class="flex justify-between items-center cursor-pointer p-6 list-none text-slate-900 font-medium text-lg">
+                {f.q}
+                <span class="transform group-open:rotate-180 transition-transform duration-300 text-slate-400"><ChevronDown className="w-5 h-5" /></span>
+              </summary>
+              <div class="px-6 pb-6 text-slate-500 leading-relaxed">{f.a}</div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ============ CTA ============ */}
+    <section class="py-20 px-6 bg-slate-50">
+      <div class="max-w-5xl mx-auto bg-indigo-900 rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 opacity-20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-indigo-400 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+        <div class="relative z-10">
+          <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">Plan your healthcare journey.<br class="hidden md:block" /> Explore your long-term stay.</h2>
+          <p class="text-indigo-100 text-lg mb-10 max-w-2xl mx-auto">Exploring healthcare, retirement, family relocation or investment in Malaysia? Ocha can connect you with Daro International for a private MM2H or PVIP consultation.</p>
+          <div class="flex justify-center">
+            <a href={waGeneral} target="_blank" rel="noopener" class="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-50 transition shadow-lg flex items-center justify-center gap-2 group">
+              <MessageCircle className="w-5 h-5" /> Speak to us on WhatsApp
+            </a>
+          </div>
+          <p class="text-indigo-200/70 text-xs mt-8 max-w-xl mx-auto leading-relaxed">Programme requirements may change from time to time and approval is subject to the relevant Malaysian authorities. Applicants should obtain updated advice based on their personal circumstances before making any decision.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</LandingLayout>
+
+<style>
+  .perspective-1000 { perspective: 1000px; }
+  .rotate-y-6 { transform: rotateY(-6deg) rotateX(2deg); }
+  .rotate-y-6:hover { transform: rotateY(0) rotateX(0); }
+</style>

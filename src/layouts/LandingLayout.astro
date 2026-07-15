@@ -10,10 +10,14 @@ const {
     description,
     canonicalPath = Astro.url.pathname,
     robots = 'index,follow',
-    image,
+    image: explicitImage,
+    ogImage,
     contentType = 'website',
     schemas = [],
 } = Astro.props;
+// Keep origin/main's `ogImage` prop compatible while routing all metadata
+// through Phase 1's single SEO component.
+const image = explicitImage ?? ogImage;
 const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin membuat janji konsultasi.`;
 
 // 🔴 YOUR IDs (PRESERVED)
@@ -57,6 +61,9 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-P59DXCBC');
         </script>
+
+        {/* 📊 GoHighLevel (GHL) external tracking */}
+        <script is:inline src="https://link.ocha.health/js/external-tracking.js" data-tracking-id="tk_1d3f5f01348b42b7a2b92e23faa347cd"></script>
     </head>
     
     <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
@@ -80,6 +87,7 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                     <div class="flex items-center gap-8 font-medium text-slate-600 pointer-events-auto">
                         <a href="/" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Beranda</a>
                         <a href="/doctors" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Cari Dokter</a>
+                        <a href="/mm2h-pvip" class="hover:text-[#276CA1] transition-colors text-sm font-bold">Tinggal Jangka Panjang</a>
                         <a href="/blog" class="hover:text-[#276CA1] transition-colors text-sm font-bold flex items-center gap-2">
                             Panduan
                         </a>
@@ -128,6 +136,10 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
             <a href="/doctors" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
                 Cari Dokter
                 <Search className="w-5 h-5 text-slate-400" />
+            </a>
+
+            <a href="/mm2h-pvip" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all">
+                Tinggal Jangka Panjang
             </a>
 
             <a href="/blog" class="text-lg font-bold text-slate-700 p-4 rounded-xl hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-between">
