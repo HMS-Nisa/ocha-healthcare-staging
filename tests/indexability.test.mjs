@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   countWords,
   hasRequiredDoctorFields,
@@ -42,4 +43,17 @@ test('indexes a complete doctor with three verified differentiators', () => {
 test('does not index a thin or incomplete doctor', () => {
   assert.equal(isDoctorIndexable(base), false);
   assert.equal(isDoctorIndexable({ ...base, hospital: '' }), false);
+});
+
+test('provider page sources contain no external placeholder service', () => {
+  const providerSources = [
+    '../src/components/Directory.jsx',
+    '../src/pages/doctor/[id].astro',
+    '../src/pages/dokter/[slug].astro',
+  ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8'));
+
+  for (const source of providerSources) {
+    assert.doesNotMatch(source, /placehold\.co/);
+    assert.match(source, /\/assets\/doctor-placeholder\.png/);
+  }
 });
