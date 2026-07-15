@@ -15,6 +15,15 @@ sources:
   - label: "Sunway Medical Centre — Heart, Lung & Vascular Centre"
     url: "https://www.sunwaymedical.com/en/centres-of-excellence/heart-lung-vascular-centre"
 medicalDisclaimer: "Informasi ini bersifat umum dan tidak menggantikan pemeriksaan, diagnosis, atau saran dari dokter yang menangani Anda."
+faq:
+  - question: "Apakah Ocha dapat memberi harga pasti operasi bypass?"
+    answer: "Tidak. Ocha membantu meminta estimasi khusus kasus dari rumah sakit mitra. Harga akhir dan cakupannya ditentukan rumah sakit berdasarkan evaluasi serta layanan yang diberikan."
+  - question: "Apakah Ocha memilihkan tindakan medis?"
+    answer: "Tidak. Ocha mengoordinasikan perkenalan dan janji temu. Diagnosis, penilaian risiko, pilihan tindakan, dan perawatan merupakan tanggung jawab dokter serta rumah sakit yang menangani pasien."
+  - question: "Apakah semua rumah sakit di Malaysia tersedia melalui Ocha?"
+    answer: "Tidak. Pilihan terbatas pada jaringan mitra Ocha yang telah diverifikasi dan bergantung pada kesesuaian kebutuhan serta ketersediaan saat permintaan diproses."
+  - question: "Bagaimana saya memulai?"
+    answer: "Pilih jadwal melalui kalender Ocha. Setelah itu, lanjutkan melalui WhatsApp agar agen dapat meninjau permintaan Anda secara manual dan menjelaskan langkah koordinasi berikutnya."
 ---
 
 ## Apa itu operasi bypass jantung (CABG)?
@@ -66,24 +75,6 @@ Sebagai rujukan mengenai layanan yang tersedia di Malaysia, [Institut Jantung Ne
 5. Rumah sakit menilai informasi kasus, memberikan estimasi bila memungkinkan, dan menawarkan jadwal yang tersedia.
 
 Layanan koordinasi Ocha gratis bagi pasien. Ocha memperoleh pendapatan melalui kemitraan rumah sakit yang diungkapkan. Anda tetap membuat keputusan bersama dokter dan rumah sakit yang menangani Anda.
-
-## Pertanyaan yang sering diajukan
-
-### Apakah Ocha dapat memberi harga pasti operasi bypass?
-
-Tidak. Ocha membantu meminta estimasi khusus kasus dari rumah sakit mitra. Harga akhir dan cakupannya ditentukan rumah sakit berdasarkan evaluasi serta layanan yang diberikan.
-
-### Apakah Ocha memilihkan tindakan medis?
-
-Tidak. Ocha mengoordinasikan perkenalan dan janji temu. Diagnosis, penilaian risiko, pilihan tindakan, dan perawatan merupakan tanggung jawab dokter serta rumah sakit yang menangani pasien.
-
-### Apakah semua rumah sakit di Malaysia tersedia melalui Ocha?
-
-Tidak. Pilihan terbatas pada jaringan mitra Ocha yang telah diverifikasi dan bergantung pada kesesuaian kebutuhan serta ketersediaan saat permintaan diproses.
-
-### Bagaimana saya memulai?
-
-Pilih jadwal melalui kalender Ocha. Setelah itu, lanjutkan melalui WhatsApp agar agen dapat meninjau permintaan Anda secara manual dan menjelaskan langkah koordinasi berikutnya.
 
 ## Sumber dan disclaimer medis
 

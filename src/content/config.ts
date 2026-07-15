@@ -14,7 +14,9 @@ const blogCollection = defineCollection({
     image: z.string(),
     category: z.string(),
     readTime: z.string(),
-    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).min(2),
+    robots: z.enum(['index,follow', 'noindex,follow']).default('index,follow'),
+    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).min(2).optional(),
+    faq: z.array(z.object({ question: z.string(), answer: z.string() })).min(2).optional(),
     medicalDisclaimer: z.string().min(40),
   }),
 });
