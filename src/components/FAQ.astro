@@ -2,16 +2,16 @@
 import { ChevronDown } from 'lucide-react';
 
 const FAQS = [
-    { q: "Is Ocha's service really free?", a: "Yes. Ocha does not charge patients for our services. We are supported by our partner hospitals to coordinate international patient care, and all payments are made directly to the hospital with full transparency and no markups." },
-    { q: "How quickly can I get an appointment?", a: "Typically, we can secure appointments within 24-48 hours, even for senior specialists." },
-    { q: "Do you help with insurance claims?", a: "Yes, please contact us for more information." },
-    { q: "Can you arrange airport pickup?", a: "Yes. Airport transfers are available, subject to the hospital’s terms and conditions." }
+    { q: "Apakah layanan Ocha gratis?", a: "Ya. Ocha tidak mengenakan biaya layanan kepada pasien. Ocha didukung melalui kemitraan yang diungkapkan dengan rumah sakit, dan pembayaran medis dilakukan langsung kepada rumah sakit." },
+    { q: "Bagaimana cara membuat janji?", a: "Pilih kebutuhan dan ajukan jadwal konsultasi. Tim Ocha akan meninjau pilihan, memeriksa ketersediaan, lalu menghubungi Anda melalui WhatsApp." },
+    { q: "Apakah jadwal yang saya pilih langsung dikonfirmasi?", a: "Belum. Jadwal yang dipilih merupakan permintaan dan baru dikonfirmasi setelah tim Ocha memeriksa ketersediaan dokter atau rumah sakit." },
+    { q: "Apakah Ocha memberikan diagnosis atau saran pengobatan?", a: "Tidak. Ocha membantu menghubungkan pasien dengan dokter dan rumah sakit mitra. Diagnosis dan keputusan pengobatan harus diberikan oleh tenaga medis yang berkualifikasi." }
 ];
 ---
 
 <section class="py-24 bg-white">
   <div class="max-w-3xl mx-auto px-6">
-      <h2 class="font-serif text-3xl font-medium text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
+      <h2 class="font-serif text-3xl font-medium text-slate-900 text-center mb-12">Pertanyaan yang Sering Diajukan</h2>
       <div class="space-y-4">
           {FAQS.map((faq) => (
               <details class="group bg-slate-50 rounded-xl border border-slate-100 open:bg-white open:shadow-sm transition-all duration-300">

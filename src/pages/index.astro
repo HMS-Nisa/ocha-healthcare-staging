@@ -10,12 +10,25 @@ import CTA from '../components/CTA.astro';
 
 // We use the new React component for Hubs
 import MedicalHubs from '../components/MedicalHubs.jsx';
+import { buildOrganizationSchema } from '../lib/seo.js';
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://ocha.health/#website',
+  url: 'https://ocha.health/',
+  name: 'Ocha Healthcare',
+  description: 'Concierge medis untuk pasien Indonesia yang mencari dokter spesialis dan rumah sakit mitra di Malaysia.',
+  inLanguage: 'id-ID',
+};
 ---
 
 {/* 🚀 CHANGE: Use <LandingLayout> instead of <Layout> */}
 <LandingLayout 
-  title="Ocha Healthcare | AI-Powered Medical Concierge"
-  description="Your trusted AI medical concierge for treatment in Malaysia. Get free doctor recommendations, cost estimates, and appointment booking."
+  title="Temukan Dokter Spesialis di Malaysia"
+  description="Ocha membantu pasien Indonesia terhubung dengan dokter spesialis dan rumah sakit mitra di Malaysia secara gratis dan mudah."
+  canonicalPath="/"
+  schemas={[buildOrganizationSchema(), websiteSchema]}
 >
   <main>
     <Hero />

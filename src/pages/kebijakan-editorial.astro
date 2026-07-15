@@ -1,0 +1,28 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const description = 'Kebijakan Ocha untuk konten kesehatan informasional, sumber, tanggal pembaruan, dan persetujuan peninjau medis.';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://ocha.health/kebijakan-editorial/#webpage',
+  url: 'https://ocha.health/kebijakan-editorial/',
+  name: 'Kebijakan Editorial',
+  description,
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
+---
+
+<LandingLayout title="Kebijakan Editorial" {description} canonicalPath="/kebijakan-editorial/" schemas={[schema]}>
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    <article class="prose prose-slate max-w-none prose-headings:font-serif">
+      <h1>Kebijakan Editorial</h1>
+      <p>Konten kesehatan Ocha bersifat informasional, menggunakan sumber yang dicantumkan, menampilkan tanggal pembaruan, dan tidak menggantikan konsultasi dokter. Nama peninjau medis hanya ditampilkan setelah peninjau menyetujui versi yang diterbitkan.</p>
+      <h2>Standar penerbitan</h2>
+      <p>Kami berupaya menjelaskan topik kesehatan dengan bahasa yang mudah dipahami, membedakan informasi umum dari layanan Ocha, dan memperbarui konten ketika sumber atau fakta penting berubah.</p>
+      <h2>Koreksi</h2>
+      <p>Kesalahan substantif diperbaiki setelah diverifikasi. Tanggal pembaruan pada halaman membantu pembaca mengetahui kapan konten terakhir ditinjau.</p>
+    </article>
+  </main>
+</LandingLayout>

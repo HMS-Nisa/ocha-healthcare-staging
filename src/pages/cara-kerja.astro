@@ -1,0 +1,30 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const description = 'Ocha meninjau kebutuhan pasien, pilihan dalam jaringan mitra, dan ketersediaan sebelum membantu mengatur janji.';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://ocha.health/cara-kerja/#webpage',
+  url: 'https://ocha.health/cara-kerja/',
+  name: 'Cara Kerja Ocha',
+  description,
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
+---
+
+<LandingLayout title="Cara Kerja Ocha" {description} canonicalPath="/cara-kerja/" schemas={[schema]}>
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    <article class="prose prose-slate max-w-none prose-headings:font-serif">
+      <h1>Cara Kerja Ocha</h1>
+      <p>Ocha mengumpulkan kebutuhan awal, meninjau pilihan dalam jaringan mitra, menghubungi pasien melalui WhatsApp, dan membantu mengatur janji. Pilihan jadwal adalah permintaan dan baru dikonfirmasi setelah tim Ocha memeriksa ketersediaan.</p>
+      <ol>
+        <li><strong>Pilih kebutuhan.</strong> Sampaikan spesialisasi atau keluhan awal.</li>
+        <li><strong>Pilih jadwal konsultasi.</strong> Ajukan waktu yang sesuai bagi Anda.</li>
+        <li><strong>Tim Ocha meninjau.</strong> Kami memeriksa pilihan dan ketersediaan dalam jaringan mitra.</li>
+        <li><strong>Kami hubungkan ke rumah sakit.</strong> Tim Ocha menghubungi Anda melalui WhatsApp untuk langkah berikutnya.</li>
+      </ol>
+    </article>
+  </main>
+</LandingLayout>

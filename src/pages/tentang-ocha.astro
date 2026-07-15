@@ -1,0 +1,27 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const description = 'Ocha Healthcare Sdn Bhd membantu pasien Indonesia terhubung dengan dokter spesialis dan rumah sakit mitra di Malaysia.';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://ocha.health/tentang-ocha/#webpage',
+  url: 'https://ocha.health/tentang-ocha/',
+  name: 'Tentang Ocha',
+  description,
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
+---
+
+<LandingLayout title="Tentang Ocha" {description} canonicalPath="/tentang-ocha/" schemas={[schema]}>
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    <article class="prose prose-slate max-w-none prose-headings:font-serif">
+      <h1>Tentang Ocha</h1>
+      <p>Ocha Healthcare Sdn Bhd membantu pasien Indonesia terhubung dengan dokter spesialis dan rumah sakit mitra di Malaysia. Layanan Ocha gratis bagi pasien; Ocha didukung melalui kemitraan yang diungkapkan dengan rumah sakit.</p>
+      <h2>Peran kami</h2>
+      <p>Tim Ocha meninjau kebutuhan awal dan pilihan dalam jaringan mitra, kemudian menghubungi pasien untuk membantu mengatur janji. Dokter dan rumah sakit tetap bertanggung jawab atas layanan medis yang mereka berikan.</p>
+      <p><strong>Ocha Healthcare Sdn Bhd 202501013492 (1614906-U)</strong></p>
+    </article>
+  </main>
+</LandingLayout>

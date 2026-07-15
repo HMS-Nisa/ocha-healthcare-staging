@@ -7,7 +7,7 @@ export default function MedicalHubs() {
     {
       id: 'kuala-lumpur',
       name: 'Kuala Lumpur',
-      category: 'Central Region',
+      category: 'Wilayah Tengah',
       // KL is now the large feature item
       image: '/images/hubs/kl.jpg', 
       large: true,
@@ -15,14 +15,14 @@ export default function MedicalHubs() {
     {
       id: 'penang',
       name: 'Penang',
-      category: 'Northern Region',
+      category: 'Wilayah Utara',
       image: '/images/hubs/penang.jpg', 
       large: false, 
     },
     {
       id: 'johor',
       name: 'Johor',
-      category: 'Southern Region',
+      category: 'Wilayah Selatan',
       image: '/images/hubs/johor.jpg', 
       large: false,
     },
@@ -34,9 +34,9 @@ export default function MedicalHubs() {
         
         {/* SECTION HEADER */}
         <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl text-slate-900 mb-4">World-Class Medical Hubs</h2>
+          <h2 className="font-serif text-4xl md:text-5xl text-slate-900 mb-4">Pusat Medis Mitra di Malaysia</h2>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            Partnered with elite JCI-accredited hospitals in Malaysia's top healthcare destinations.
+            Jelajahi dokter spesialis di jaringan rumah sakit mitra Ocha.
           </p>
         </div>
 
@@ -66,7 +66,7 @@ export default function MedicalHubs() {
               <h3 className="font-serif text-3xl md:text-5xl text-white mb-6">{hubs[0].name}</h3>
               
               <div className="flex items-center gap-2 text-white font-semibold group-hover:gap-4 transition-all">
-                Explore Specialists <ArrowRight className="w-5 h-5" />
+                Lihat Dokter Spesialis <ArrowRight className="w-5 h-5" />
               </div>
             </div>
           </a>

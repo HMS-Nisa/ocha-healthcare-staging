@@ -1,0 +1,26 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+
+const description = 'Batas peran Ocha sebagai layanan penghubung dan informasi penting mengenai diagnosis, pengobatan, serta keadaan darurat.';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://ocha.health/disclaimer-medis/#webpage',
+  url: 'https://ocha.health/disclaimer-medis/',
+  name: 'Disclaimer Medis',
+  description,
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
+---
+
+<LandingLayout title="Disclaimer Medis" {description} canonicalPath="/disclaimer-medis/" schemas={[schema]}>
+  <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+    <article class="prose prose-slate max-w-none prose-headings:font-serif">
+      <h1>Disclaimer Medis</h1>
+      <p>Ocha bukan rumah sakit dan tidak memberikan diagnosis, rekomendasi pengobatan, atau layanan darurat. Dalam keadaan darurat, hubungi layanan darurat setempat.</p>
+      <p>Informasi di situs ini hanya untuk tujuan informasi umum dan tidak menggantikan konsultasi dengan dokter atau tenaga kesehatan berkualifikasi. Jangan menunda mencari bantuan medis karena informasi yang Anda baca di situs Ocha.</p>
+      <p>Keputusan medis, termasuk diagnosis dan pengobatan, merupakan tanggung jawab pasien bersama dokter atau penyedia layanan kesehatan yang menangani.</p>
+    </article>
+  </main>
+</LandingLayout>

@@ -1,6 +1,6 @@
 ---
 // src/components/Hero.astro
-import { ArrowRight, MessageCircle, CheckCircle2, FileCheck, Car, ShieldCheck } from 'lucide-react';
+import { ArrowRight, MessageCircle, CheckCircle2, CalendarCheck, Search, ShieldCheck } from 'lucide-react';
 ---
 
 {/* 🚀 UPDATE: Aggressive reduction to pt-20 (Mobile) and lg:pt-24 (Desktop) */}
@@ -21,33 +21,30 @@ import { ArrowRight, MessageCircle, CheckCircle2, FileCheck, Car, ShieldCheck } 
       {/* BADGE */}
       <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-indigo-100 shadow-sm mb-8 transition-transform hover:scale-105 cursor-default group">
         <span class="text-xs font-bold tracking-wider uppercase bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-          AI-Powered Medical Concierge
+          Concierge Medis untuk Pasien Indonesia
         </span>
       </div>
 
       {/* Headline */}
       <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl text-slate-900 leading-[1.1] mb-6 tracking-tight">
-        Expert care. <br />
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
-          Fast, smooth, & seamless.
-        </span>
+        Temukan dokter spesialis yang tepat di Malaysia
       </h1>
 
       {/* Subheadline */}
       <p class="text-lg md:text-xl text-slate-500 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
-        We replace the confusion and hassle of medical travel with clarity. From doctor bookings and airport transfers to guarantee letter (GL) assistance, we support you every step of the way.
+        Ocha membantu Anda terhubung dengan dokter dan rumah sakit mitra yang sesuai dengan kebutuhan Anda. Gratis, mudah, dan ditinjau langsung oleh tim Ocha.
       </p>
 
       {/* Buttons */}
       <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
         <a href="/doctors" class="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-700 transition shadow-xl shadow-indigo-200/50 flex items-center justify-center gap-2 hover:-translate-y-1 duration-300">
-          Find a Specialist <ArrowRight class="w-5 h-5" />
+          Cari Dokter Spesialis <ArrowRight class="w-5 h-5" />
         </a>
         
         {/* 🚀 UPDATE: New WhatsApp API Link */}
         <a href="https://api.whatsapp.com/send/?phone=60125525544&text&type=phone_number&app_absent=0" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition flex items-center justify-center gap-2 hover:border-indigo-200">
           <MessageCircle class="w-5 h-5" />
-          Talk to Concierge
+          Konsultasi via WhatsApp
         </a>
       </div>
 
@@ -58,7 +55,7 @@ import { ArrowRight, MessageCircle, CheckCircle2, FileCheck, Car, ShieldCheck } 
             <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-300"></div>
             <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-400"></div>
         </div>
-        <p>Trusted by patients in SouthEast Asia.</p>
+        <p>Untuk pasien Indonesia yang mencari perawatan di Malaysia.</p>
       </div>
     </div>
 
@@ -75,13 +72,13 @@ import { ArrowRight, MessageCircle, CheckCircle2, FileCheck, Car, ShieldCheck } 
                     <ShieldCheck class="w-5 h-5" />
                 </div>
                 <div>
-                    <div class="text-sm font-bold text-slate-800">Trip Itinerary</div>
-                    <div class="text-xs text-slate-400">ID: #OCHA-8821</div>
+                    <div class="text-sm font-bold text-slate-800">Proses bersama Ocha</div>
+                    <div class="text-xs text-slate-400">Empat langkah mudah</div>
                 </div>
             </div>
             <div class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center gap-1">
                 <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                CONFIRMED
+                DITINJAU TIM
             </div>
         </div>
 
@@ -94,30 +91,40 @@ import { ArrowRight, MessageCircle, CheckCircle2, FileCheck, Car, ShieldCheck } 
                     <CheckCircle2 class="w-5 h-5" />
                 </div>
                 <div class="flex-1">
-                    <div class="text-sm font-bold text-slate-800">Specialist Matched</div>
-                    <div class="text-xs text-slate-500">Dr. Patrick Tiau • Sunway Medical</div>
+                    <div class="text-sm font-bold text-slate-800">Pilih kebutuhan</div>
+                    <div class="text-xs text-slate-500">Sampaikan spesialisasi atau keluhan awal</div>
                 </div>
             </div>
 
             {/* Item 2 */}
             <div class="flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm transition-transform group-hover:translate-x-1 duration-300 delay-75">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <FileCheck class="w-5 h-5" />
+                    <CalendarCheck class="w-5 h-5" />
                 </div>
                 <div class="flex-1">
-                    <div class="text-sm font-bold text-slate-800">Guarantee Letter (GL)</div>
-                    <div class="text-xs text-slate-500">Approved by insurance provider</div>
+                    <div class="text-sm font-bold text-slate-800">Pilih jadwal konsultasi</div>
+                    <div class="text-xs text-slate-500">Ajukan waktu yang sesuai bagi Anda</div>
                 </div>
             </div>
 
             {/* Item 3 */}
             <div class="flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm transition-transform group-hover:translate-x-1 duration-300 delay-150">
                 <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                    <Car class="w-5 h-5" />
+                    <Search class="w-5 h-5" />
                 </div>
                 <div class="flex-1">
-                    <div class="text-sm font-bold text-slate-800">Premium Transfer</div>
-                    <div class="text-xs text-slate-500">Pick-up scheduled for 09:30 AM</div>
+                    <div class="text-sm font-bold text-slate-800">Tim Ocha meninjau</div>
+                    <div class="text-xs text-slate-500">Kami memeriksa pilihan dalam jaringan mitra</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 shadow-sm transition-transform group-hover:translate-x-1 duration-300">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <ShieldCheck class="w-5 h-5" />
+                </div>
+                <div class="flex-1">
+                    <div class="text-sm font-bold text-slate-800">Kami hubungkan ke rumah sakit</div>
+                    <div class="text-xs text-slate-500">Konfirmasi diberikan setelah ketersediaan diperiksa</div>
                 </div>
             </div>
 

@@ -1,62 +1,54 @@
 ---
-// src/pages/terms.astro
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { FileText } from 'lucide-react';
 
-const lastUpdated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const lastUpdated = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+const description = 'Aturan dan ketentuan penggunaan situs Ocha Healthcare.';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://ocha.health/terms/#webpage',
+  url: 'https://ocha.health/terms/',
+  name: 'Ketentuan Penggunaan Ocha Healthcare',
+  description,
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
 ---
 
-<LandingLayout title="Terms of Use - Ocha Healthcare" description="Rules and regulations for using the Ocha Healthcare website.">
+<LandingLayout title="Ketentuan Penggunaan" {description} canonicalPath="/terms/" schemas={[schema]}>
   <main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
-    
     <div class="text-center mb-16">
       <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#276CA1] text-xs font-bold uppercase tracking-wider mb-4">
         <FileText className="w-4 h-4" />
         Legal
       </span>
-      <h1 class="font-serif text-4xl md:text-5xl font-bold text-slate-900 mb-4">Terms of Use</h1>
-      <p class="text-slate-500">Last updated: {lastUpdated}</p>
+      <h1 class="font-serif text-4xl md:text-5xl font-bold text-slate-900 mb-4">Ketentuan Penggunaan</h1>
+      <p class="text-slate-500">Terakhir diperbarui: {lastUpdated}</p>
     </div>
 
     <div class="prose prose-slate max-w-none prose-headings:font-serif prose-a:text-[#276CA1]">
-      
       <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 not-prose rounded-r-lg">
-        <h3 class="text-red-800 font-bold text-lg mb-2">Medical Disclaimer</h3>
-        <p class="text-red-700 text-sm leading-relaxed">
-          Ocha Healthcare is a <strong>medical directory and concierge service</strong>, not a medical provider. 
-          The information provided on this website is for educational and informational purposes only and <strong>does not constitute medical advice</strong>, diagnosis, or treatment. 
-          Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
-        </p>
+        <h3 class="text-red-800 font-bold text-lg mb-2">Disclaimer Medis</h3>
+        <p class="text-red-700 text-sm leading-relaxed">Ocha Healthcare adalah <strong>direktori medis dan layanan concierge</strong>, bukan penyedia layanan medis. Informasi di situs ini hanya untuk tujuan pendidikan dan informasi serta <strong>bukan saran medis</strong>, diagnosis, atau pengobatan. Selalu mintalah saran dokter atau tenaga kesehatan berkualifikasi lain jika Anda memiliki pertanyaan mengenai kondisi medis.</p>
       </div>
 
-      <h3>1. Agreement to Terms</h3>
-      <p>
-        By accessing or using our website, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
-      </p>
+      <h3>1. Persetujuan atas Ketentuan</h3>
+      <p>Dengan mengakses atau menggunakan situs kami, Anda setuju untuk terikat oleh Ketentuan ini. Jika Anda tidak menyetujui bagian mana pun dari Ketentuan ini, Anda tidak boleh mengakses Layanan.</p>
 
-      <h3>2. Accuracy of Information</h3>
-      <p>
-        While we strive to keep doctor schedules, hospital pricing, and credentials accurate, medical information changes rapidly. 
-        We do not warrant that the information on this website is 100% accurate, complete, or current. <strong>Always verify details directly with the hospital or doctor before travelling.</strong>
-      </p>
+      <h3>2. Keakuratan Informasi</h3>
+      <p>Kami berupaya menjaga agar jadwal dokter, harga rumah sakit, dan kredensial tetap akurat, tetapi informasi medis dapat berubah dengan cepat. Kami tidak menjamin bahwa informasi di situs ini sepenuhnya akurat, lengkap, atau terkini. <strong>Selalu verifikasi rincian langsung kepada rumah sakit atau dokter sebelum melakukan perjalanan.</strong></p>
 
-      <h3>3. Limitation of Liability</h3>
-      <p>
-        In no event shall Ocha Healthcare, nor its directors, employees, or partners, be liable for any indirect, incidental, special, consequential or punitive damages, 
-        including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
-      </p>
+      <h3>3. Batasan Tanggung Jawab</h3>
+      <p>Dalam keadaan apa pun, Ocha Healthcare maupun direktur, karyawan, atau mitranya tidak bertanggung jawab atas kerugian tidak langsung, insidental, khusus, konsekuensial, atau bersifat menghukum, termasuk tetapi tidak terbatas pada kehilangan keuntungan, data, penggunaan, nama baik, atau kerugian tidak berwujud lainnya, yang timbul dari akses atau penggunaan Layanan, atau ketidakmampuan Anda untuk mengakses atau menggunakan Layanan.</p>
 
-      <h3>4. External Links</h3>
-      <p>
-        Our Service may contain links to third-party web sites or services (such as WhatsApp for Business) that are not owned or controlled by Ocha Healthcare. 
-        We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third party web sites or services.
-      </p>
+      <h3>4. Tautan Eksternal</h3>
+      <p>Layanan kami dapat memuat tautan ke situs atau layanan pihak ketiga, seperti WhatsApp for Business, yang tidak dimiliki atau dikendalikan oleh Ocha Healthcare. Kami tidak memiliki kendali dan tidak bertanggung jawab atas konten, kebijakan privasi, atau praktik situs maupun layanan pihak ketiga.</p>
 
-      <h3>5. Governing Law</h3>
-      <p>
-        These Terms shall be governed and construed in accordance with the laws of Malaysia, without regard to its conflict of law provisions.
-      </p>
+      <h3>5. Hukum yang Berlaku</h3>
+      <p>Ketentuan ini diatur dan ditafsirkan sesuai dengan hukum Malaysia, tanpa memperhatikan ketentuan mengenai pertentangan hukumnya.</p>
 
+      <p><strong>Ocha Healthcare Sdn Bhd 202501013492 (1614906-U)</strong></p>
     </div>
   </main>
 </LandingLayout>
