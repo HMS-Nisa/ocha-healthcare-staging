@@ -10,6 +10,9 @@ node_modules/
 # isolated development worktrees
 .worktrees/
 
+# subagent development scratch state
+.superpowers/
+
 # logs
 npm-debug.log*
 yarn-debug.log*
