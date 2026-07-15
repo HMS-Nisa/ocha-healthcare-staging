@@ -1,4 +1,4 @@
-export const EVENTS = new Set([
+const EVENTS = new Set([
   'view_doctor_directory',
   'view_doctor_profile',
   'select_booking_date',
@@ -8,7 +8,7 @@ export const EVENTS = new Set([
   'view_lead_guide',
 ]);
 
-export const PARAMETERS = new Set([
+const PARAMETERS = new Set([
   'page_type',
   'specialty',
   'location',

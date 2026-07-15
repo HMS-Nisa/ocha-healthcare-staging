@@ -1,5 +1,5 @@
 ---
-import { absoluteUrl, seoDefaults } from '../lib/seo.js';
+import { absoluteUrl, buildSeoTitle, seoDefaults } from '../lib/seo.js';
 import { DEFAULT_LOCALE, SITE_TITLE } from '../config.js';
 
 const defaults = seoDefaults();
@@ -14,7 +14,7 @@ const {
 } = Astro.props;
 const canonical = absoluteUrl(canonicalPath);
 const socialImage = image.startsWith('http') ? image : absoluteUrl(image);
-const fullTitle = title.includes(SITE_TITLE) ? title : `${title} | ${SITE_TITLE}`;
+const fullTitle = buildSeoTitle(title);
 ---
 <title>{fullTitle}</title>
 <meta name="description" content={description} />

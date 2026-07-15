@@ -13,6 +13,25 @@ export function absoluteUrl(path = '/') {
   return new URL(normalizePath(path), SITE_URL).href;
 }
 
+export function normalizeDoctorSpecialtyLabel(specialty = '') {
+  return String(specialty)
+    .trim()
+    .replace(/^dokter(?:\s+spesialis)?\s+/i, '')
+    .trim();
+}
+
+export function buildDoctorPageTitle({ name, specialty, hospital }) {
+  const specialtyLabel = normalizeDoctorSpecialtyLabel(specialty);
+  return `${name} - Dokter Spesialis ${specialtyLabel} di ${hospital}`;
+}
+
+export function buildSeoTitle(title = '') {
+  const normalizedTitle = String(title).trim();
+  return normalizedTitle.endsWith(SITE_TITLE)
+    ? normalizedTitle
+    : `${normalizedTitle} | ${SITE_TITLE}`;
+}
+
 export function buildOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
