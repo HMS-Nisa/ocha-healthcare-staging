@@ -6,6 +6,39 @@ const DIFFERENTIATORS = [
   'schedule',
 ];
 
+export function normalizeDoctorId(value = '') {
+  return String(value).trim().toLowerCase();
+}
+
+export function assertUniqueDoctorIds(doctors = []) {
+  const counts = new Map();
+  for (const doctor of doctors) {
+    const id = normalizeDoctorId(doctor?.id);
+    if (id) counts.set(id, (counts.get(id) || 0) + 1);
+  }
+  const duplicates = [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([id]) => id)
+    .sort();
+  if (duplicates.length) throw new Error(`Duplicate doctor IDs after normalization: ${duplicates.join(', ')}`);
+  return true;
+}
+
+export function validatedDoctorRecords(doctors = [], requiredFields = ['id', 'name']) {
+  if (!Array.isArray(doctors)) throw new Error('Doctor data must be an array');
+  assertUniqueDoctorIds(doctors);
+  return doctors.filter((doctor) => requiredFields.every(
+    (field) => String(doctor?.[field] || '').trim().length > 0,
+  ));
+}
+
+export function uniqueIndexableDoctorCount(doctors = []) {
+  return new Set(doctors
+    .filter((doctor) => doctor?.indexable === true)
+    .map((doctor) => normalizeDoctorId(doctor.id))
+    .filter(Boolean)).size;
+}
+
 export function countWords(value = '') {
   return String(value).trim().split(/\s+/).filter(Boolean).length;
 }

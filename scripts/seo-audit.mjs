@@ -7,6 +7,12 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const dist = path.join(projectRoot, 'dist');
 const failures = [];
 const siteOrigin = 'https://ocha.health';
+const requiredNetlifyRedirects = [
+  '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301',
+  '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301',
+  '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301',
+  '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301',
+];
 
 async function walk(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -39,6 +45,23 @@ export function isIndexableByDefault(html) {
   const robotsTag = tagWithAttribute(html, 'meta', 'name', 'robots');
   const directives = attribute(robotsTag, 'content').toLowerCase().split(',').map((value) => value.trim());
   return !directives.includes('noindex');
+}
+
+export function findDuplicateValues(values = []) {
+  const counts = new Map();
+  for (const raw of values) {
+    const value = String(raw || '').trim();
+    if (value) counts.set(value, (counts.get(value) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([value]) => value)
+    .sort();
+}
+
+export function hasRequiredNetlifyRedirects(source = '') {
+  const lines = new Set(String(source).split(/\r?\n/).map((line) => line.trim()).filter(Boolean));
+  return requiredNetlifyRedirects.every((rule) => lines.has(rule));
 }
 
 function outputUrl(file) {
@@ -157,7 +180,16 @@ async function main() {
       if (target && !await hasInternalTarget(target)) missingTargets.push(target);
     }
     for (const target of missingTargets) failures.push(`${relative}: broken internal link ${target}`);
-    indexableEntries.push({ url: expectedUrl, html });
+    const title = html.match(/<title>([^<]+)<\/title>/i)?.[1] || '';
+    const description = attribute(tagWithAttribute(html, 'meta', 'name', 'description'), 'content');
+    indexableEntries.push({ url: expectedUrl, html, title, description });
+  }
+
+  for (const title of findDuplicateValues(indexableEntries.map((entry) => entry.title))) {
+    failures.push(`indexable pages: duplicate title ${title}`);
+  }
+  for (const description of findDuplicateValues(indexableEntries.map((entry) => entry.description))) {
+    failures.push(`indexable pages: duplicate description ${description}`);
   }
 
   for (const file of allFiles.filter((candidate) => /\.(?:html|m?js)$/i.test(candidate))) {
@@ -202,6 +234,11 @@ async function main() {
   const sitemapDeclarations = robots.match(/^Sitemap:.*$/gmi) || [];
   if (sitemapDeclarations.length !== 1 || sitemapDeclarations[0] !== 'Sitemap: https://ocha.health/sitemap-index.xml') {
     failures.push('robots.txt: canonical sitemap declaration is invalid');
+  }
+
+  const netlifyRedirects = await fs.readFile(path.join(dist, '_redirects'), 'utf8');
+  if (!hasRequiredNetlifyRedirects(netlifyRedirects)) {
+    failures.push('_redirects: required permanent legacy redirects are missing');
   }
 
   if (failures.length) {

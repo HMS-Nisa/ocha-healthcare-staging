@@ -28,7 +28,7 @@ Ocha tidak menilai rekam medis, memberikan diagnosis, atau memberi saran medis. 
 ## Cara meminta jadwal melalui Ocha
 
 1. Buka [direktori dokter Ocha](/doctors/) dan pilih spesialis yang tersedia.
-2. Pilih slot pada kalender dokter.
+2. Ajukan tanggal dan waktu pilihan pada kalender dokter.
 3. Lanjutkan ke WhatsApp melalui alur pemesanan untuk menghubungi agen Ocha.
 4. Agen meninjau permintaan secara manual dan membantu koordinasi dengan mitra yang sesuai dalam jaringan Ocha.
 

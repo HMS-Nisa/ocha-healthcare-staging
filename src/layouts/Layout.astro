@@ -2,6 +2,7 @@
 // src/layouts/Layout.astro
 import { Menu, X, Search } from 'lucide-react';
 import SeoHead from '../components/SeoHead.astro';
+import Footer from '../components/Footer.astro';
 
 const {
 	title,
@@ -121,18 +122,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 			<slot />
 		</div>
 
-		{/* === FOOTER === */}
-		<footer class="bg-white border-t border-slate-200 py-12 mt-auto">
-			<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-				<div class="opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
-					<img src="/assets/logo.jpg" alt="Ocha Healthcare" class="h-10 w-auto object-contain mix-blend-multiply" />
-				</div>
-				<div class="text-slate-400 text-sm text-center md:text-right font-medium">
-					<p>© {new Date().getFullYear()} Ocha Healthcare. Hak cipta dilindungi.</p>
-					<p class="mt-1 text-xs">Ocha Healthcare Sdn Bhd 202501013492 (1614906-U)</p>
-				</div>
-			</div>
-		</footer>
+		<Footer />
 
 		{/* === MOBILE MENU SCRIPT (With Outside Tap Detection) === */}
 		<script is:inline>

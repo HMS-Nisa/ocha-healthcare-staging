@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
+  assertUniqueDoctorIds,
   countWords,
   hasRequiredDoctorFields,
   isDoctorIndexable,
+  uniqueIndexableDoctorCount,
 } from '../src/lib/indexability.js';
 
 const base = {
@@ -43,6 +45,26 @@ test('indexes a complete doctor with three verified differentiators', () => {
 test('does not index a thin or incomplete doctor', () => {
   assert.equal(isDoctorIndexable(base), false);
   assert.equal(isDoctorIndexable({ ...base, hospital: '' }), false);
+});
+
+test('rejects every duplicate doctor ID after normalization before deduplication', () => {
+  assert.throws(
+    () => assertUniqueDoctorIds([{ id: ' Dr-A ' }, { id: 'dr-a' }, { id: 'DR-B' }, { id: ' dr-b ' }]),
+    /dr-a.*dr-b/i,
+  );
+  assert.equal(assertUniqueDoctorIds([{ id: 'dr-a' }, { id: 'dr-b' }, { id: '' }]), true);
+});
+
+test('specialty eligibility counts unique indexable provider IDs only', () => {
+  assert.equal(uniqueIndexableDoctorCount([
+    { id: 'DR-A', indexable: true },
+    { id: ' dr-a ', indexable: true },
+    { id: 'dr-b', indexable: false },
+  ]), 1);
+  assert.equal(uniqueIndexableDoctorCount([
+    { id: 'dr-a', indexable: true },
+    { id: 'dr-b', indexable: true },
+  ]), 2);
 });
 
 test('provider page sources contain no external placeholder service', () => {

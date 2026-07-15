@@ -15,7 +15,7 @@ const magnetCollection = defineCollection({
     title: z.string(),
     headline: z.string(),
     subheadline: z.string(),
-    ctaText: z.string().default('Download Sekarang'),
+    ctaText: z.string().default('Unduh Sekarang'),
     coverImage: z.string(),
     benefits: z.array(z.string()),
     formUrl: z.string().optional(), 

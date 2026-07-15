@@ -1,3 +1,5 @@
+import { uniqueIndexableDoctorCount } from './indexability.js';
+
 export function slugifySegment(value = '') {
   return String(value)
     .normalize('NFKD')
@@ -14,5 +16,5 @@ export function specialtyLocationSlug(specialty, city) {
 }
 
 export function isSpecialtyLocationIndexable(doctors = []) {
-  return doctors.filter((doctor) => doctor.indexable === true).length >= 2;
+  return uniqueIndexableDoctorCount(doctors) >= 2;
 }

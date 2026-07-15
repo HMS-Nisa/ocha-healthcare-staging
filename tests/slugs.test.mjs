@@ -17,13 +17,13 @@ test('normalizes accents and ampersands deterministically', () => {
 });
 
 test('requires two indexable providers', () => {
-  assert.equal(isSpecialtyLocationIndexable([{ indexable: true }]), false);
+  assert.equal(isSpecialtyLocationIndexable([{ id: 'dr-a', indexable: true }]), false);
   assert.equal(isSpecialtyLocationIndexable([
-    { indexable: true },
-    { indexable: true },
+    { id: 'dr-a', indexable: true },
+    { id: 'dr-b', indexable: true },
   ]), true);
   assert.equal(isSpecialtyLocationIndexable([
-    { indexable: true },
-    { indexable: false },
+    { id: 'dr-a', indexable: true },
+    { id: 'dr-b', indexable: false },
   ]), false);
 });

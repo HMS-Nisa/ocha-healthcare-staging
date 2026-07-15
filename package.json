@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "npm run build:verified",
     "build:site": "astro build",
     "filter:sitemap": "node scripts/filter-sitemap.mjs",
     "build:verified": "npm run build:site && npm run filter:sitemap && npm run audit:seo",

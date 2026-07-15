@@ -1,28 +1,13 @@
 // src/components/BookingWidget.jsx
-// Tier 1 — calendar + hourly time slots → WhatsApp deep link
+// Preferred appointment request time → WhatsApp deep link
 
 import { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { normalizeDimension, track } from '../lib/analytics.js';
 
-// ── Consultation hours ────────────────────────────────────────────────────────
-// 0 = Sunday … 6 = Saturday. null = closed.
-// Jason to confirm exact hours per doctor post-launch.
-const DEFAULT_HOURS = {
-  0: null,
-  1: { start: '09:00', end: '17:00' },
-  2: { start: '09:00', end: '17:00' },
-  3: { start: '09:00', end: '17:00' },
-  4: { start: '09:00', end: '17:00' },
-  5: { start: '09:00', end: '17:00' },
-  6: { start: '09:00', end: '12:00' },
-};
-
-const SLOT_MINUTES        = 60;  // hourly
+// These are patient preferences, not provider opening hours or availability.
+const PREFERRED_REQUEST_TIMES = ['09:00', '11:00', '14:00', '16:00'];
 const BOOKING_WINDOW_DAYS = 30;
-
-// ⚠️ Add Malaysian public holidays — format: 'YYYY-MM-DD'
-const MY_HOLIDAYS = [];
 
 // ── Locale ────────────────────────────────────────────────────────────────────
 const MONTHS_FULL  = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -37,24 +22,6 @@ const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`
 function formatTime(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
   return `${h > 12 ? h-12 : h === 0 ? 12 : h}:${pad(m)} ${h >= 12 ? 'PM' : 'AM'}`;
-}
-
-function generateSlots(date) {
-  const h = DEFAULT_HOURS[date.getDay()];
-  if (!h) return [];
-  const [sh, sm] = h.start.split(':').map(Number);
-  const [eh, em] = h.end.split(':').map(Number);
-  const endMin = eh * 60 + em;
-  let cur = sh * 60 + sm;
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-  const nowMin  = isToday ? now.getHours() * 60 + now.getMinutes() : -1;
-  const slots   = [];
-  while (cur < endMin) {
-    if (cur > nowMin) slots.push(`${pad(Math.floor(cur/60))}:${pad(cur%60)}`);
-    cur += SLOT_MINUTES;
-  }
-  return slots;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -83,10 +50,7 @@ export default function BookingWidget({
     track('view_doctor_profile', analyticsParameters);
   }, [analyticsParameters.specialty, analyticsParameters.location]);
 
-  const isAvailable = d =>
-    d >= today && d <= maxDate &&
-    !!DEFAULT_HOURS[d.getDay()] &&
-    !MY_HOLIDAYS.includes(ymd(d));
+  const isRequestableDate = d => d >= today && d <= maxDate;
 
   const prevDisabled = viewYear === today.getFullYear() && viewMonth <= today.getMonth();
   const nextDisabled = new Date(viewYear, viewMonth + 1, 1) > maxDate;
@@ -109,8 +73,7 @@ export default function BookingWidget({
     ...Array.from({ length: daysInMonth }, (_, i) => new Date(viewYear, viewMonth, i+1)),
   ];
 
-  const slots   = selDate ? generateSlots(selDate) : [];
-  const dayHours = selDate ? DEFAULT_HOURS[selDate.getDay()] : null;
+  const preferredTimes = selDate ? PREFERRED_REQUEST_TIMES : [];
 
   const fallbackMsg = `Halo Ocha, saya ingin konsultasi dan minta estimasi biaya dengan ${doctorName} di ${hospital}.`;
   const fallbackUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(fallbackMsg)}`;
@@ -164,13 +127,13 @@ export default function BookingWidget({
           <div className="grid grid-cols-7 gap-y-1">
             {cells.map((date, i) => {
               if (!date) return <div key={`e${i}`} />;
-              const available = isAvailable(date);
+              const requestable = isRequestableDate(date);
               const isToday   = ymd(date) === ymd(today);
               const selected  = selDate && ymd(date) === ymd(selDate);
               const isSunday  = date.getDay() === 0;
 
               return (
-                <button key={ymd(date)} disabled={!available}
+                <button key={ymd(date)} disabled={!requestable}
                   onClick={() => {
                     setSelDate(date);
                     setSelTime(null);
@@ -180,7 +143,7 @@ export default function BookingWidget({
                     'mx-auto w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all',
                     selected
                       ? 'bg-[#276CA1] text-white font-bold shadow-md shadow-blue-900/20'
-                      : available
+                      : requestable
                         ? 'text-slate-700 hover:bg-blue-50 hover:text-[#276CA1] cursor-pointer'
                         : isSunday
                           ? 'text-red-200 cursor-not-allowed'
@@ -197,7 +160,7 @@ export default function BookingWidget({
           </div>
 
           <p className="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">
-            Pilih waktu yang Anda inginkan. Tim Ocha akan memeriksa ketersediaan dan mengonfirmasi jadwal melalui WhatsApp.
+            Pilih waktu yang Anda inginkan setelah memilih tanggal. Ini adalah permintaan; tim Ocha akan memeriksa ketersediaan dan mengonfirmasi melalui WhatsApp.
           </p>
         </div>
 
@@ -207,7 +170,7 @@ export default function BookingWidget({
           {!selDate ? (
             <div className="flex-1 flex flex-col items-center justify-center py-8 rounded-2xl bg-slate-50 border border-dashed border-slate-200">
               <div className="text-3xl mb-3">📅</div>
-              <p className="text-sm font-medium text-slate-500 text-center">Pilih tanggal<br />untuk melihat slot tersedia</p>
+              <p className="text-sm font-medium text-slate-500 text-center">Pilih tanggal<br />untuk mengajukan waktu pilihan</p>
             </div>
           ) : (
             <div className="flex-1">
@@ -215,16 +178,12 @@ export default function BookingWidget({
                 <span className="text-sm font-bold text-slate-800">
                   {DAYS_ID[selDate.getDay()]}, {selDate.getDate()} {MONTHS_SHORT[selDate.getMonth()]}
                 </span>
-                {dayHours && (
-                  <span className="text-[11px] text-slate-400 bg-slate-100 px-2 py-1 rounded-full">
-                    {formatTime(dayHours.start)} – {formatTime(dayHours.end)}
-                  </span>
-                )}
+                <span className="text-[11px] text-slate-400 bg-slate-100 px-2 py-1 rounded-full">Waktu pilihan</span>
               </div>
 
-              {slots.length > 0 ? (
+              {preferredTimes.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {slots.map(t => (
+                  {preferredTimes.map(t => (
                     <button key={t} onClick={() => {
                       setSelTime(t);
                       track('select_booking_time', analyticsParameters);
@@ -241,7 +200,7 @@ export default function BookingWidget({
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 rounded-2xl bg-slate-50 border border-dashed border-slate-200">
-                  <p className="text-sm text-slate-400 text-center">Tidak ada slot tersedia hari ini.</p>
+                  <p className="text-sm text-slate-400 text-center">Belum ada pilihan waktu untuk tanggal ini. Hubungi agen Ocha melalui WhatsApp.</p>
                 </div>
               )}
             </div>

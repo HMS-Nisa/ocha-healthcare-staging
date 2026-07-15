@@ -3,11 +3,27 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {
   containsSensitiveAnalyticsPayload,
+  findDuplicateValues,
+  hasRequiredNetlifyRedirects,
   hasProhibitedPositioning,
   isIndexableByDefault,
   resolveInternalTarget,
   targetPathForUrl,
 } from '../scripts/seo-audit.mjs';
+
+test('reports duplicate non-empty titles and descriptions', () => {
+  assert.deepEqual(findDuplicateValues(['Judul A', 'Judul B', 'Judul A', '']), ['Judul A']);
+});
+
+test('requires all permanent Netlify legacy redirects in generated output', () => {
+  assert.equal(hasRequiredNetlifyRedirects('/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301\n'), false);
+  assert.equal(hasRequiredNetlifyRedirects([
+    '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301',
+    '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301',
+    '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301',
+    '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301',
+  ].join('\n')), true);
+});
 
 test('treats missing robots metadata as indexable by default', () => {
   assert.equal(isIndexableByDefault('<html lang="id"><title>Page</title></html>'), true);

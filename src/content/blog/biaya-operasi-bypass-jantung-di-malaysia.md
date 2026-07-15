@@ -68,7 +68,7 @@ Sebagai rujukan mengenai layanan yang tersedia di Malaysia, [Institut Jantung Ne
 
 ## Cara meminta estimasi dan memilih jadwal melalui Ocha
 
-1. Pilih slot konsultasi awal di kalender Ocha.
+1. Ajukan tanggal dan waktu pilihan di kalender Ocha.
 2. Lanjutkan percakapan melalui WhatsApp dengan agen Ocha.
 3. Sampaikan kebutuhan awal dan dokumen yang tersedia secara langsung kepada agen.
 4. Tim Ocha meninjau permintaan secara manual dan, bila sesuai, menghubungkan Anda dengan spesialis atau rumah sakit terverifikasi dalam jaringan mitra.

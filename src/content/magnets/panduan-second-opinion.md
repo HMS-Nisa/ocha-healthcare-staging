@@ -1,14 +1,14 @@
 ---
 title: "Panduan & Checklist Second Opinion (Edisi 2026)"
 headline: "Yakin Operasi Adalah Satu-satunya Jalan?"
-subheadline: "30% diagnosa medis berubah setelah opini kedua. Gunakan panduan ini untuk mempersiapkan dokumen medis Anda agar dokter di Malaysia bisa memberikan evaluasi yang akurat tanpa perlu tes ulang yang mahal."
-ctaText: "Download Panduan Lengkap"
+subheadline: "Gunakan panduan ini untuk menyiapkan dokumen yang sudah tersedia sebelum meminta opini kedua dari dokter di Malaysia. Dokter atau rumah sakit akan menentukan apakah pemeriksaan tambahan diperlukan."
+ctaText: "Unduh Panduan Lengkap"
 coverImage: "/uploads/ocha-second-opinion.jpg"
 formId: "ExtHZ1c0bo6WxhQmBrSS" 
 benefits:
-  - "Hemat Biaya: Hindari tes ulang (MRI/CT-Scan) dengan membawa dokumen yang valid."
-  - "Kepastian Medis: Konfirmasi apakah tindakan operasi benar-benar diperlukan atau ada alternatif lain."
-  - "Akses Spesialis: Cara memilih sub-spesialis yang tepat untuk kasus kompleks Anda."
+  - "Persiapan Dokumen: Catat dokumen medis yang sudah tersedia untuk dibawa saat konsultasi."
+  - "Pertanyaan Terarah: Siapkan pertanyaan untuk dibahas langsung dengan dokter."
+  - "Koordinasi Spesialis: Pahami informasi awal yang membantu tim Ocha menghubungkan Anda dalam jaringan mitra."
 ---
 
 Berikut adalah **preview** langkah penting yang sering dilewatkan pasien saat mencari opini kedua:

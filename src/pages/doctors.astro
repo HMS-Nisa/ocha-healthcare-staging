@@ -3,6 +3,8 @@
 import LandingLayout from '../layouts/LandingLayout.astro'; // 👈 Switched to LandingLayout (Has Navbar/Footer)
 import Directory from '../components/Directory.jsx';
 import { GOOGLE_SHEET_URL } from '../config';
+import { isDoctorIndexable, validatedDoctorRecords } from '../lib/indexability.js';
+import { absoluteUrl } from '../lib/seo.js';
 
 // 🚀 FETCH DATA AT BUILD TIME (SERVER-SIDE)
 let allDoctors = [];
@@ -12,26 +14,44 @@ try {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const rawData = await response.json();
 
-  // 🛡️ BULLETPROOF FILTER & DEDUPLICATOR
-  // 1. Remove any blank/empty rows
-  const validDoctors = rawData.filter(doc => doc.name && doc.id);
-  
-  // 2. Deduplicate exact IDs, then reject normalized ID collisions.
-  allDoctors = Array.from(new Map(validDoctors.map(doc => [String(doc.id), doc])).values());
-  const normalizedIds = allDoctors.map(doc => String(doc.id).trim().toLowerCase());
-  if (new Set(normalizedIds).size !== normalizedIds.length) {
-    throw new Error('Duplicate doctor IDs remain after normalization');
-  }
+  allDoctors = validatedDoctorRecords(rawData);
 
   console.log(`✅ Fetched ${allDoctors.length} unique doctors at ${new Date().toLocaleTimeString()}`);
 } catch (error) {
   throw new Error(`Doctor data fetch failed: ${error instanceof Error ? error.message : String(error)}`);
 }
+
+const canonical = absoluteUrl('/doctors/');
+const eligibleDoctors = allDoctors.filter(isDoctorIndexable);
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${canonical}#webpage`,
+  url: canonical,
+  name: 'Cari Dokter Spesialis di Malaysia',
+  description: 'Direktori dokter spesialis dalam jaringan rumah sakit mitra Ocha di Malaysia.',
+  inLanguage: 'id-ID',
+  isPartOf: { '@id': 'https://ocha.health/#website' },
+};
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  '@id': `${canonical}#doctor-list`,
+  numberOfItems: eligibleDoctors.length,
+  itemListElement: eligibleDoctors.map((doctor, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: doctor.name,
+    url: absoluteUrl(`/doctor/${doctor.id}/`),
+  })),
+};
 ---
 
 <LandingLayout 
   title="Cari Dokter Spesialis di Malaysia | Ocha Healthcare"
   description="Jelajahi dokter spesialis dalam jaringan mitra terverifikasi Ocha di Malaysia. Cari berdasarkan lokasi, rumah sakit, dan spesialisasi."
+  canonicalPath="/doctors/"
+  schemas={[webPageSchema, itemListSchema]}
 >
   
   {/* Background Texture */}
