@@ -10,9 +10,12 @@ const blogCollection = defineCollection({
     author: z.string().default('Ocha Team'),
     reviewer: z.string().optional(),
     date: z.date(),
+    updatedDate: z.coerce.date(),
     image: z.string(),
     category: z.string(),
     readTime: z.string(),
+    sources: z.array(z.object({ label: z.string(), url: z.string().url() })).min(2),
+    medicalDisclaimer: z.string().min(40),
   }),
 });
 

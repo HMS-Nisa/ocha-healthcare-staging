@@ -2,11 +2,17 @@
 title: "Panduan Second Opinion: 5 Langkah Verifikasi Diagnosa Medis"
 subtitle: "Jangan ambil keputusan medis besar jika masih ragu. Pelajari cara mendapatkan pendapat kedua dari ahli medis internasional."
 author: "Ocha Medical Team"
-reviewer: "Dr. Patrick Tiau"
 date: 2026-01-09
+updatedDate: 2026-07-15
 image: "/uploads/ocha-second-opinion.jpg"
 category: "Patient Guide"
 readTime: "5 min read"
+sources:
+  - label: "NHS — Coronary artery bypass graft: what it is"
+    url: "https://www.nhs.uk/tests-and-treatments/coronary-artery-bypass-graft/what-it-is/"
+  - label: "Institut Jantung Negara — Heart Surgery"
+    url: "https://www.ijn.com.my/heart-surgery/"
+medicalDisclaimer: "Informasi ini bersifat umum dan tidak menggantikan pemeriksaan, diagnosis, atau saran dari dokter yang menangani Anda."
 ---
 
 Salah diagnosa adalah risiko nyata. Panduan ini akan membantu Anda menentukan **KAPAN** Anda butuh pendapat kedua dan **BAGAIMANA** cara mendapatkannya dari ahli medis internasional tanpa harus langsung terbang ke sana.
