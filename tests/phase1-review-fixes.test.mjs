@@ -46,10 +46,10 @@ test('legal pages use a stable editorial update date and blog layout shares Foot
 test('Netlify redirect rules permanently cover every legacy route', () => {
   const redirects = read('../public/_redirects');
   const expected = [
-    '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301',
-    '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301',
-    '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301',
-    '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301',
+    '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301!',
+    '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301!',
+    '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301!',
+    '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301!',
   ];
   for (const rule of expected) assert.match(redirects, new RegExp(rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 });

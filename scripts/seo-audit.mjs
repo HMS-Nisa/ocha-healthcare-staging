@@ -8,10 +8,10 @@ const dist = path.join(projectRoot, 'dist');
 const failures = [];
 const siteOrigin = 'https://ocha.health';
 const requiredNetlifyRedirects = [
-  '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301',
-  '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301',
-  '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301',
-  '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301',
+  '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301!',
+  '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301!',
+  '/dokter/dokter-spesialis-ortopedi-tulang--penang/ /dokter/dokter-spesialis-ortopedi-tulang-penang/ 301!',
+  '/dokter/dokter-spesialis-ortopedi-tulang--sarawak/ /dokter/dokter-spesialis-ortopedi-tulang-sarawak/ 301!',
 ];
 
 async function walk(directory) {
