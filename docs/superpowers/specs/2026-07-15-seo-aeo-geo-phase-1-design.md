@@ -1,6 +1,6 @@
 # Ocha Healthcare SEO, AEO, and GEO Phase 1 Design
 
-Date: 15 July 2026  
+Date: 15 July 2026
 Status: Approved direction, pending written-spec review
 
 ## 1. Purpose
