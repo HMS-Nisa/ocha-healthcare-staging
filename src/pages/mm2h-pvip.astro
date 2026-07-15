@@ -3,6 +3,7 @@
 // Malaysia MM2H & PVIP long-term stay support — in partnership with Daro International
 import LandingLayout from '../layouts/LandingLayout.astro';
 import { WA_NUMBER } from '../config';
+import { absoluteUrl } from '../lib/seo.js';
 import {
   ShieldCheck, HeartHandshake, GraduationCap, Home, Wallet, Globe,
   Building2, Users, CheckCircle2, MessageCircle, Plane, Briefcase,
@@ -50,10 +51,10 @@ const pvipBenefits = [
 const pvipReqs = ['Participation fee', 'Fixed deposit', 'Income proof', 'Medical check-up', 'Medical insurance', 'Relationship proof'];
 
 const steps = [
-  { n: '01', title: 'Consultation & Eligibility Review', desc: 'We assess your motivation and outline an application strategy.', note: 'Typically takes a few days.' },
-  { n: '02', title: 'Document Review & Submission', desc: 'We compile and review your documents, then submit the application.', note: 'Timeline depends on client readiness and document completeness.' },
+  { n: '01', title: 'Consultation & Eligibility Review', desc: 'Daro assesses your goals and outlines an application strategy after Ocha makes the introduction.', note: 'Typically takes a few days.' },
+  { n: '02', title: 'Document Review & Submission', desc: 'Daro compiles and reviews your documents, then coordinates the application submission.', note: 'Timeline depends on client readiness and document completeness.' },
   { n: '03', title: 'Official Review', desc: 'The authority assesses the application and may request additional information.', note: 'Processing time varies and approval is not guaranteed.' },
-  { n: '04', title: 'Endorsement', desc: 'We assist with conditional approval requirements and the visa endorsement process.', note: 'Typically completed within 2 weeks, subject to readiness.' },
+  { n: '04', title: 'Endorsement', desc: 'Daro assists with conditional approval requirements and the visa endorsement process.', note: 'Typically completed within 2 weeks, subject to readiness.' },
 ];
 
 const comparison = [
@@ -90,16 +91,24 @@ const faqs = [
   { q: 'Is approval guaranteed?', a: 'No. Programme requirements may change from time to time and approval is subject to the relevant Malaysian authorities. Applicants should obtain updated advice based on their personal circumstances before making any decision.' },
 ];
 
-const canonical = new URL('/mm2h-pvip', Astro.site).href;
+const canonical = absoluteUrl('/mm2h-pvip/');
 const jsonLd = [
-  { "@context": "https://schema.org", "@type": "WebPage", "name": pageTitle, "description": pageDesc, "url": canonical, "inLanguage": "en", "isPartOf": { "@type": "WebSite", "name": "Ocha Healthcare", "url": "https://ocha.health" } },
-  { "@context": "https://schema.org", "@type": "Service", "serviceType": "Malaysia long-term stay visa advisory (MM2H & PVIP)", "name": "Malaysia MM2H & PVIP Long-Term Stay Support", "description": pageDesc, "areaServed": "Malaysia", "provider": { "@type": "Organization", "name": "Ocha Healthcare", "url": "https://ocha.health" }, "offers": [ { "@type": "Offer", "name": "Malaysia My Second Home (MM2H)" }, { "@type": "Offer", "name": "Premium Visa Programme (PVIP)" } ] },
+  { '@context': 'https://schema.org', '@type': 'WebPage', '@id': `${canonical}#webpage`, name: pageTitle, description: pageDesc, url: canonical, inLanguage: 'en', isPartOf: { '@id': 'https://ocha.health/#website' }, mainEntity: { '@id': `${canonical}#service` } },
+  { '@context': 'https://schema.org', '@type': 'Service', '@id': `${canonical}#service`, url: canonical, serviceType: 'Malaysia long-term stay visa advisory (MM2H & PVIP)', name: 'Malaysia MM2H & PVIP Long-Term Stay Support', description: pageDesc, areaServed: 'Malaysia', provider: { '@type': 'Organization', name: 'Daro International' }, broker: { '@id': 'https://ocha.health/#organization' }, offers: [ { '@type': 'Offer', name: 'Malaysia My Second Home (MM2H)' }, { '@type': 'Offer', name: 'Premium Visa Programme (PVIP)' } ] },
   { "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": faqs.map(f => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } })) },
-  { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ocha.health" }, { "@type": "ListItem", "position": 2, "name": "MM2H & PVIP", "item": canonical } ] }
+  { "@context": "https://schema.org", "@type": "BreadcrumbList", "@id": `${canonical}#breadcrumb`, "itemListElement": [ { "@type": "ListItem", "position": 1, "name": "Home", "item": absoluteUrl('/') }, { "@type": "ListItem", "position": 2, "name": "MM2H & PVIP", "item": canonical } ] }
 ];
 ---
 
-<LandingLayout title={pageTitle} description={pageDesc}>
+<LandingLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonicalPath="/mm2h-pvip/"
+  robots="noindex,follow"
+  lang="en"
+  schemas={jsonLd}
+  enableGhlTracking
+>
   <main>
 
     {/* ============ HERO ============ */}
@@ -343,13 +352,13 @@ const jsonLd = [
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">How Ocha &amp; Daro work together</h2>
-          <p class="text-slate-500 leading-relaxed">Together we provide a complete pathway — for clients coming to Malaysia for treatment, and those considering it as a longer-term home, recovery base, retirement destination or family hub.</p>
+          <p class="text-slate-500 leading-relaxed">Ocha makes the introduction. Daro independently advises eligible clients on MM2H or PVIP applications, while Ocha separately coordinates introductions to partner hospitals and specialists when requested.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-6 mb-8">
           <div class="bg-slate-50 rounded-2xl border border-slate-100 p-8">
             <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-5"><HeartPulse className="w-6 h-6 text-indigo-600" /></div>
             <h3 class="text-lg font-bold text-slate-900 mb-2">Ocha — your healthcare journey</h3>
-            <p class="text-sm text-slate-500 leading-relaxed">Specialist matching, medical appointment coordination, hospital arrangements and related patient support in Malaysia.</p>
+            <p class="text-sm text-slate-500 leading-relaxed">Introductions to suitable specialists or hospitals within Ocha's verified partner network and appointment coordination when requested.</p>
           </div>
           <div class="bg-slate-50 rounded-2xl border border-slate-100 p-8">
             <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-5"><Building2 className="w-6 h-6 text-blue-500" /></div>
@@ -404,7 +413,6 @@ const jsonLd = [
 
   </main>
 
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </LandingLayout>
 
 <style>

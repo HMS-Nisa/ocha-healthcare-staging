@@ -7,6 +7,8 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const dist = path.join(projectRoot, 'dist');
 const failures = [];
 const siteOrigin = 'https://ocha.health';
+const ghlTrackingUrl = 'https://link.ocha.health/js/external-tracking.js';
+const ghlTrackingId = 'tk_1d3f5f01348b42b7a2b92e23faa347cd';
 const requiredNetlifyRedirects = [
   '/article/template/ /blog/biaya-operasi-bypass-jantung-di-malaysia/ 301!',
   '/dokter/dokter-spesialis-ortopedi-tulang--kuala-lumpur/ /dokter/dokter-spesialis-ortopedi-tulang-kuala-lumpur/ 301!',
@@ -45,6 +47,13 @@ export function isIndexableByDefault(html) {
   const robotsTag = tagWithAttribute(html, 'meta', 'name', 'robots');
   const directives = attribute(robotsTag, 'content').toLowerCase().split(',').map((value) => value.trim());
   return !directives.includes('noindex');
+}
+
+export function hasGhlTracking(html) {
+  return tags(html, 'script').some((tag) => (
+    attribute(tag, 'src') === ghlTrackingUrl
+    && attribute(tag, 'data-tracking-id') === ghlTrackingId
+  ));
 }
 
 export function findDuplicateValues(values = []) {
@@ -138,7 +147,15 @@ async function main() {
 
   for (const file of htmlFiles) {
     const html = await fs.readFile(file, 'utf8');
-    const relative = path.relative(dist, file);
+    const relative = path.relative(dist, file).split(path.sep).join('/');
+    const isLongStayPage = relative === 'mm2h-pvip/index.html';
+    if (isLongStayPage) {
+      if (isIndexableByDefault(html)) failures.push(`${relative}: must remain noindex until claims are approved and sourced`);
+      if (!/<html[^>]+lang=["']en["']/i.test(html)) failures.push(`${relative}: missing lang=en`);
+      if (!hasGhlTracking(html)) failures.push(`${relative}: missing approved GHL tracking`);
+    } else if (hasGhlTracking(html)) {
+      failures.push(`${relative}: GHL tracking is restricted to the MM2H/PVIP page`);
+    }
     if (hasProhibitedPositioning(html)) failures.push(`${relative}: out-of-scope positioning`);
     if (!isIndexableByDefault(html)) continue;
 
@@ -207,6 +224,7 @@ async function main() {
   const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => match[1]);
   if (sitemapUrls.length === 0) failures.push('sitemap-0.xml: contains no URLs');
   if (/\/article\/template\/|--/.test(sitemap)) failures.push('sitemap-0.xml: mock or malformed URL');
+  if (/\/mm2h-pvip\//.test(sitemap)) failures.push('sitemap-0.xml: MM2H/PVIP must remain excluded while noindex');
   if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap-0.xml: duplicate URL');
 
   const sitemapEntries = await Promise.all(sitemapUrls.map(async (url) => {

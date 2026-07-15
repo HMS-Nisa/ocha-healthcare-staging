@@ -14,6 +14,8 @@ const {
     ogImage,
     contentType = 'website',
     schemas = [],
+    lang = 'id',
+    enableGhlTracking = false,
 } = Astro.props;
 // Keep origin/main's `ogImage` prop compatible while routing all metadata
 // through Phase 1's single SEO component.
@@ -26,7 +28,7 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
 ---
 
 <!doctype html>
-<html lang="id" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
     <head>
         <meta charset="UTF-8" />
         {/* 🚀 ADDED: Prevent scaling on input focus for a more app-like feel */}
@@ -62,8 +64,9 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
             })(window,document,'script','dataLayer','GTM-P59DXCBC');
         </script>
 
-        {/* 📊 GoHighLevel (GHL) external tracking */}
-        <script is:inline src="https://link.ocha.health/js/external-tracking.js" data-tracking-id="tk_1d3f5f01348b42b7a2b92e23faa347cd"></script>
+        {enableGhlTracking && (
+            <script is:inline src="https://link.ocha.health/js/external-tracking.js" data-tracking-id="tk_1d3f5f01348b42b7a2b92e23faa347cd"></script>
+        )}
     </head>
     
     <body class="bg-slate-50 font-sans text-slate-900 antialiased flex flex-col min-h-screen overflow-x-hidden">
