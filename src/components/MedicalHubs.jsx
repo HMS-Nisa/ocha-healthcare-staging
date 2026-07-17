@@ -79,6 +79,8 @@ export default function MedicalHubs() {
                   src={hub.image} 
                   alt={hub.name} 
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
                    onError={(e) => {
                     console.error("Image failed to load:", hub.image);
                     e.target.style.backgroundColor = '#ccc';
