@@ -36,7 +36,7 @@ Run:
 
 ```sql
 select id, name from public.doctors
-where id in ('kan-choon-hong', 'yoong-meow-foong', 'ng-khai-choon', 'lee-hock-keong', 'victor-ooi-keat-jin', 'ooi-kim-soon', 'lee-chun-lin', 'kelvin-lim-liang-hooi')
+where id in ('kan-choon-hong', 'yoong-meow-foong', 'ng-khai-oon', 'lee-hock-keong', 'victor-ooi-keat-jin', 'oh-kim-soon-prof-dato-dr', 'lee-chun-lin', 'kelvin-lim-liang-hooi')
 order by id;
 ```
 
@@ -53,7 +53,7 @@ Run:
 ```sql
 select id, name, specialty, hospital, published
 from public.doctors
-where id in ('kan-choon-hong', 'yoong-meow-foong', 'ng-khai-choon', 'lee-hock-keong', 'victor-ooi-keat-jin', 'ooi-kim-soon', 'lee-chun-lin', 'kelvin-lim-liang-hooi')
+where id in ('kan-choon-hong', 'yoong-meow-foong', 'ng-khai-oon', 'lee-hock-keong', 'victor-ooi-keat-jin', 'oh-kim-soon-prof-dato-dr', 'lee-chun-lin', 'kelvin-lim-liang-hooi')
 order by id;
 ```
 
