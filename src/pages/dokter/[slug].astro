@@ -2,7 +2,7 @@
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { Building2, Calendar, CheckCircle2, MapPin, MessageCircle } from 'lucide-react';
-import { GOOGLE_SHEET_URL } from '../../config';
+import { getPublishedDoctors } from '../../lib/doctors.js';
 import { isDoctorIndexable, validatedDoctorRecords } from '../../lib/indexability.js';
 import {
   isSpecialtyLocationIndexable,
@@ -45,12 +45,7 @@ export async function getStaticPaths() {
     return 'Malaysia';
   };
 
-  const response = await fetch(GOOGLE_SHEET_URL);
-  if (!response.ok) throw new Error(`Specialty data fetch failed: HTTP ${response.status}`);
-  const data = await response.json();
-  if (!Array.isArray(data)) throw new Error('Specialty data fetch failed: expected an array');
-
-  const doctors = validatedDoctorRecords(data, ['id', 'name', 'specialty', 'location'])
+  const doctors = validatedDoctorRecords(await getPublishedDoctors(), ['id', 'name', 'specialty', 'location'])
     .map((doctor) => ({
       ...doctor,
       city: locationName(doctor.location),

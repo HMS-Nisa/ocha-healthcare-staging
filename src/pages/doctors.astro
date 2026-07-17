@@ -2,21 +2,15 @@
 // src/pages/doctors.astro
 import LandingLayout from '../layouts/LandingLayout.astro'; // 👈 Switched to LandingLayout (Has Navbar/Footer)
 import Directory from '../components/Directory.jsx';
-import { GOOGLE_SHEET_URL } from '../config';
+import { getPublishedDoctors } from '../lib/doctors.js';
 import { isDoctorIndexable, validatedDoctorRecords } from '../lib/indexability.js';
 import { absoluteUrl } from '../lib/seo.js';
 
 // 🚀 FETCH DATA AT BUILD TIME (SERVER-SIDE)
 let allDoctors = [];
 try {
-  const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
-  const response = await fetch(noCacheUrl, { cache: 'no-store' });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const rawData = await response.json();
-
-  allDoctors = validatedDoctorRecords(rawData);
-
-  console.log(`✅ Fetched ${allDoctors.length} unique doctors at ${new Date().toLocaleTimeString()}`);
+  allDoctors = validatedDoctorRecords(await getPublishedDoctors());
+  console.log(`Fetched ${allDoctors.length} published doctors from Supabase`);
 } catch (error) {
   throw new Error(`Doctor data fetch failed: ${error instanceof Error ? error.message : String(error)}`);
 }
