@@ -23,6 +23,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# local Supabase doctor import credentials
+.env.doctors-import
+
 # macOS-specific files
 .DS_Store
 

@@ -58,3 +58,12 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Doctor directory data
+
+The static doctor directory builds from Supabase. Set these Netlify build environment variables for every deploy:
+
+- `PUBLIC_SUPABASE_URL`
+- `PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+Both are public client-safe values protected by the `public.doctors` RLS policy. Do not set `SUPABASE_SERVICE_ROLE_KEY` in Netlify or commit it to the repository. Run `node scripts/import-doctors-to-supabase.mjs` only from a local shell with its three required local environment variables.

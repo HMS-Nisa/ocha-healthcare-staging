@@ -79,3 +79,20 @@ test('provider page sources contain no external placeholder service', () => {
     assert.match(source, /\/assets\/doctor-placeholder\.png/);
   }
 });
+
+test('provider routes use the shared Supabase reader and contain no Google Apps Script URL', () => {
+  const providerSources = [
+    '../src/pages/doctors.astro', '../src/pages/doctor/[id].astro', '../src/pages/dokter/[slug].astro',
+  ].map(path => readFileSync(new URL(path, import.meta.url), 'utf8'));
+  for (const source of providerSources) {
+    assert.match(source, /getPublishedDoctors/);
+    assert.doesNotMatch(source, /GOOGLE_SHEET_URL|script\.google\.com/);
+  }
+});
+
+test('directory has no runtime doctor data fallback', () => {
+  const directory = readFileSync(new URL('../src/components/Directory.jsx', import.meta.url), 'utf8');
+  const config = readFileSync(new URL('../src/config.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(directory, /GOOGLE_SHEET_URL|script\.google\.com|fetch\(urlWithCacheBuster/);
+  assert.doesNotMatch(config, /GOOGLE_SHEET_URL|script\.google\.com/);
+});

@@ -6,8 +6,9 @@ import {
   CheckCircle2, ChevronLeft, 
   Star, ArrowRight
 } from 'lucide-react';
-import { GOOGLE_SHEET_URL, WA_NUMBER } from '../../config';
+import { WA_NUMBER } from '../../config';
 import BookingWidget from '../../components/BookingWidget.jsx';
+import { getPublishedDoctors } from '../../lib/doctors.js';
 import { isDoctorIndexable, validatedDoctorRecords } from '../../lib/indexability.js';
 import {
   absoluteUrl,
@@ -18,22 +19,7 @@ import {
 // 1. GENERATE STATIC PATHS & PASS RELATED DOCTORS
 export async function getStaticPaths() {
   try {
-    const noCacheUrl = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
-    
-    // 🚀 OMEGA CACHE-BUSTER: Forces the server to download fresh data
-    const response = await fetch(noCacheUrl, {
-        cache: 'no-store',
-        headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-        }
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const data = await response.json();
-    
-    const deduplicatedDoctors = validatedDoctorRecords(data);
+    const deduplicatedDoctors = validatedDoctorRecords(await getPublishedDoctors());
 
     return deduplicatedDoctors.map(doc => {
       const related = deduplicatedDoctors
