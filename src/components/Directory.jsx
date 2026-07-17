@@ -1,7 +1,7 @@
 // src/components/Directory.jsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, MapPin, Filter, Building2, Loader2, ChevronDown } from 'lucide-react';
-import { GOOGLE_SHEET_URL, WA_NUMBER } from '../config'; 
+import { Search, MapPin, Filter, Building2, ChevronDown } from 'lucide-react';
+import { WA_NUMBER } from '../config';
 import { normalizeDimension, track } from '../lib/analytics.js';
 
 // --- HELPER FUNCTIONS ---
@@ -32,12 +32,7 @@ const processDoctors = (data) => {
 export default function Directory({ preloadedDoctors = [], pageType = 'doctor_directory' }) {
   
   // 1. INITIALIZE STATE
-  const [doctors, setDoctors] = useState(() => 
-    preloadedDoctors.length > 0 ? processDoctors(preloadedDoctors) : []
-  );
-  
-  const [loading, setLoading] = useState(preloadedDoctors.length === 0);
-  const [error, setError] = useState(false);
+  const [doctors] = useState(() => processDoctors(preloadedDoctors));
   
   // FILTER STATES
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,48 +58,10 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
      };
   }, [doctors]); 
 
-  const [filterOptions, setFilterOptions] = useState(initialOptions);
-
-  useEffect(() => {
-      if (preloadedDoctors.length > 0) {
-          setFilterOptions(initialOptions);
-      }
-  }, [preloadedDoctors, initialOptions]);
-
   // RESET PAGINATION
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE);
   }, [searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
-
-  // 2. FALLBACK FETCH
-  useEffect(() => {
-    if (preloadedDoctors.length > 0) return; 
-
-    const urlWithCacheBuster = `${GOOGLE_SHEET_URL}?t=${Date.now()}`;
-
-    fetch(urlWithCacheBuster)
-      .then(res => res.json())
-      .then(data => {
-        const processed = processDoctors(data);
-        
-        const uniqueLocs = ['All', ...new Set(processed.map(d => d.cleanState).filter(Boolean))].sort();
-        const uniqueSpecs = ['All', ...new Set(processed.map(d => d.specialty).filter(Boolean))].sort();
-        const uniqueHospitals = ['All', ...new Set(processed.map(d => d.hospital).filter(Boolean))].sort();
-
-        setDoctors(processed);
-        setFilterOptions({ 
-          locations: uniqueLocs, 
-          specialties: uniqueSpecs,
-          hospitals: uniqueHospitals
-        });
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to load doctors:", err);
-        setError(true);
-        setLoading(false);
-      });
-  }, []);
 
   const filteredDoctors = useMemo(() => {
     return doctors.filter(doctor => {
@@ -124,24 +81,6 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
   }, [doctors, searchTerm, selectedSpecialty, selectedLocation, selectedHospital]);
 
   const visibleDoctors = filteredDoctors.slice(0, visibleCount);
-
-  if (loading) {
-      return (
-          <div className="flex flex-col items-center justify-center min-h-[400px] text-slate-400">
-              <Loader2 className="w-10 h-10 animate-spin mb-4 text-[#276CA1]" />
-              <p className="text-sm font-medium">Memuat direktori...</p>
-          </div>
-      );
-  }
-
-  if (error) {
-      return (
-          <div className="text-center py-20 bg-red-50 rounded-3xl border border-red-100 text-red-600">
-              <p className="font-bold mb-2">Direktori tidak dapat dimuat</p>
-              <p className="text-sm">Silakan muat ulang halaman.</p>
-          </div>
-      );
-  }
 
   return (
     <div className="w-full relative">
@@ -169,7 +108,7 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            {filterOptions.locations.map((loc, idx) => (<option key={idx} value={loc}>{loc === 'All' ? 'Semua Lokasi' : loc}</option>))}
+            {initialOptions.locations.map((loc, idx) => (<option key={idx} value={loc}>{loc === 'All' ? 'Semua Lokasi' : loc}</option>))}
           </select>
           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
@@ -182,7 +121,7 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedHospital} onChange={(e) => setSelectedHospital(e.target.value)}
           >
-            {filterOptions.hospitals.map((hosp, idx) => (<option key={idx} value={hosp}>{hosp === 'All' ? 'Semua Rumah Sakit' : hosp}</option>))}
+            {initialOptions.hospitals.map((hosp, idx) => (<option key={idx} value={hosp}>{hosp === 'All' ? 'Semua Rumah Sakit' : hosp}</option>))}
           </select>
           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
@@ -195,7 +134,7 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
             className="w-full pl-10 pr-8 py-3 bg-transparent rounded-xl focus:outline-none focus:bg-slate-50 cursor-pointer text-slate-600 font-medium appearance-none truncate"
             value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)}
           >
-            {filterOptions.specialties.map((spec, idx) => (<option key={idx} value={spec}>{spec === 'All' ? 'Semua Spesialisasi' : spec}</option>))}
+            {initialOptions.specialties.map((spec, idx) => (<option key={idx} value={spec}>{spec === 'All' ? 'Semua Spesialisasi' : spec}</option>))}
           </select>
            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">▼</div>
         </div>
