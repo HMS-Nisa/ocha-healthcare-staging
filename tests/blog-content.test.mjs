@@ -6,6 +6,7 @@ import { blogEntrySchema } from '../src/lib/blog-schema.js';
 const secondOpinionPath = new URL('../src/content/blog/panduan-second-opinion.md', import.meta.url);
 const bypassPath = new URL('../src/content/blog/biaya-operasi-bypass-jantung-di-malaysia.md', import.meta.url);
 const bookingGuidePath = new URL('../src/content/blog/cara-meminta-slot-konsultasi-spesialis-di-malaysia.md', import.meta.url);
+const stentCostPath = new URL('../src/content/blog/biaya-pasang-ring-jantung-di-malaysia.md', import.meta.url);
 const rendererPath = new URL('../src/pages/blog/[...slug].astro', import.meta.url);
 
 const unsourcedEntry = {
@@ -67,6 +68,18 @@ test('specialist booking guide is source-backed, indexable, and limited to coord
   assert.match(content, /https:\/\/merits\.mmc\.gov\.my\/search\/registeredDoctor/);
   assert.match(content, /https:\/\/mmc\.gov\.my\/wp-content\/uploads\/2023\/06\/NSR_ProceduresGuidelines\.pdf/);
   assert.match(content, /Ocha tidak memberikan diagnosis, menentukan perawatan, atau menilai rekam medis/i);
+  assert.match(content, /\]\(\/doctors\/\)/);
+  assert.doesNotMatch(content, /AI-powered|airport transfer|akomodasi|Guarantee Letter/i);
+});
+
+test('stent cost guide is source-backed, indexable, and does not promise a price or treatment', async () => {
+  const content = await readFile(stentCostPath, 'utf8');
+
+  assert.match(content, /robots:\s*"index,follow"/);
+  assert.match(content, /https:\/\/www\.nhs\.uk\/tests-and-treatments\/coronary-angioplasty\//);
+  assert.match(content, /https:\/\/www\.ijn\.com\.my\/ijn-media\/mengenal-ijn-malaysia-salah-satu-pusat-kesehatan-kardiovaskular-dan-toraks-terbaik\//);
+  assert.match(content, /Ocha tidak memberikan diagnosis, menentukan perawatan, atau menjamin biaya/i);
+  assert.match(content, /\]\(\/blog\/biaya-operasi-bypass-jantung-di-malaysia\/\)/);
   assert.match(content, /\]\(\/doctors\/\)/);
   assert.doesNotMatch(content, /AI-powered|airport transfer|akomodasi|Guarantee Letter/i);
 });
