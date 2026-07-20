@@ -4,7 +4,7 @@ subtitle: "Panduan untuk menanyakan estimasi angioplasti dan stent secara jelas 
 author: "Tim Ocha Healthcare"
 date: 2026-07-20
 updatedDate: 2026-07-20
-image: "/images/hubs/kl.jpg"
+image: "/images/blog/biaya-pasang-ring-jantung-di-malaysia.jpg"
 category: "Jantung & Pembuluh Darah"
 readTime: "6 menit baca"
 robots: "index,follow"

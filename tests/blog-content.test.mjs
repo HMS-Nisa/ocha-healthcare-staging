@@ -76,6 +76,7 @@ test('stent cost guide is source-backed, indexable, and does not promise a price
   const content = await readFile(stentCostPath, 'utf8');
 
   assert.match(content, /robots:\s*"index,follow"/);
+  assert.match(content, /image:\s*"\/images\/blog\/biaya-pasang-ring-jantung-di-malaysia\.jpg"/);
   assert.match(content, /https:\/\/www\.nhs\.uk\/tests-and-treatments\/coronary-angioplasty\//);
   assert.match(content, /https:\/\/www\.ijn\.com\.my\/ijn-media\/mengenal-ijn-malaysia-salah-satu-pusat-kesehatan-kardiovaskular-dan-toraks-terbaik\//);
   assert.match(content, /Ocha tidak memberikan diagnosis, menentukan perawatan, atau menjamin biaya/i);
