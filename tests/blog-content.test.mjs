@@ -87,14 +87,14 @@ test('stent cost guide is source-backed, indexable, and does not promise a price
   assert.doesNotMatch(content, /AI-powered|airport transfer|akomodasi|Guarantee Letter/i);
 });
 
-test('Indonesia patient lead drafts remain approval-only and coordination-only', async () => {
+test('approved Indonesia patient lead guides are indexable and coordination-only', async () => {
   const drafts = await Promise.all([
     readFile(cancerCostPath, 'utf8'),
     readFile(kneeCostPath, 'utf8'),
   ]);
 
   for (const content of drafts) {
-    assert.match(content, /robots:\s*"noindex,follow"/);
+    assert.match(content, /robots:\s*"index,follow"/);
     assert.match(content, /sources:\s*\n(?:.|\n)*https:\/\//);
     assert.match(content, /faq:\s*\n(?:.|\n)*question:/);
     assert.match(content, /Ocha tidak memberikan diagnosis, menentukan perawatan, atau menjamin biaya/i);

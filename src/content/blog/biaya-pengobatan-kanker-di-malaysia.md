@@ -7,7 +7,7 @@ updatedDate: 2026-08-10
 image: "/assets/logo.jpg"
 category: "Kanker & Onkologi"
 readTime: "7 menit baca"
-robots: "noindex,follow"
+robots: "index,follow"
 sources:
   - label: "National Cancer Institute - Types of Cancer Treatment"
     url: "https://www.cancer.gov/about-cancer/treatment/types"

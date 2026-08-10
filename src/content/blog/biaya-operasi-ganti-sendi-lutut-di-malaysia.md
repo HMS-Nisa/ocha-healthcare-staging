@@ -7,7 +7,7 @@ updatedDate: 2026-08-10
 image: "/assets/logo.jpg"
 category: "Ortopedi & Tulang"
 readTime: "6 menit baca"
-robots: "noindex,follow"
+robots: "index,follow"
 sources:
   - label: "NHS - Knee replacement"
     url: "https://www.nhs.uk/tests-and-treatments/knee-replacement/"
