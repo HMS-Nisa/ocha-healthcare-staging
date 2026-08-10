@@ -59,6 +59,6 @@ Pertanyaan yang lebih berguna untuk diajukan kepada rumah sakit adalah: layanan 
 
 ## Cara Ocha membantu
 
-Ocha membantu menghubungkan pasien dengan pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi dan membantu meneruskan pertanyaan administratif, termasuk permintaan estimasi bila tersedia. Ocha tidak mewakili seluruh pasar rumah sakit di Malaysia.
+Ocha hanya membantu koordinasi. Agen dapat menghubungkan pasien dengan pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi dan meneruskan pertanyaan administratif, termasuk permintaan estimasi bila tersedia. Ocha tidak mewakili seluruh pasar rumah sakit di Malaysia.
 
 Untuk memulai koordinasi, [lihat direktori dokter Ocha](/doctors/) dan ajukan tanggal serta waktu konsultasi yang Anda harapkan.

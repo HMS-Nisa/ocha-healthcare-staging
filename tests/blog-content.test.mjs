@@ -102,3 +102,23 @@ test('Indonesia patient lead drafts remain approval-only and coordination-only',
     assert.doesNotMatch(content, /AI-powered|airport transfer|akomodasi|Guarantee Letter/i);
   }
 });
+
+test('Indonesia patient lead drafts block unsupported price, treatment, and service claims', async () => {
+  const drafts = await Promise.all([
+    readFile(cancerCostPath, 'utf8'),
+    readFile(kneeCostPath, 'utf8'),
+  ]);
+  const unsupportedClaims = [
+    /(?:RM|MYR|IDR|Rp\.?|USD)\s*\d/i,
+    /harga mulai dari|harga termurah|biaya pasti/i,
+    /Anda perlu menjalani|Anda harus menjalani|cocok untuk Anda/i,
+    /AI-powered|airport transfer|akomodasi|Guarantee Letter|hasil pengobatan/i,
+  ];
+
+  for (const content of drafts) {
+    assert.match(content, /Ocha hanya membantu koordinasi/i);
+    assert.match(content, /Ocha tidak menilai rekam medis/i);
+    assert.match(content, /Ocha tidak mewakili seluruh pasar rumah sakit di Malaysia/i);
+    for (const pattern of unsupportedClaims) assert.doesNotMatch(content, pattern);
+  }
+});

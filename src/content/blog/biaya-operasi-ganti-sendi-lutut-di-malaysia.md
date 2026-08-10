@@ -59,6 +59,6 @@ Ocha tidak menilai rekam medis atau menyarankan tindakan berdasarkan dokumen. Bi
 
 ## Cara Ocha membantu
 
-Ocha membantu meneruskan kebutuhan koordinasi kepada pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi, termasuk pertanyaan administratif mengenai estimasi bila tersedia. Keputusan medis, ketersediaan, dan tagihan akhir tetap berasal dari dokter serta rumah sakit.
+Ocha hanya membantu koordinasi. Agen dapat meneruskan kebutuhan kepada pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi, termasuk pertanyaan administratif mengenai estimasi bila tersedia. Keputusan medis, ketersediaan, dan tagihan akhir tetap berasal dari dokter serta rumah sakit.
 
 Ocha tidak mewakili seluruh pasar rumah sakit di Malaysia. Untuk memulai, [lihat direktori dokter Ocha](/doctors/) dan ajukan waktu konsultasi yang Anda harapkan.
