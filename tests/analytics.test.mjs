@@ -62,6 +62,15 @@ test('tracks sanitized payloads and rejects server-side or unknown events', () =
   }
 });
 
+test('accepts lead offer events with the offer parameter only', () => {
+  for (const eventName of ['view_offer', 'open_offer_form', 'generate_lead']) {
+    assert.deepEqual(
+      sanitizeEvent(eventName, { page_type: 'blog', offer: 'estimate', email: 'a@b.c', name: 'A' }),
+      { event: eventName, page_type: 'blog', offer: 'estimate' },
+    );
+  }
+});
+
 test('instruments booking funnel without sending selected values or patient content', async () => {
   const [booking, directory, guide] = await Promise.all([
     fs.readFile(new URL('../src/components/BookingWidget.jsx', import.meta.url), 'utf8'),

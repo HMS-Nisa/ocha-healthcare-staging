@@ -6,6 +6,9 @@ const EVENTS = new Set([
   'click_whatsapp_booking',
   'click_whatsapp_concierge',
   'view_lead_guide',
+  'view_offer',
+  'open_offer_form',
+  'generate_lead',
 ]);
 
 const PARAMETERS = new Set([
@@ -13,6 +16,7 @@ const PARAMETERS = new Set([
   'specialty',
   'location',
   'cta_placement',
+  'offer',
 ]);
 
 export function normalizeDimension(value) {
