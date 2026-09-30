@@ -11,7 +11,7 @@ import {
 } from '../../lib/slugs.js';
 import { absoluteUrl } from '../../lib/seo.js';
 import OfferCard from '../../components/OfferCard.astro';
-import { cityFromLocation } from '../../lib/offers.js';
+import { cityFromLocation, getOffer, isOfferAvailable } from '../../lib/offers.js';
 
 export async function getStaticPaths() {
   const specialtyTranslations = {
@@ -77,6 +77,7 @@ export async function getStaticPaths() {
 
 const { slug, doctors, specialty, city } = Astro.props;
 const doctorCount = doctors.length;
+const showOffer = isOfferAvailable(getOffer('shortlist'), { dev: import.meta.env.DEV });
 const indexableDoctors = doctors.filter((doctor) => doctor.indexable === true);
 const indexable = isSpecialtyLocationIndexable(doctors);
 const hospitals = [...new Set(doctors.map((doctor) => String(doctor.hospital || '').trim()).filter(Boolean))];
@@ -217,11 +218,13 @@ const faqSchema = {
     </div>
   </section>
 
-  <section class="pb-12 md:pb-16">
-    <div class="mx-auto max-w-6xl px-4 md:px-6">
-      <OfferCard offer="shortlist" variant="banner" pageType="specialty_location" placement="specialty_banner" defaultSpecialty={specialty} defaultCity={cityFromLocation(city)} />
-    </div>
-  </section>
+  {showOffer && (
+    <section class="pb-12 md:pb-16">
+      <div class="mx-auto max-w-6xl px-4 md:px-6">
+        <OfferCard offer="shortlist" variant="banner" pageType="specialty_location" placement="specialty_banner" defaultSpecialty={specialty} defaultCity={cityFromLocation(city)} />
+      </div>
+    </section>
+  )}
 
   <section class="bg-slate-900 py-12 text-white md:py-16">
     <div class="mx-auto max-w-6xl px-4 md:px-6">

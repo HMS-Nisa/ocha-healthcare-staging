@@ -87,3 +87,20 @@ test('privacy policy discloses offer forms and attribution storage', () => {
   assert.match(privacy, /Formulir GoHighLevel hanya dimuat setelah Anda menekan tombol penawaran/);
   assert.match(privacy, /tanpa data pribadi/);
 });
+
+test('offer wrappers render only when the offer is live', () => {
+  const blog = read('../src/pages/blog/[...slug].astro');
+  assert.match(blog, /isOfferAvailable\(getOffer\(articleOffer\), \{ dev: import\.meta\.env\.DEV \}\)/);
+  assert.match(blog, /\{showOffer && \(\s*<section class="mt-12" aria-label="Penawaran gratis">/);
+  // The original sidebar booking card stays as the fallback.
+  assert.match(blog, /Mulai dengan memilih jadwal/);
+  assert.ok(before(blog, 'showOffer ? (', 'Mulai dengan memilih jadwal'));
+
+  const specialty = read('../src/pages/dokter/[slug].astro');
+  assert.match(specialty, /isOfferAvailable\(getOffer\('shortlist'\), \{ dev: import\.meta\.env\.DEV \}\)/);
+  assert.match(specialty, /\{showOffer && \(\s*<section class="pb-12 md:pb-16">/);
+
+  const directory = read('../src/pages/doctors.astro');
+  assert.match(directory, /isOfferAvailable\(getOffer\('shortlist'\), \{ dev: import\.meta\.env\.DEV \}\)/);
+  assert.match(directory, /\{showOffer && \(\s*<section class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 mt-16">/);
+});
