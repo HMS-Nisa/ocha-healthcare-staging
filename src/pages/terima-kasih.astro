@@ -62,7 +62,8 @@ const offerCopy = Object.fromEntries(Object.entries(OFFERS).map(([key, offer]) =
   import { buildWhatsAppUrl } from '../lib/attribution.js';
 
   const offer = new URLSearchParams(window.location.search).get('offer') || '';
-  const copy = window.__ochaOfferCopy?.[offer];
+  const offerCopy = window.__ochaOfferCopy || {};
+  const copy = Object.hasOwn(offerCopy, offer) ? offerCopy[offer] : null;
   if (copy) {
     document.getElementById('ty-label').textContent = `${copy.label} · diterima`;
     document.getElementById('ty-message').textContent = copy.message;
@@ -72,7 +73,7 @@ const offerCopy = Object.fromEntries(Object.entries(OFFERS).map(([key, offer]) =
   const whatsapp = document.getElementById('ty-whatsapp');
   whatsapp.href = buildWhatsAppUrl(
     `Halo Ocha, saya baru mengisi formulir${copy ? ` ${copy.label}` : ''} dan ingin konsultasi lebih lanjut.`,
-    `terima-kasih/${offer || 'umum'}`,
+    `terima-kasih/${copy ? offer : 'umum'}`,
   );
   whatsapp.addEventListener('click', () => track('click_whatsapp_concierge', {
     page_type: 'thank_you',

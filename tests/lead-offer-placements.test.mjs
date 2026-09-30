@@ -76,7 +76,9 @@ test('thank-you page records the lead without indexing', () => {
   assert.match(page, /robots="noindex,follow"/);
   assert.match(page, /track\('generate_lead', \{ page_type: 'thank_you', offer: copy \? offer : 'unknown' \}\)/);
   assert.match(page, /buildWhatsAppUrl\(/);
-  assert.match(page, /`terima-kasih\/\$\{offer \|\| 'umum'\}`/);
+  assert.match(page, /`terima-kasih\/\$\{copy \? offer : 'umum'\}`/);
+  assert.match(page, /Object\.hasOwn\(/);
+  assert.doesNotMatch(page, /__ochaOfferCopy\?\.\[offer\]/);
 });
 
 test('privacy policy discloses offer forms and attribution storage', () => {
