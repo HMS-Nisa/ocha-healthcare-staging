@@ -6,8 +6,9 @@ import {
   CheckCircle2, ChevronLeft, 
   Star, ArrowRight
 } from 'lucide-react';
-import { WA_NUMBER } from '../../config';
 import BookingWidget from '../../components/BookingWidget.jsx';
+import OfferCard from '../../components/OfferCard.astro';
+import { cityFromLocation } from '../../lib/offers.js';
 import { getPublishedDoctors } from '../../lib/doctors.js';
 import { isDoctorIndexable, validatedDoctorRecords } from '../../lib/indexability.js';
 import {
@@ -270,12 +271,15 @@ const physicianSchema = indexable ? {
           <BookingWidget
             doctorName={doctor.name}
             hospital={doctor.hospital}
-            waNumber={WA_NUMBER}
+            doctorId={doctor.id}
             specialty={doctor.specialty}
             location={locationName}
             client:load
           />
         </div>
+
+        {/* LEAD OFFER: for visitors not ready to pick a slot */}
+        <OfferCard offer="estimate" variant="inline" pageType="doctor" placement="doctor_after_booking" defaultSpecialty={normalizeDoctorSpecialtyLabel(doctor.specialty)} defaultCity={cityFromLocation(doctor.location)} />
 
         {/* TRUST SIGNALS: Testimonials */}
         <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border border-blue-100/50">

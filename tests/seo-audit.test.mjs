@@ -4,6 +4,7 @@ import path from 'node:path';
 import {
   containsSensitiveAnalyticsPayload,
   findDuplicateValues,
+  findNonCanonicalWhatsAppLinks,
   hasRequiredNetlifyRedirects,
   hasProhibitedPositioning,
   isIndexableByDefault,
@@ -50,4 +51,18 @@ test('detects quoted, shorthand, indirect, and gtag sensitive analytics payloads
   assert.equal(containsSensitiveAnalyticsPayload('const payload = { message: text }; dataLayer.push(payload)'), true);
   assert.equal(containsSensitiveAnalyticsPayload("gtag('event', 'lead', { email: value })"), true);
   assert.equal(containsSensitiveAnalyticsPayload('dataLayer.push({ event: "lead", page_type: "guide" })'), false);
+});
+
+test('flags WhatsApp links that are not canonical or lack a source reference', () => {
+  const good = '<a href="https://wa.me/60125525544?text=Halo%20Ocha%0A%0A(ref%3A%20blog%2Fbiaya-a)">A</a>';
+  const legacy = '<a href="https://api.whatsapp.com/send/?phone=60125525544&text&type=phone_number&app_absent=0">B</a>';
+  const bare = '<a href="https://wa.me/60125525544">C</a>';
+  const noRef = '<a href="https://wa.me/60125525544?text=Halo%20Ocha">D</a>';
+  const other = '<a href="/doctors/">E</a>';
+  assert.deepEqual(findNonCanonicalWhatsAppLinks(good + other), []);
+  assert.deepEqual(findNonCanonicalWhatsAppLinks(legacy + bare + noRef), [
+    'https://api.whatsapp.com/send/?phone=60125525544&text&type=phone_number&app_absent=0',
+    'https://wa.me/60125525544',
+    'https://wa.me/60125525544?text=Halo%20Ocha',
+  ]);
 });

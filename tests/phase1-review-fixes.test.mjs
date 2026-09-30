@@ -35,9 +35,9 @@ test('core provider pages emit connected WebPage and breadcrumb schema', () => {
 });
 
 test('legal pages use a stable editorial update date and blog layout shares Footer', () => {
-  for (const file of ['../src/pages/privacy.astro', '../src/pages/terms.astro']) {
+  for (const [file, date] of [['../src/pages/privacy.astro', /30 September 2026/], ['../src/pages/terms.astro', /15 Juli 2026/]]) {
     const source = read(file);
-    assert.match(source, /15 Juli 2026/);
+    assert.match(source, date);
     assert.doesNotMatch(source, /new Date\(\)\.toLocaleDateString/);
   }
   assert.match(read('../src/layouts/Layout.astro'), /<Footer\s*\/>/);

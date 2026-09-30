@@ -1,0 +1,20 @@
+---
+// src/components/SiteScripts.astro
+// Site-wide: capture first-party attribution and track tagged WhatsApp links.
+---
+
+<script>
+  import { captureAttribution } from '../lib/attribution.js';
+  import { normalizeDimension, track } from '../lib/analytics.js';
+
+  captureAttribution();
+  const pageType = normalizeDimension(window.location.pathname.split('/')[1] || '') || 'home';
+  document.querySelectorAll('[data-wa-placement]').forEach((link) => {
+    link.addEventListener('click', () => {
+      track('click_whatsapp_concierge', {
+        page_type: pageType,
+        cta_placement: link.dataset.waPlacement,
+      });
+    });
+  });
+</script>

@@ -1,4 +1,5 @@
 import { z } from 'astro/zod';
+import { OFFER_KEYS } from './offers.js';
 
 export const blogEntrySchema = z.object({
   title: z.string(),
@@ -14,6 +15,8 @@ export const blogEntrySchema = z.object({
   sources: z.array(z.object({ label: z.string(), url: z.string().url() })).min(2).optional(),
   faq: z.array(z.object({ question: z.string(), answer: z.string() })).min(2).optional(),
   medicalDisclaimer: z.string().min(40),
+  offer: z.enum(OFFER_KEYS).optional(),
+  offerSpecialty: z.string().optional(),
 }).superRefine((entry, context) => {
   if (entry.robots === 'index,follow' && !entry.sources) {
     context.addIssue({

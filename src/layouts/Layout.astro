@@ -3,6 +3,8 @@
 import { Menu, X, Search } from 'lucide-react';
 import SeoHead from '../components/SeoHead.astro';
 import Footer from '../components/Footer.astro';
+import SiteScripts from '../components/SiteScripts.astro';
+import { buildWhatsAppUrl, whatsappRef } from '../lib/attribution.js';
 
 const {
 	title,
@@ -15,7 +17,7 @@ const {
 } = Astro.props;
 
 // 🚀 UPDATED: New Concierge Link
-const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phone_number&app_absent=0";
+const WA_LINK = buildWhatsAppUrl('Halo Ocha, saya ingin membuat janji konsultasi.', whatsappRef(Astro.url.pathname));
 ---
 
 <!doctype html>
@@ -76,7 +78,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 						<Search className="w-4 h-4 text-slate-400 group-hover:text-[#276CA1] transition-colors" />
 						Cari Dokter
 					</a>
-					<a href={WA_LINK} target="_blank" class="bg-[#276CA1] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 active:scale-95 transform duration-150 flex items-center gap-2">
+					<a href={WA_LINK} data-wa-placement="navbar" target="_blank" class="bg-[#276CA1] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 active:scale-95 transform duration-150 flex items-center gap-2">
 						Buat Janji
 					</a>
 				</div>
@@ -117,7 +119,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 			</a>
 
 			<div class="mt-4 px-2">
-				<a href={WA_LINK} target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
+				<a href={WA_LINK} data-wa-placement="mobile_menu" target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
 					Buat Janji
 				</a>
 			</div>
@@ -194,6 +196,7 @@ const WA_LINK = "https://api.whatsapp.com/send/?phone=60125525544&text&type=phon
 				});
 			}
 		</script>
+		<SiteScripts />
 	</body>
 </html>
 

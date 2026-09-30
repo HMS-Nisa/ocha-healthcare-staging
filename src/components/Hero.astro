@@ -1,6 +1,7 @@
 ---
 // src/components/Hero.astro
 import { ArrowRight, MessageCircle, CheckCircle2, CalendarCheck, Search, ShieldCheck } from 'lucide-react';
+import { buildWhatsAppUrl } from '../lib/attribution.js';
 ---
 
 {/* 🚀 UPDATE: Aggressive reduction to pt-20 (Mobile) and lg:pt-24 (Desktop) */}
@@ -42,7 +43,7 @@ import { ArrowRight, MessageCircle, CheckCircle2, CalendarCheck, Search, ShieldC
         </a>
         
         {/* 🚀 UPDATE: New WhatsApp API Link */}
-        <a href="https://api.whatsapp.com/send/?phone=60125525544&text&type=phone_number&app_absent=0" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition flex items-center justify-center gap-2 hover:border-indigo-200">
+        <a href={buildWhatsAppUrl('Halo Ocha, saya ingin konsultasi mencari dokter spesialis di Malaysia.', 'beranda/hero')} data-wa-placement="hero" target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-50 transition flex items-center justify-center gap-2 hover:border-indigo-200">
           <MessageCircle class="w-5 h-5" />
           Konsultasi via WhatsApp
         </a>

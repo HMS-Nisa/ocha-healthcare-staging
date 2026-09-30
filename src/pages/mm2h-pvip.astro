@@ -2,7 +2,7 @@
 // src/pages/mm2h-pvip.astro
 // Malaysia MM2H & PVIP long-term stay support — in partnership with Daro International
 import LandingLayout from '../layouts/LandingLayout.astro';
-import { WA_NUMBER } from '../config';
+import { buildWhatsAppUrl } from '../lib/attribution.js';
 import { absoluteUrl } from '../lib/seo.js';
 import {
   ShieldCheck, HeartHandshake, GraduationCap, Home, Wallet, Globe,
@@ -13,10 +13,9 @@ import {
 const pageTitle = 'MM2H & PVIP Malaysia Long-Term Stay Visa Support | Ocha Healthcare';
 const pageDesc = 'Explore Malaysia My Second Home (MM2H) and the Premium Visa Programme (PVIP) with Ocha Healthcare and licensed advisor Daro International. Eligibility, requirements, application process and expert guidance for retirement, family relocation, healthcare and investment.';
 
-const waBase = `https://wa.me/${WA_NUMBER}?text=`;
-const waGeneral = waBase + encodeURIComponent("Hi Ocha, I'd like to learn more about long-term stay in Malaysia (MM2H / PVIP) with Daro International. Please share the details.");
-const waMM2H = waBase + encodeURIComponent("Hi Ocha, I'm interested in the Malaysia My Second Home (MM2H) programme. Please help me with a consultation.");
-const waPVIP = waBase + encodeURIComponent("Hi Ocha, I'm interested in the Malaysia Premium Visa Programme (PVIP). Please help me with a consultation.");
+const waGeneral = buildWhatsAppUrl("Hi Ocha, I'd like to learn more about long-term stay in Malaysia (MM2H / PVIP) with Daro International. Please share the details.", 'mm2h-pvip/general');
+const waMM2H = buildWhatsAppUrl("Hi Ocha, I'm interested in the Malaysia My Second Home (MM2H) programme. Please help me with a consultation.", 'mm2h-pvip/mm2h');
+const waPVIP = buildWhatsAppUrl("Hi Ocha, I'm interested in the Malaysia Premium Visa Programme (PVIP). Please help me with a consultation.", 'mm2h-pvip/pvip');
 
 // Hero background — free-license Kuala Lumpur skyline (Unsplash license, no attribution required)
 const heroImg = 'https://images.unsplash.com/photo-1566914447826-bf04e54bf1be?q=80&w=1600&auto=format&fit=crop';
@@ -136,7 +135,7 @@ const jsonLd = [
           </p>
 
           <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-10">
-            <a href={waGeneral} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-indigo-600 text-white px-7 py-3.5 rounded-full font-bold text-base hover:bg-indigo-700 transition shadow-lg shadow-indigo-200/60 hover:-translate-y-0.5 active:scale-[0.98] duration-200">
+            <a href={waGeneral} data-wa-placement="mm2h_hero" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-indigo-600 text-white px-7 py-3.5 rounded-full font-bold text-base hover:bg-indigo-700 transition shadow-lg shadow-indigo-200/60 hover:-translate-y-0.5 active:scale-[0.98] duration-200">
               <MessageCircle class="w-5 h-5 flex-shrink-0" /> Book a Free Consultation
             </a>
             <a href="#compare" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-7 py-3.5 rounded-full font-bold text-base hover:bg-slate-50 hover:border-indigo-200 active:scale-[0.98] transition duration-200">
@@ -207,7 +206,7 @@ const jsonLd = [
                 <li class="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" /><span>{b}</span></li>
               ))}
             </ul>
-            <a href={waMM2H} target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about MM2H <ArrowRight className="w-4 h-4" /></a>
+            <a href={waMM2H} data-wa-placement="mm2h_mm2h" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about MM2H <ArrowRight className="w-4 h-4" /></a>
           </div>
           <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
             <div class="flex items-center gap-3 mb-6">
@@ -240,7 +239,7 @@ const jsonLd = [
                 <li class="flex items-start gap-3 text-slate-700"><CheckCircle2 className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" /><span>{b}</span></li>
               ))}
             </ul>
-            <a href={waPVIP} target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about PVIP <ArrowRight className="w-4 h-4" /></a>
+            <a href={waPVIP} data-wa-placement="mm2h_pvip" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all">Ask about PVIP <ArrowRight className="w-4 h-4" /></a>
           </div>
           <div class="lg:order-1 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm p-8">
             <div class="flex items-center gap-3 mb-6">
@@ -285,7 +284,7 @@ const jsonLd = [
             </tbody>
           </table>
         </div>
-        <p class="text-center text-slate-500 text-sm mt-8">Not sure which suits you? <a href={waGeneral} target="_blank" rel="noopener" class="text-indigo-600 font-bold hover:underline">Get a free eligibility review →</a></p>
+        <p class="text-center text-slate-500 text-sm mt-8">Not sure which suits you? <a href={waGeneral} data-wa-placement="mm2h_compare" target="_blank" rel="noopener" class="text-indigo-600 font-bold hover:underline">Get a free eligibility review →</a></p>
       </div>
     </section>
 
@@ -402,7 +401,7 @@ const jsonLd = [
           <h2 class="font-serif text-4xl md:text-5xl text-white mb-6">Plan your healthcare journey.<br class="hidden md:block" /> Explore your long-term stay.</h2>
           <p class="text-indigo-100 text-lg mb-10 max-w-2xl mx-auto">Exploring healthcare, retirement, family relocation or investment in Malaysia? Ocha can connect you with Daro International for a private MM2H or PVIP consultation.</p>
           <div class="flex justify-center">
-            <a href={waGeneral} target="_blank" rel="noopener" class="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-50 transition shadow-lg flex items-center justify-center gap-2 group">
+            <a href={waGeneral} data-wa-placement="mm2h_bottom" target="_blank" rel="noopener" class="bg-white text-indigo-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-50 transition shadow-lg flex items-center justify-center gap-2 group">
               <MessageCircle className="w-5 h-5" /> Speak to us on WhatsApp
             </a>
           </div>

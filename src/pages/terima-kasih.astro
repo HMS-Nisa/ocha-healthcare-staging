@@ -1,0 +1,83 @@
+---
+// src/pages/terima-kasih.astro
+// GHL forms redirect here after submit (?offer=<key>). Confirms the request and
+// records the conversion; the GHL iframe itself cannot report submissions.
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { CheckCircle2, MessageCircle, Search, BookOpen } from 'lucide-react';
+import { OFFERS } from '../lib/offers.js';
+
+const messages = {
+  shortlist: 'Tim Ocha akan menyiapkan daftar dokter yang sesuai dan mengirimkannya ke email Anda, biasanya dalam 1 hari kerja.',
+  estimate: 'Tim Ocha akan meminta estimasi dari rumah sakit mitra. Estimasi biasanya dikirim ke email Anda dalam 2–3 hari kerja.',
+  'guide-budget': 'Checklist sedang dikirim ke email Anda. Periksa folder Promosi atau Spam jika belum terlihat dalam beberapa menit.',
+  'guide-second-opinion': 'Panduan sedang dikirim ke email Anda. Periksa folder Promosi atau Spam jika belum terlihat dalam beberapa menit.',
+};
+const offerCopy = Object.fromEntries(Object.entries(OFFERS).map(([key, offer]) => [key, { label: offer.label, message: messages[key] }]));
+---
+
+<LandingLayout
+  title="Terima Kasih"
+  description="Permintaan Anda sudah diterima tim Ocha Healthcare."
+  canonicalPath="/terima-kasih/"
+  robots="noindex,follow"
+>
+  <main class="min-h-screen bg-slate-50 pt-32 pb-24 px-4">
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-blue-900/5 p-8 md:p-12 text-center">
+        <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+          <CheckCircle2 className="w-8 h-8" />
+        </div>
+        <p id="ty-label" class="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-3">Permintaan diterima</p>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-4">Terima kasih, permintaan Anda sudah kami terima</h1>
+        <p id="ty-message" class="text-slate-600 leading-relaxed mb-10">Tim Ocha akan menindaklanjuti melalui email.</p>
+
+        <div class="rounded-2xl bg-blue-50 border border-blue-100 p-6 text-left mb-6">
+          <h2 class="font-serif text-lg font-bold text-slate-900 mb-2">Ingin lebih cepat?</h2>
+          <p class="text-sm text-slate-600 mb-4">Bicara langsung dengan agen Ocha melalui WhatsApp. Kami meninjau kebutuhan Anda secara manual.</p>
+          <a id="ty-whatsapp" href="/doctors/" target="_blank" rel="noopener noreferrer"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-4 font-bold text-white shadow-lg transition hover:bg-[#128C7E]">
+            <MessageCircle className="w-5 h-5" /> Lanjut via WhatsApp
+          </a>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+          <a href="/doctors/" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-bold text-slate-700 hover:border-[#276CA1] hover:text-[#276CA1] transition">
+            <Search className="w-4 h-4" /> Lihat dokter mitra
+          </a>
+          <a href="/blog/" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3.5 text-sm font-bold text-slate-700 hover:border-[#276CA1] hover:text-[#276CA1] transition">
+            <BookOpen className="w-4 h-4" /> Baca panduan pasien
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</LandingLayout>
+
+<script define:vars={{ offerCopy }}>
+  window.__ochaOfferCopy = offerCopy;
+</script>
+
+<script>
+  import { track } from '../lib/analytics.js';
+  import { buildWhatsAppUrl } from '../lib/attribution.js';
+
+  const offer = new URLSearchParams(window.location.search).get('offer') || '';
+  const offerCopy = window.__ochaOfferCopy || {};
+  const copy = Object.hasOwn(offerCopy, offer) ? offerCopy[offer] : null;
+  if (copy) {
+    document.getElementById('ty-label').textContent = `${copy.label} · diterima`;
+    document.getElementById('ty-message').textContent = copy.message;
+  }
+  track('generate_lead', { page_type: 'thank_you', offer: copy ? offer : 'unknown' });
+
+  const whatsapp = document.getElementById('ty-whatsapp');
+  whatsapp.href = buildWhatsAppUrl(
+    `Halo Ocha, saya baru mengisi formulir${copy ? ` ${copy.label}` : ''} dan ingin konsultasi lebih lanjut.`,
+    `terima-kasih/${copy ? offer : 'umum'}`,
+  );
+  whatsapp.addEventListener('click', () => track('click_whatsapp_concierge', {
+    page_type: 'thank_you',
+    cta_placement: 'thank_you_primary',
+    offer: copy ? offer : 'unknown',
+  }));
+</script>

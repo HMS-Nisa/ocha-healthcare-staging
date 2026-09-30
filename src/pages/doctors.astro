@@ -5,6 +5,8 @@ import Directory from '../components/Directory.jsx';
 import { getPublishedDoctors } from '../lib/doctors.js';
 import { isDoctorIndexable, validatedDoctorRecords } from '../lib/indexability.js';
 import { absoluteUrl } from '../lib/seo.js';
+import OfferCard from '../components/OfferCard.astro';
+import { getOffer, isOfferAvailable } from '../lib/offers.js';
 
 // 🚀 FETCH DATA AT BUILD TIME (SERVER-SIDE)
 let allDoctors = [];
@@ -17,6 +19,7 @@ try {
 
 const canonical = absoluteUrl('/doctors/');
 const eligibleDoctors = allDoctors.filter(isDoctorIndexable);
+const showOffer = isOfferAvailable(getOffer('shortlist'), { dev: import.meta.env.DEV });
 const webPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
@@ -72,6 +75,12 @@ const itemListSchema = {
     <section id="directory" class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <Directory client:load preloadedDoctors={allDoctors} pageType="doctor_directory" />
     </section>
+
+    {showOffer && (
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 mt-16">
+          <OfferCard offer="shortlist" variant="banner" pageType="doctor_directory" placement="directory_banner" />
+      </section>
+    )}
 
   </main>
 </LandingLayout>

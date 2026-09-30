@@ -1,6 +1,7 @@
 ---
 // src/components/CTA.astro
 import { ArrowRight, CalendarCheck } from 'lucide-react';
+import { buildWhatsAppUrl } from '../lib/attribution.js';
 ---
 
 <section class="py-20 px-6 bg-slate-50">
@@ -25,7 +26,7 @@ import { ArrowRight, CalendarCheck } from 'lucide-react';
               </a>
               
               {/* Button 2: WhatsApp (Booking) */}
-              <a href="https://wa.me/60125525544" class="bg-transparent border border-indigo-500/50 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/5 transition flex items-center justify-center gap-2 hover:border-white/30">
+              <a href={buildWhatsAppUrl('Halo Ocha, saya ingin konsultasi mencari dokter spesialis di Malaysia.', 'beranda/home_bottom_cta')} data-wa-placement="home_bottom_cta" target="_blank" rel="noopener noreferrer" class="bg-transparent border border-indigo-500/50 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/5 transition flex items-center justify-center gap-2 hover:border-white/30">
                   <CalendarCheck className="w-5 h-5" />
                   Konsultasi via WhatsApp
               </a>

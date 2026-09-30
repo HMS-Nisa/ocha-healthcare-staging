@@ -8,6 +8,8 @@ import {
   User, Search, ArrowRight
 } from 'lucide-react';
 import { absoluteUrl } from '../../lib/seo.js';
+import OfferCard from '../../components/OfferCard.astro';
+import { getOffer, isOfferAvailable, offerForArticle } from '../../lib/offers.js';
 
 // 1. GENERATE PATHS
 export async function getStaticPaths() {
@@ -21,6 +23,8 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 const canonicalPath = `/blog/${entry.slug}/`;
+const articleOffer = offerForArticle({ offer: entry.data.offer, slug: entry.slug, category: entry.data.category });
+const showOffer = isOfferAvailable(getOffer(articleOffer), { dev: import.meta.env.DEV });
 const canonical = absoluteUrl(canonicalPath);
 const socialImage = new URL(entry.data.image, 'https://ocha.health/').href;
 
@@ -138,6 +142,13 @@ const faqPageSchema = entry.data.faq ? {
             <Content />
         </article>
 
+        {/* Lead offer matched to the article's intent */}
+        {showOffer && (
+          <section class="mt-12" aria-label="Penawaran gratis">
+            <OfferCard offer={articleOffer} variant="inline" pageType="blog" placement="article_inline" defaultSpecialty={entry.data.offerSpecialty} />
+          </section>
+        )}
+
         {entry.data.faq && (
           <section class="mt-12" aria-labelledby="article-faq">
             <h2 id="article-faq" class="font-serif text-2xl font-bold text-slate-900">Pertanyaan yang sering diajukan</h2>
@@ -184,6 +195,16 @@ const faqPageSchema = entry.data.faq ? {
       </div>
 
       {/* SIDEBAR */}
+      {showOffer ? (
+      <div class="hidden lg:block lg:col-span-4 space-y-8">
+        <div class="sticky top-32 space-y-4">
+            <OfferCard offer={articleOffer} variant="sidebar" pageType="blog" placement="article_sidebar" defaultSpecialty={entry.data.offerSpecialty} />
+            <a href="/doctors/" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition">
+                <Search className="w-4 h-4" /> Sudah siap? Pilih jadwal dokter
+            </a>
+        </div>
+      </div>
+      ) : (
       <div class="lg:col-span-4 space-y-8">
         <div class="sticky top-32">
             <div class="bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-slate-100 p-6 overflow-hidden relative group">
@@ -200,6 +221,7 @@ const faqPageSchema = entry.data.faq ? {
             </div>
         </div>
       </div>
+      )}
 
     </div>
   </div>

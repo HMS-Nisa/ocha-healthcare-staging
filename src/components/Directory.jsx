@@ -1,7 +1,7 @@
 // src/components/Directory.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, MapPin, Filter, Building2, ChevronDown } from 'lucide-react';
-import { WA_NUMBER } from '../config';
+import { buildWhatsAppUrl } from '../lib/attribution.js';
 import { normalizeDimension, track } from '../lib/analytics.js';
 
 // --- HELPER FUNCTIONS ---
@@ -145,7 +145,7 @@ export default function Directory({ preloadedDoctors = [], pageType = 'doctor_di
         <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {visibleDoctors.map((doctor, index) => {
-                const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Halo Ocha, saya ingin membuat janji dengan ${doctor.name}`)}`;
+                const waLink = buildWhatsAppUrl(`Halo Ocha, saya ingin membuat janji dengan ${doctor.name}`, `doctors/${doctor.docId}`);
                 return (
                 // 🚀 UPDATE 1: Added 'overflow-hidden' to clip any internal elements
                 <div key={doctor.docId || index} className="bg-white rounded-[20px] border border-slate-100 p-4 md:p-6 hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group overflow-hidden">

@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { normalizeDimension, track } from '../lib/analytics.js';
+import { buildWhatsAppUrl } from '../lib/attribution.js';
 
 // These are patient preferences, not provider opening hours or availability.
 const PREFERRED_REQUEST_TIMES = ['09:00', '11:00', '14:00', '16:00'];
@@ -28,7 +29,7 @@ function formatTime(hhmm) {
 export default function BookingWidget({
   doctorName = '',
   hospital = '',
-  waNumber = '60125525544',
+  doctorId = '',
   specialty = '',
   location = '',
 }) {
@@ -76,16 +77,18 @@ export default function BookingWidget({
   const preferredTimes = selDate ? PREFERRED_REQUEST_TIMES : [];
 
   const fallbackMsg = `Halo Ocha, saya ingin konsultasi dan minta estimasi biaya dengan ${doctorName} di ${hospital}.`;
-  const fallbackUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(fallbackMsg)}`;
+  const waRef = `doctor/${doctorId}`;
+  const fallbackUrl = buildWhatsAppUrl(fallbackMsg, waRef);
 
   function handleBook() {
     const dayStr = `${DAYS_ID[selDate.getDay()]}, ${selDate.getDate()} ${MONTHS_SHORT[selDate.getMonth()]}`;
     const msg = `Halo Ocha, saya ingin booking konsultasi dengan ${doctorName} pada ${dayStr} pukul ${formatTime(selTime)}.`;
+    const bookingUrl = buildWhatsAppUrl(msg, waRef);
     track('click_whatsapp_booking', {
       ...analyticsParameters,
       cta_placement: 'booking_selected_time',
     });
-    window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(bookingUrl, '_blank');
   }
 
   return (
