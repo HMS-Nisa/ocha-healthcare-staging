@@ -60,6 +60,23 @@ test('first touch is kept and last touch updates only on new campaign or externa
   }
 });
 
+test('own and GHL hosts count as internal referrers and keep the last touch', () => {
+  try {
+    for (const referrer of ['https://link.healthmetrics.com/widget/form/x', 'https://www.ocha.health/blog/x/']) {
+      const storage = fakeBrowser({ search: '?utm_source=instagram&utm_campaign=reel-a', pathname: '/' });
+      captureAttribution();
+
+      fakeBrowser({ pathname: '/terima-kasih/', referrer, storage });
+      captureAttribution();
+      const stored = JSON.parse(storage.get('ocha_attr_v1'));
+      assert.equal(stored.last.utm_campaign, 'reel-a', referrer);
+      assert.equal(stored.last.referrer, '', referrer);
+    }
+  } finally {
+    resetBrowser();
+  }
+});
+
 test('blocked storage never throws and falls back to the current page', () => {
   try {
     fakeBrowser({ search: '?utm_source=instagram', pathname: '/', blocked: true });

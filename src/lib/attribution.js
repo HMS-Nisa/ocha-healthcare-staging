@@ -29,10 +29,14 @@ function writeStore(value) {
   }
 }
 
+// Hosts that belong to Ocha's own journey (site, www alias, GHL form host after submit).
+const INTERNAL_HOSTS = new Set(['ocha.health', 'www.ocha.health', 'link.healthmetrics.com']);
+
 function referrerDomain() {
   try {
     const host = new URL(document.referrer).hostname;
-    return host && host !== window.location.hostname ? host : '';
+    const internal = host === window.location.hostname || INTERNAL_HOSTS.has(host);
+    return host && !internal ? host : '';
   } catch {
     return '';
   }
