@@ -90,6 +90,15 @@ export function hasProhibitedPositioning(html) {
   return /AI-Powered|airport transfer|airport pickup|accommodation support|dukungan akomodasi|Guarantee Letter/i.test(visibleHtml(html));
 }
 
+const canonicalWhatsAppLink = /^https:\/\/wa\.me\/\d+\?text=[^\s"']*%0A%0A\(ref%3A%20[^)\s"']+\)$/;
+
+export function findNonCanonicalWhatsAppLinks(html) {
+  return tags(html, 'a')
+    .map((tag) => attribute(tag, 'href'))
+    .filter((href) => /api\.whatsapp\.com|wa\.me\//i.test(href))
+    .filter((href) => !canonicalWhatsAppLink.test(href));
+}
+
 export function resolveInternalTarget(href, pageUrl) {
   try {
     const target = new URL(href, pageUrl);
@@ -157,6 +166,12 @@ async function main() {
       failures.push(`${relative}: GHL tracking is restricted to the MM2H/PVIP page`);
     }
     if (hasProhibitedPositioning(html)) failures.push(`${relative}: out-of-scope positioning`);
+    for (const href of findNonCanonicalWhatsAppLinks(html)) {
+      failures.push(`${relative}: non-canonical WhatsApp link ${href}`);
+    }
+    if (relative === 'terima-kasih/index.html' && isIndexableByDefault(html)) {
+      failures.push(`${relative}: thank-you page must be noindex`);
+    }
     if (!isIndexableByDefault(html)) continue;
 
     const required = [
@@ -225,6 +240,7 @@ async function main() {
   if (sitemapUrls.length === 0) failures.push('sitemap-0.xml: contains no URLs');
   if (/\/article\/template\/|--/.test(sitemap)) failures.push('sitemap-0.xml: mock or malformed URL');
   if (/\/mm2h-pvip\//.test(sitemap)) failures.push('sitemap-0.xml: MM2H/PVIP must remain excluded while noindex');
+  if (/\/terima-kasih\//.test(sitemap)) failures.push('sitemap-0.xml: thank-you page must be excluded');
   if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap-0.xml: duplicate URL');
 
   const sitemapEntries = await Promise.all(sitemapUrls.map(async (url) => {
