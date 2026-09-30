@@ -10,6 +10,8 @@ import { normalizeDimension, track } from '../lib/analytics.js';
 
 const IS_DEV = import.meta.env.DEV;
 const FORM_TIMEOUT_MS = 8000;
+// GHL's post-submit redirect and auto-height rely on this script, so it is added lazily with the iframe.
+const FORM_EMBED_SRC = 'https://link.healthmetrics.com/js/form_embed.js';
 
 export default function LeadOffer({
   offer: offerKey,
@@ -148,6 +150,16 @@ function OfferModal({ offer, fields, onClose }) {
     return () => clearTimeout(timer);
   }, [showIframe]);
 
+  useEffect(() => {
+    if (!showIframe) return;
+    const alreadyLoaded = [...document.scripts].some((script) => script.src === FORM_EMBED_SRC);
+    if (alreadyLoaded) return;
+    const script = document.createElement('script');
+    script.src = FORM_EMBED_SRC;
+    script.async = true;
+    document.body.appendChild(script);
+  }, [showIframe]);
+
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-slate-900/50 backdrop-blur-sm p-0 sm:p-4"
       role="dialog" aria-modal="true" aria-label={offer.headline} onClick={onClose}>
@@ -179,6 +191,18 @@ function OfferModal({ offer, fields, onClose }) {
                 </div>
               )}
               <iframe src={formUrl} title={offer.label} onLoad={() => setStatus('ready')}
+                id={`inline-${offer.formId}`}
+                data-layout="{'id':'INLINE'}"
+                data-trigger-type="alwaysShow"
+                data-trigger-value=""
+                data-activation-type="alwaysActivated"
+                data-activation-value=""
+                data-deactivation-type="neverDeactivate"
+                data-deactivation-value=""
+                data-form-name={offer.label}
+                data-height="530"
+                data-layout-iframe-id={`inline-${offer.formId}`}
+                data-form-id={offer.formId}
                 className="w-full h-[560px] border-0 rounded-lg" />
             </div>
           ) : (

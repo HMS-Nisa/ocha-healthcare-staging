@@ -8,7 +8,14 @@ test('lead offer loads GHL only inside the on-demand pop-up', () => {
   const source = read('../src/components/LeadOffer.jsx');
   assert.match(source, /createPortal\(/);
   assert.equal((source.match(/<iframe/g) || []).length, 1);
-  assert.doesNotMatch(source, /form_embed\.js/);
+  // GHL's redirect and auto-height need form_embed.js, so it is injected lazily, only once the pop-up shows the iframe.
+  assert.match(source, /FORM_EMBED_SRC = 'https:\/\/link\.healthmetrics\.com\/js\/form_embed\.js'/);
+  assert.match(source, /document\.createElement\('script'\)/);
+  assert.doesNotMatch(source, /<script/);
+  assert.match(source, /id=\{`inline-\$\{offer\.formId\}`\}/);
+  assert.match(source, /data-layout-iframe-id=\{`inline-\$\{offer\.formId\}`\}/);
+  assert.match(source, /data-form-id=\{offer\.formId\}/);
+  assert.match(source, /data-form-name=\{offer\.label\}/);
   assert.match(source, /track\('view_offer'/);
   assert.match(source, /track\('open_offer_form'/);
   assert.match(source, /FORM_TIMEOUT_MS = 8000/);
