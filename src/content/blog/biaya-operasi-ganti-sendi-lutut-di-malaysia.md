@@ -21,6 +21,8 @@ faq:
     answer: "Periksa cakupan konsultasi, pemeriksaan, tindakan, implan, anestesi, rawat inap, obat, tindak lanjut, serta bagian yang masih dapat berubah."
   - question: "Apakah semua nyeri lutut memerlukan penggantian sendi?"
     answer: "Tidak dapat disimpulkan dari artikel ini. Kesesuaian tindakan hanya dapat dinilai oleh dokter yang menangani setelah evaluasi klinis."
+offer: "estimate"
+offerSpecialty: "Ortopedi (tulang)"
 ---
 
 Pencarian biaya operasi ganti sendi lutut di Malaysia biasanya berujung pada banyak angka yang sulit dibandingkan. Cara yang lebih berguna adalah meminta **estimasi tertulis dengan rincian cakupan layanan** dari rumah sakit, lalu menanyakan bagian mana yang masih dapat berubah setelah evaluasi dokter.

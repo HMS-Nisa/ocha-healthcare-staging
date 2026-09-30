@@ -19,6 +19,8 @@ faq:
     answer: "Tidak. Estimasi dan tagihan akhir ditetapkan oleh rumah sakit setelah mereka menilai kebutuhan prosedur, pemeriksaan, obat, dan layanan yang diperlukan."
   - question: "Apakah semua penyempitan pembuluh darah memerlukan stent?"
     answer: "Tidak. Keputusan klinis hanya dapat dibuat oleh dokter yang menangani setelah evaluasi yang sesuai. Ocha membantu koordinasi, bukan menentukan perawatan."
+offer: "estimate"
+offerSpecialty: "Jantung"
 ---
 
 Istilah “pasang ring jantung” biasanya merujuk pada angioplasti koroner dengan pemasangan *stent*. Angioplasti memakai balon kecil untuk melebarkan pembuluh koroner yang menyempit atau tersumbat. Dalam banyak prosedur, *stent* berupa tabung kawat kecil ditempatkan untuk membantu menjaga pembuluh tetap terbuka. Penilaian apakah tindakan ini diperlukan tetap berada pada dokter spesialis jantung yang menangani Anda.

@@ -19,6 +19,7 @@ faq:
     answer: "Tidak. Anda mengajukan waktu pilihan, lalu rumah sakit atau spesialis menentukan ketersediaan. Agen Ocha membantu koordinasi dalam jaringan mitra yang telah diverifikasi."
   - question: "Apakah Ocha menentukan dokter yang paling tepat untuk kondisi saya?"
     answer: "Tidak. Ocha tidak memberikan rekomendasi medis atau diagnosis. Tim membantu menghubungkan Anda dengan pilihan yang tersedia dalam jaringan mitra berdasarkan kebutuhan koordinasi yang Anda sampaikan."
+offer: "shortlist"
 ---
 
 Meminta slot konsultasi tidak perlu dimulai dengan mencari jawaban medis sendiri. Mulailah dengan tujuan yang jelas: spesialis apa yang ingin Anda temui, kapan Anda bisa datang, dan apakah ada rumah sakit atau kota yang Anda pertimbangkan. Setelah itu, Ocha dapat membantu proses koordinasi dengan mitra dalam jaringan yang tersedia.

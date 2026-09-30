@@ -9,6 +9,7 @@ category: "Panduan Pasien"
 readTime: "4 menit baca"
 robots: "noindex,follow"
 medicalDisclaimer: "Informasi ini bersifat umum dan tidak menggantikan pemeriksaan, diagnosis, atau saran dari dokter yang menangani Anda."
+offer: "guide-second-opinion"
 ---
 
 *Second opinion* adalah konsultasi dengan dokter lain mengenai pertanyaan kesehatan Anda. Halaman ini hanya menjelaskan persiapan administratif untuk meminta jadwal. Halaman ini tidak membantu menentukan apakah Anda membutuhkan *second opinion* dan belum melalui peninjauan sumber medis terpisah, sehingga untuk sementara tidak disertakan dalam indeks mesin pencari.

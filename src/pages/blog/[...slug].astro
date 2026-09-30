@@ -8,6 +8,8 @@ import {
   User, Search, ArrowRight
 } from 'lucide-react';
 import { absoluteUrl } from '../../lib/seo.js';
+import OfferCard from '../../components/OfferCard.astro';
+import { offerForArticle } from '../../lib/offers.js';
 
 // 1. GENERATE PATHS
 export async function getStaticPaths() {
@@ -21,6 +23,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 const canonicalPath = `/blog/${entry.slug}/`;
+const articleOffer = offerForArticle({ offer: entry.data.offer, slug: entry.slug, category: entry.data.category });
 const canonical = absoluteUrl(canonicalPath);
 const socialImage = new URL(entry.data.image, 'https://ocha.health/').href;
 
@@ -138,6 +141,11 @@ const faqPageSchema = entry.data.faq ? {
             <Content />
         </article>
 
+        {/* Lead offer matched to the article's intent */}
+        <section class="mt-12" aria-label="Penawaran gratis">
+          <OfferCard offer={articleOffer} variant="inline" pageType="blog" placement="article_inline" defaultSpecialty={entry.data.offerSpecialty} />
+        </section>
+
         {entry.data.faq && (
           <section class="mt-12" aria-labelledby="article-faq">
             <h2 id="article-faq" class="font-serif text-2xl font-bold text-slate-900">Pertanyaan yang sering diajukan</h2>
@@ -184,20 +192,12 @@ const faqPageSchema = entry.data.faq ? {
       </div>
 
       {/* SIDEBAR */}
-      <div class="lg:col-span-4 space-y-8">
-        <div class="sticky top-32">
-            <div class="bg-white rounded-2xl shadow-xl shadow-blue-900/5 border border-slate-100 p-6 overflow-hidden relative group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-bl-[100px] -z-10 transition group-hover:scale-110"></div>
-                <div class="mb-6">
-                    <span class="inline-block py-1 px-3 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-4">Koordinasi Gratis</span>
-                    <h3 class="font-serif text-xl font-bold text-slate-900 mb-2">Mulai dengan memilih jadwal</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">Pilih spesialis lalu ajukan tanggal dan waktu pilihan, kemudian lanjutkan melalui WhatsApp. Agen Ocha meninjau kebutuhan Anda secara manual.</p>
-                </div>
-                <a href="/doctors/" class="block w-full py-4 bg-[#276CA1] hover:bg-[#1f5682] text-white text-center font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
-                    <Search className="w-4 h-4" />
-                    Pilih Jadwal
-                </a>
-            </div>
+      <div class="hidden lg:block lg:col-span-4 space-y-8">
+        <div class="sticky top-32 space-y-4">
+            <OfferCard offer={articleOffer} variant="sidebar" pageType="blog" placement="article_sidebar" defaultSpecialty={entry.data.offerSpecialty} />
+            <a href="/doctors/" class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 hover:border-[#276CA1] hover:text-[#276CA1] transition">
+                <Search className="w-4 h-4" /> Sudah siap? Pilih jadwal dokter
+            </a>
         </div>
       </div>
 

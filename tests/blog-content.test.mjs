@@ -122,3 +122,29 @@ test('Indonesia patient lead drafts block unsupported price, treatment, and serv
     for (const pattern of unsupportedClaims) assert.doesNotMatch(content, pattern);
   }
 });
+
+test('articles declare a valid lead offer', async () => {
+  const expected = {
+    'biaya-operasi-bypass-jantung-di-malaysia': ['estimate', 'Bedah Jantung'],
+    'biaya-pasang-ring-jantung-di-malaysia': ['estimate', 'Jantung'],
+    'biaya-operasi-ganti-sendi-lutut-di-malaysia': ['estimate', 'Ortopedi (tulang)'],
+    'biaya-pengobatan-kanker-di-malaysia': ['estimate', 'Onkologi'],
+    'panduan-second-opinion': ['guide-second-opinion', undefined],
+    'cara-meminta-slot-konsultasi-spesialis-di-malaysia': ['shortlist', undefined],
+  };
+  for (const [slug, [offer, specialty]] of Object.entries(expected)) {
+    const source = await readFile(new URL(`../src/content/blog/${slug}.md`, import.meta.url), 'utf8');
+    assert.equal(source.match(/^offer:\s*"([^"]+)"/m)?.[1], offer, slug);
+    assert.equal(source.match(/^offerSpecialty:\s*"([^"]+)"/m)?.[1], specialty, slug);
+  }
+});
+
+test('blog schema rejects unknown offers', () => {
+  const base = {
+    title: 'T', subtitle: 'S', date: new Date('2026-09-30'), updatedDate: '2026-09-30', image: '/x.jpg',
+    category: 'C', readTime: '1 menit', robots: 'noindex,follow',
+    medicalDisclaimer: 'Informasi ini bersifat umum dan tidak menggantikan saran dokter.',
+  };
+  assert.equal(blogEntrySchema.safeParse({ ...base, offer: 'estimate', offerSpecialty: 'Jantung' }).success, true);
+  assert.equal(blogEntrySchema.safeParse({ ...base, offer: 'bogus' }).success, false);
+});

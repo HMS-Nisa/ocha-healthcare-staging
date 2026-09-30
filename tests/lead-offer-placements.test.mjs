@@ -25,3 +25,36 @@ test('offer card hides unavailable offers and fetches doctors once per build', (
   assert.match(card, /client:visible/);
   assert.match(read('../src/lib/doctors.js'), /export function getPublishedDoctorsCached\(\)/);
 });
+
+const before = (source, first, second) => {
+  const a = source.indexOf(first);
+  const b = source.indexOf(second);
+  return a !== -1 && b !== -1 && a < b;
+};
+
+test('articles show the matched offer inline and in a desktop-only sidebar', () => {
+  const page = read('../src/pages/blog/[...slug].astro');
+  assert.match(page, /offerForArticle\(\{ offer: entry\.data\.offer, slug: entry\.slug, category: entry\.data\.category \}\)/);
+  assert.match(page, /<OfferCard offer=\{articleOffer\} variant="inline"/);
+  assert.match(page, /<OfferCard offer=\{articleOffer\} variant="sidebar"/);
+  assert.match(page, /class="hidden lg:block lg:col-span-4/);
+  assert.ok(before(page, '<Content />', 'variant="inline"'));
+  assert.ok(before(page, 'variant="inline"', 'id="article-faq"'));
+});
+
+test('directory, specialty and doctor pages place offers after primary booking paths', () => {
+  const directory = read('../src/pages/doctors.astro');
+  assert.ok(before(directory, '<Directory client:load', '<OfferCard offer="shortlist" variant="banner"'));
+
+  const specialty = read('../src/pages/dokter/[slug].astro');
+  assert.match(specialty, /<OfferCard offer="shortlist" variant="banner" pageType="specialty_location" placement="specialty_banner" defaultSpecialty=\{specialty\} defaultCity=\{cityFromLocation\(city\)\}/);
+  assert.ok(before(specialty, 'OfferCard offer="shortlist"', 'Cara meminta janji melalui Ocha'));
+
+  const doctor = read('../src/pages/doctor/[id].astro');
+  assert.ok(before(doctor, '<BookingWidget', '<OfferCard offer="estimate"'));
+  assert.ok(before(doctor, '<OfferCard offer="estimate"', 'TRUST SIGNALS'));
+
+  const home = read('../src/pages/index.astro');
+  assert.ok(before(home, '<Testimonials />', '<OfferCard offer="guide-budget"'));
+  assert.ok(before(home, '<OfferCard offer="guide-budget"', '<FAQ />'));
+});

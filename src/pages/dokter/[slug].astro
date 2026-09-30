@@ -10,6 +10,8 @@ import {
   specialtyLocationSlug,
 } from '../../lib/slugs.js';
 import { absoluteUrl } from '../../lib/seo.js';
+import OfferCard from '../../components/OfferCard.astro';
+import { cityFromLocation } from '../../lib/offers.js';
 
 export async function getStaticPaths() {
   const specialtyTranslations = {
@@ -212,6 +214,12 @@ const faqSchema = {
           ))}
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="pb-12 md:pb-16">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <OfferCard offer="shortlist" variant="banner" pageType="specialty_location" placement="specialty_banner" defaultSpecialty={specialty} defaultCity={cityFromLocation(city)} />
     </div>
   </section>
 

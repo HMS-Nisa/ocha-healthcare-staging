@@ -21,6 +21,8 @@ faq:
     answer: "Rencana perawatan, jenis layanan yang diminta dokter, pemeriksaan, obat, lama perawatan, dan cakupan layanan rumah sakit dapat memengaruhi estimasi."
   - question: "Apakah Ocha memilihkan perawatan kanker?"
     answer: "Tidak. Ocha membantu koordinasi dengan pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi. Keputusan medis tetap dibuat oleh dokter dan pasien."
+offer: "estimate"
+offerSpecialty: "Onkologi"
 ---
 
 Jika Anda mencari biaya pengobatan kanker di Malaysia, langkah yang paling aman adalah meminta **estimasi tertulis yang menjelaskan cakupan layanannya**, bukan mengandalkan satu angka dari internet. Ocha dapat membantu meneruskan kebutuhan koordinasi Anda kepada pilihan spesialis atau rumah sakit dalam jaringan mitra yang telah diverifikasi. Agen Ocha meninjau permintaan secara manual.

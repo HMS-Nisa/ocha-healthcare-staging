@@ -24,6 +24,8 @@ faq:
     answer: "Tidak. Pilihan terbatas pada jaringan mitra Ocha yang telah diverifikasi dan bergantung pada kesesuaian kebutuhan serta ketersediaan saat permintaan diproses."
   - question: "Bagaimana saya memulai?"
     answer: "Pilih jadwal melalui kalender Ocha. Setelah itu, lanjutkan melalui WhatsApp agar agen dapat meninjau permintaan Anda secara manual dan menjelaskan langkah koordinasi berikutnya."
+offer: "estimate"
+offerSpecialty: "Bedah Jantung"
 ---
 
 ## Apa itu operasi bypass jantung (CABG)?
