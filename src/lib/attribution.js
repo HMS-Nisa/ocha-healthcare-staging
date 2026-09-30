@@ -8,19 +8,24 @@ const STORAGE_KEY = 'ocha_attr_v1';
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 const MAX_FIELD_LENGTH = 120;
 
+// In-memory fallback when localStorage is blocked: holds the current page's attribution
+// so that forms and links work even in private mode or with storage restrictions.
+let memoryStore = {};
+
 function readStore() {
   try {
     return JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '{}') || {};
   } catch {
-    return {};
+    return memoryStore;
   }
 }
 
 function writeStore(value) {
+  memoryStore = value;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   } catch {
-    // Private mode or blocked storage: attribution degrades to nothing stored.
+    // Private mode or blocked storage: attribution persists in memory for the current page.
   }
 }
 

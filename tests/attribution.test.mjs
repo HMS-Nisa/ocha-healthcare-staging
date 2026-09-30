@@ -60,11 +60,12 @@ test('first touch is kept and last touch updates only on new campaign or externa
   }
 });
 
-test('blocked storage never throws and yields empty attribution', () => {
+test('blocked storage never throws and falls back to the current page', () => {
   try {
-    fakeBrowser({ search: '?utm_source=instagram', blocked: true });
+    fakeBrowser({ search: '?utm_source=instagram', pathname: '/', blocked: true });
     assert.doesNotThrow(() => captureAttribution());
-    assert.equal(currentAttribution().utm_source, '');
+    assert.equal(currentAttribution().utm_source, 'instagram');
+    assert.equal(currentAttribution().landing_page, '/');
   } finally {
     resetBrowser();
   }
