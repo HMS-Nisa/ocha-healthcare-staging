@@ -34,3 +34,10 @@ export async function getPublishedDoctors({ fetchImpl = fetch, env = import.meta
   if (!Array.isArray(rows)) throw new Error('Doctor data fetch failed: expected an array');
   return rows.map(normalizeDoctorRow).sort((a, b) => a.id.localeCompare(b.id));
 }
+
+// One fetch per build for components that only need doctor-derived options.
+let cachedDoctors;
+export function getPublishedDoctorsCached() {
+  cachedDoctors ||= getPublishedDoctors();
+  return cachedDoctors;
+}

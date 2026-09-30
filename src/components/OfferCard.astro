@@ -1,0 +1,36 @@
+---
+// src/components/OfferCard.astro
+// Server wrapper: hides unavailable offers, resolves intent options, mounts LeadOffer.
+import LeadOffer from './LeadOffer.jsx';
+import { getOffer, intentOptions, isOfferAvailable } from '../lib/offers.js';
+import { getPublishedDoctorsCached } from '../lib/doctors.js';
+
+const {
+  offer,
+  variant = 'inline',
+  pageType = '',
+  placement = '',
+  defaultSpecialty = '',
+  defaultCity = '',
+} = Astro.props;
+
+const definition = getOffer(offer);
+const available = isOfferAvailable(definition, { dev: import.meta.env.DEV });
+const options = available && definition.needsIntent
+  ? intentOptions(await getPublishedDoctorsCached())
+  : { specialties: [], cities: [] };
+---
+
+{available && (
+  <LeadOffer
+    client:visible
+    offer={offer}
+    variant={variant}
+    pageType={pageType}
+    placement={placement}
+    specialties={options.specialties}
+    cities={options.cities}
+    defaultSpecialty={defaultSpecialty}
+    defaultCity={defaultCity}
+  />
+)}
