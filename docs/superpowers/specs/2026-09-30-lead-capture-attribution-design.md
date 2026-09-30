@@ -15,10 +15,10 @@ This is sub-project 1 of the lead conversion and nurturing initiative:
 |---|---|---|
 | 0 | Reconcile repository | Merge `codex/indonesia-patient-lead-drafts` into `main` so `main` matches production |
 | 1 | On-site capture and attribution | This spec |
-| 2 | GHL handover and email nurture | Field, tag and workflow specification plus Bahasa Indonesia email sequences for the colleague who builds GHL |
+| 2 | GHL build and email nurture | Owned by the user's colleague, outside this repository. This spec supplies only the form requirements in Section 7.3 |
 | 3 | Content loop | Weekly article briefs must name an offer |
 
-Sub-project 0 ships in the same pull request as sub-project 1.
+Sub-project 0 ships in the same pull request as sub-project 1. This work covers the website only; GHL configuration, tags, workflows and email content are not built here.
 
 ## 2. Confirmed constraints
 
@@ -117,14 +117,14 @@ Booking calendar behaviour, Supabase schema and data, SEO indexability rules, si
 
 `offer`, `specialty`, `city`, `source_page`, `landing_page`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`. Each value is cut to 120 characters. Empty values are left out of the URL.
 
-### 7.3 GHL checklist for the colleague
+### 7.3 GHL form requirements (handed to the colleague)
 
 1. Create two forms. **Shortlist** asks for full name, email, WhatsApp number and consent. **Estimate** asks for the same fields plus an optional "Tindakan / kebutuhan" text field.
 2. Add the eleven hidden fields in 7.2 to all four forms, with query keys exactly as listed.
 3. Add a required, unticked consent checkbox: "Saya setuju menerima email dari Ocha Healthcare dan dapat berhenti kapan saja." This supports consent under Indonesia's Personal Data Protection Law (UU 27/2022).
 4. On submit, redirect to `https://ocha.health/terima-kasih/?offer=<key>`, using the matching key per form.
 5. Send the two new form IDs to be added to `offers.js`.
-6. Tags and workflows per `offer` are defined in sub-project 2.
+6. Tags, workflows and nurture emails per `offer` are the colleague's decision; the `offer` hidden field makes segmentation possible.
 
 ### 7.4 Analytics
 
@@ -165,4 +165,4 @@ Browser checks before the pull request, on desktop and mobile: an article, the d
 
 ## 11. Out of scope
 
-Hero trust-line fix, an offer on the blog index, an MM2H lead form, GHL workflows and email copy (sub-project 2), content-brief changes (sub-project 3), and any paid acquisition.
+Hero trust-line fix, an offer on the blog index, an MM2H lead form, any GHL configuration or email copy (sub-project 2, owned by the colleague), content-brief changes (sub-project 3), and any paid acquisition.
