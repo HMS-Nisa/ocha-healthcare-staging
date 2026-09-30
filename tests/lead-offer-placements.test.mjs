@@ -70,3 +70,18 @@ test('guide pages open the GHL form on demand and keep WhatsApp tracking', () =>
   assert.match(guide, /robots="noindex,follow"/);
   assert.match(guide, /Formulir Unduh Panduan/);
 });
+
+test('thank-you page records the lead without indexing', () => {
+  const page = read('../src/pages/terima-kasih.astro');
+  assert.match(page, /robots="noindex,follow"/);
+  assert.match(page, /track\('generate_lead', \{ page_type: 'thank_you', offer: copy \? offer : 'unknown' \}\)/);
+  assert.match(page, /buildWhatsAppUrl\(/);
+  assert.match(page, /`terima-kasih\/\$\{offer \|\| 'umum'\}`/);
+});
+
+test('privacy policy discloses offer forms and attribution storage', () => {
+  const privacy = read('../src/pages/privacy.astro');
+  assert.match(privacy, /30 September 2026/);
+  assert.match(privacy, /Formulir GoHighLevel hanya dimuat setelah Anda menekan tombol penawaran/);
+  assert.match(privacy, /tanpa data pribadi/);
+});
