@@ -58,3 +58,15 @@ test('directory, specialty and doctor pages place offers after primary booking p
   assert.ok(before(home, '<Testimonials />', '<OfferCard offer="guide-budget"'));
   assert.ok(before(home, '<OfferCard offer="guide-budget"', '<FAQ />'));
 });
+
+test('guide pages open the GHL form on demand and keep WhatsApp tracking', () => {
+  const guide = read('../src/pages/guide/[...slug].astro');
+  assert.doesNotMatch(guide, /<iframe/);
+  assert.doesNotMatch(guide, /form_embed\.js/);
+  assert.match(guide, /offerKeyForGuide\(entry\.slug\)/);
+  assert.match(guide, /<LeadOffer client:load offer=\{guideOffer\} variant="button" pageType="lead_guide" placement="guide_primary"/);
+  assert.match(guide, /data-whatsapp-concierge/);
+  assert.match(guide, /track\('view_lead_guide'/);
+  assert.match(guide, /robots="noindex,follow"/);
+  assert.match(guide, /Formulir Unduh Panduan/);
+});
