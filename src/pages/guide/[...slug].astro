@@ -3,7 +3,7 @@
 import { getCollection } from 'astro:content';
 import LandingLayout from '../../layouts/LandingLayout.astro';
 import { CheckCircle2, MessageCircle, FileText, ArrowDown } from 'lucide-react';
-import { WA_NUMBER } from '../../config';
+import { buildWhatsAppUrl } from '../../lib/attribution.js';
 
 export async function getStaticPaths() {
   const magnets = await getCollection('magnets');
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 
 // Logic for fallback button
-const destinationUrl = entry.data.formUrl || `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya mau request "${entry.data.title}".`;
+const destinationUrl = entry.data.formUrl || buildWhatsAppUrl(`Halo Ocha, saya mau request "${entry.data.title}".`, `guide/${entry.slug}`);
 const ButtonIcon = entry.data.formUrl ? FileText : MessageCircle;
 ---
 

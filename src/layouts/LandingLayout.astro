@@ -3,7 +3,8 @@
 import { Search, Menu, X } from 'lucide-react';
 import Footer from '../components/Footer.astro';
 import SeoHead from '../components/SeoHead.astro';
-import { WA_NUMBER } from '../config'; 
+import SiteScripts from '../components/SiteScripts.astro';
+import { buildWhatsAppUrl, whatsappRef } from '../lib/attribution.js';
 
 const {
     title,
@@ -20,7 +21,7 @@ const {
 // Keep origin/main's `ogImage` prop compatible while routing all metadata
 // through Phase 1's single SEO component.
 const image = explicitImage ?? ogImage;
-const waLink = `https://wa.me/${WA_NUMBER}?text=Halo Ocha, saya ingin membuat janji konsultasi.`;
+const waLink = buildWhatsAppUrl('Halo Ocha, saya ingin membuat janji konsultasi.', whatsappRef(Astro.url.pathname));
 
 // 🔴 YOUR IDs (PRESERVED)
 const GA_MEASUREMENT_ID = 'G-WL0KG6Y6B8'; 
@@ -106,6 +107,7 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
 
                     <a 
                         href={waLink} 
+                        data-wa-placement="navbar" 
                         target="_blank" 
                         class="px-5 py-2.5 bg-[#276CA1] text-white font-bold rounded-full text-sm hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 active:scale-95 transform duration-150 flex items-center gap-2"
                     >
@@ -150,7 +152,7 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
             </a>
             
             <div class="mt-4 px-2">
-                <a href={waLink} target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
+                <a href={waLink} data-wa-placement="mobile_menu" target="_blank" class="block w-full bg-[#276CA1] text-white text-center py-4 rounded-xl font-bold text-[15px] shadow-lg shadow-blue-900/20 active:scale-95 active:bg-[#1f5682] transition-all duration-200">
                     Buat Janji
                 </a>
             </div>
@@ -229,5 +231,6 @@ const CLARITY_PROJECT_ID = 'v0p5vbt2q2';
                 });
             }
         </script>
+        <SiteScripts />
     </body>
 </html>
