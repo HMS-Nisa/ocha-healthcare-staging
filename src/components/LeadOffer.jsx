@@ -137,10 +137,12 @@ function OfferModal({ offer, fields, onClose }) {
     const onKey = (event) => event.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
     document.body.classList.add('overflow-hidden');
+    const previous = document.activeElement;
     closeRef.current?.focus();
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.classList.remove('overflow-hidden');
+      previous?.focus?.();
     };
   }, []);
 

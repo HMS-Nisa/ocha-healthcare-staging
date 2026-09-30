@@ -111,3 +111,10 @@ test('offer wrappers render only when the offer is live', () => {
   assert.match(directory, /isOfferAvailable\(getOffer\('shortlist'\), \{ dev: import\.meta\.env\.DEV \}\)/);
   assert.match(directory, /\{showOffer && \(\s*<section class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 mt-16">/);
 });
+
+test('pop-up returns focus to the element that opened it', () => {
+  const source = read('../src/components/LeadOffer.jsx');
+  assert.match(source, /const previous = document\.activeElement;/);
+  assert.match(source, /previous\?\.focus\?\.\(\)/);
+  assert.ok(before(source, 'const previous = document.activeElement;', 'closeRef.current?.focus()'));
+});
