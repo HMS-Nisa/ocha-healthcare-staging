@@ -1,0 +1,596 @@
+---
+// src/pages/alhaya-fertility-centre.astro
+// Alhaya Fertility Centre (Alpha IVF Group) — partner clinic page for Indonesian patients.
+// Content supplied by Alhaya: clinic profile, USP sheet, doctor profiles, package sheets,
+// operating hours. Prices and promo periods are Alhaya's and are quoted as given.
+import LandingLayout from '../layouts/LandingLayout.astro';
+import { WA_NUMBER } from '../config';
+import { absoluteUrl } from '../lib/seo.js';
+import {
+  MessageCircle, ArrowRight, MapPin, Clock, Phone, Stethoscope, HeartHandshake,
+  Building2, Microscope, Snowflake, Activity, Dna, Sparkles, CheckCircle2,
+  BadgeCheck, CalendarDays, Users, ShieldCheck
+} from 'lucide-react';
+
+const pageTitle = 'Bayi Tabung (IVF) di Alhaya Fertility Centre Kuala Lumpur';
+const pageDesc = 'Alhaya Fertility Centre di KPJ Damansara Specialist Hospital 2, Kuala Lumpur — klinik fertilitas ramah Muslim dari Alpha IVF Group. Lihat layanan, teknologi, dokter, paket, dan jadwal. Ocha bantu atur janji temu, gratis.';
+const canonical = absoluteUrl('/alhaya-fertility-centre/');
+
+const wa = (message) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+const waGeneral = wa('Halo Ocha, saya ingin konsultasi program bayi tabung (IVF) di Alhaya Fertility Centre, Kuala Lumpur.');
+const waPackage = wa('Halo Ocha, saya ingin tahu detail paket pemeriksaan kesuburan dan IVF di Alhaya Fertility Centre.');
+const waSchedule = wa('Halo Ocha, saya ingin membuat janji temu dengan dokter fertilitas di Alhaya Fertility Centre.');
+
+const highlights = [
+  { icon: HeartHandshake, label: 'Ramah Muslim' },
+  { icon: Building2, label: 'Satu atap' },
+  { icon: BadgeCheck, label: 'Bagian dari Alpha IVF Group' },
+  { icon: MapPin, label: 'KPJ Damansara Specialist Hospital 2' },
+];
+
+const advantages = [
+  {
+    icon: HeartHandshake,
+    title: 'Klinik fertilitas ramah Muslim',
+    desc: 'Dipimpin dokter spesialis fertilitas Muslim, dengan proses dan etika layanan yang selaras dengan prinsip syariah — nyaman bagi pasangan Muslim yang menjalani program kesuburan.',
+  },
+  {
+    icon: Building2,
+    title: 'Layanan satu atap',
+    desc: 'Pemeriksaan kesuburan, IUI, IVF/ICSI, laparoskopi dan histeroskopi, pembekuan serta pencairan embrio, hingga tes diagnostik lanjutan dikerjakan di dalam klinik, sehingga penanganan lebih cepat dan terkoordinasi.',
+  },
+  {
+    icon: Activity,
+    title: 'Tingkat keberhasilan yang kuat',
+    desc: 'Angka kehamilan dan kelahiran hidup yang konsisten, ditangani dokter berpengalaman untuk kasus kesuburan sederhana maupun kompleks, dengan dukungan laboratorium modern.',
+  },
+  {
+    icon: Microscope,
+    title: 'Teknologi eksklusif Alpha IVF Group',
+    desc: 'Akses ke teknologi yang tidak tersedia di semua klinik, mulai dari Piezo-ICSI hingga pemilihan sperma mikrofluida dan analisis kesehatan endometrium.',
+  },
+  {
+    icon: Dna,
+    title: 'Seleksi embrio berlapis (CESS)',
+    desc: 'Comprehensive Embryo Selection System menilai embrio dari beberapa sisi sebelum transfer, sehingga embrio terbaik yang dipilih.',
+  },
+];
+
+const technologies = [
+  {
+    icon: Microscope,
+    title: 'Piezo-ICSI',
+    desc: 'Teknik ICSI yang lebih presisi dan lembut. Risiko kerusakan sel telur lebih kecil dan tingkat pembuahan lebih baik dibanding ICSI konvensional.',
+  },
+  {
+    icon: Activity,
+    title: 'Pemilihan sperma mikrofluida',
+    desc: 'Sperma terbaik dipilih lewat kanal mikrofluida berdasarkan gerak dan morfologi alaminya, tanpa sentrifugasi, sehingga sel sperma tidak tertekan dan embrio lebih sehat.',
+  },
+  {
+    icon: Snowflake,
+    title: 'Metode pembekuan Cryotec',
+    desc: 'Sistem vitrifikasi terbaru untuk sel telur dan embrio dengan tingkat kelangsungan hidup sampai 100% setelah dicairkan.',
+  },
+  {
+    icon: Dna,
+    title: 'Endometrio (ERA, EMMA, ALICE)',
+    desc: 'Analisis menyeluruh kesehatan dinding rahim: ERA menentukan waktu transfer embrio terbaik, EMMA menilai keseimbangan bakteri rahim, ALICE mendeteksi endometritis kronis.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Ova/Endo PRP',
+    desc: 'Platelet-Rich Plasma untuk meremajakan ovarium serta menebalkan dinding rahim, membantu kualitas sel telur dan peluang implantasi.',
+  },
+];
+
+const embryoSelection = [
+  'Kultur blastosis — embrio dipantau sampai hari ke-5/6 agar kelayakannya terlihat lebih jelas.',
+  'Evaluasi morfologi embrio — penilaian bentuk dan struktur embrio.',
+  'Morfokinetik embrio (time-lapse) — perkembangan embrio dipantau terus-menerus secara real time.',
+  'Penilaian embrio berbantuan kecerdasan buatan — memperkirakan peluang kromosom normal dan kehamilan.',
+  'PGT-A — skrining kelainan kromosom untuk memilih embrio yang kromosomnya normal.',
+];
+
+const doctors = [
+  {
+    name: 'Dr. Haris Hamzah',
+    role: 'Consultant O&G & Fertility Specialist',
+    credentials: 'MBBS (MAL), FRCOG (UK)',
+    image: '/assets/doctors/dr-haris-hamzah.jpg',
+    points: [
+      'Pelopor IVF di Malaysia — mendirikan pusat IVF pertama di negara itu pada 1986 bersama Prof. J.L. Yovich (PIVET Laboratories, Australia Barat), yang menghasilkan kehamilan IVF pertama dan kelahiran sehat pertama di Malaysia pada Maret 1987.',
+      'Lulusan Fakultas Kedokteran Universiti Malaya (1977), angkatan pertama lulusan Malaysia yang meraih MRCOG di London (1982), dan diangkat sebagai FRCOG pada 1994.',
+      'Mantan Presiden MSART serta anggota komite Kementerian Malaysia yang menyusun regulasi praktik teknologi reproduksi berbantu (ART) di Malaysia.',
+      'Membangun program ICSI pertama di Malaysia (2004), termasuk kehamilan pertama Malaysia dari ICSI dengan biopsi testis (TESA) dan kelahiran sehat pada 2005.',
+    ],
+  },
+  {
+    name: 'Dr. Wan Syahirah binti Yang Mohsin',
+    role: 'Consultant O&G & Fertility Specialist',
+    credentials: 'MD (UKM), MOG (UKM)',
+    image: '/assets/doctors/dr-wan-syahirah.jpg',
+    points: [
+      'Dokter spesialis kebidanan dan kandungan sekaligus spesialis fertilitas, meraih gelar dokter dan magister Obstetri & Ginekologi dari Universiti Kebangsaan Malaysia (UKM).',
+      'Menempuh tiga tahun pendidikan kedokteran reproduksi di Hospital Raja Permaisuri Bainun (Perak), Hospital Tunku Azizah (Kuala Lumpur), serta Advanced Reproductive Centre, Hospital Canselor Tuanku Muhriz UKM.',
+      'Mengikuti observership di klinik Endokrinologi Ginekologi dan Kedokteran Reproduksi, Medical University of Innsbruck, Austria (2017), dengan penelitian pada kegagalan implantasi berulang, keguguran berulang, endometriosis, dan adenomiosis.',
+      'Meraih Fellowship in Reproductive Medicine (2021) dan Fellowship in Minimally Access Surgery (F.MAS) di Dubai, serta pengakuan Malaysia Book of Records (2022) untuk studi INVOcell pertama yang berhasil dilakukan dan dipublikasikan di Malaysia.',
+    ],
+  },
+];
+
+const packages = [
+  {
+    name: 'Skrining Kesuburan Wanita',
+    price: 'RM398',
+    normal: 'Harga normal RM905',
+    note: 'Hemat lebih dari 55%',
+    includes: [
+      'Konsultasi dokter spesialis fertilitas',
+      'USG abdomen',
+      'USG transvaginal',
+      'Tes darah AMH',
+    ],
+    footnote: 'AMH (Anti-Müllerian Hormone) memperkirakan cadangan sel telur, sehingga Anda tahu kondisi kesuburan sebelum merencanakan kehamilan.',
+  },
+  {
+    name: 'Skrining Kesuburan Pria',
+    price: 'RM198',
+    normal: 'Harga normal RM425',
+    note: 'Pemeriksaan cepat dan non-invasif',
+    includes: [
+      'Konsultasi dokter spesialis fertilitas',
+      'Analisis sperma berbantuan kecerdasan buatan',
+    ],
+    footnote: 'Analisis sperma menilai jumlah, pergerakan, dan kualitas sperma. Faktor pria berperan pada hampir 30% kasus gangguan kesuburan.',
+  },
+  {
+    name: 'Pemeriksaan Kesuburan Pasangan',
+    price: 'RM388',
+    normal: 'Harga normal RM800+',
+    note: 'Untuk suami dan istri',
+    includes: [
+      'Konsultasi dokter spesialis fertilitas',
+      'USG transvaginal dan USG abdomen',
+      'Analisis sperma berbantuan kecerdasan buatan',
+      'Bonus bersama Tabib Sun: konsultasi pengobatan tradisional Tiongkok dan akupunktur 30 menit',
+    ],
+    footnote: 'Cocok untuk pasangan yang sudah mencoba hamil lebih dari 6 bulan, wanita usia 30 tahun ke atas, atau pasangan yang ingin memeriksa kesuburan sebelum merencanakan kehamilan.',
+  },
+  {
+    name: 'Paket IVF Visit Malaysia',
+    price: 'RM18.888',
+    normal: 'Dirancang untuk pasien luar negeri',
+    note: 'Termasuk jasa dokter',
+    includes: [
+      'Konsultasi dokter spesialis fertilitas (jasa dokter termasuk)',
+      'Pemeriksaan darah suami dan istri',
+      'USG',
+      'Biaya prosedur IVF dan ovum pick-up (OPU)',
+      'Piezo-ICSI dan kultur blastosis',
+      'Transfer embrio beku (FET)',
+      'Diskon penerbangan 10% bersama Batik Air dan tarif khusus di hotel mitra terpilih',
+    ],
+    footnote: 'Belum termasuk obat stimulasi IVF, pembekuan embrio tambahan, serta prosedur lain yang mungkin diperlukan sesuai kondisi medis pasien.',
+  },
+];
+
+const hours = [
+  { day: 'Senin – Jumat', time: '08.00 – 17.00' },
+  { day: 'Sabtu', time: '08.00 – 13.00' },
+  { day: 'Minggu', time: 'Tutup' },
+];
+
+const specialists = [
+  'Dr. Haris Hamzah',
+  'Dr. Wan Syahirah',
+  'Dr. Mohamad Faisol',
+  'Dr. Liew',
+];
+
+const faqs = [
+  {
+    q: 'Di mana lokasi Alhaya Fertility Centre?',
+    a: 'Alhaya Fertility Centre berada di No. 3.01, Left Wing, Level 3, KPJ Damansara Specialist Hospital 2, Jalan Bukit Lanjan, 60000 Kuala Lumpur, Malaysia.',
+  },
+  {
+    q: 'Apakah klinik ini ramah bagi pasangan Muslim?',
+    a: 'Ya. Alhaya Fertility Centre dipimpin dokter spesialis fertilitas Muslim dan menjalankan proses layanan yang selaras dengan prinsip syariah, sehingga pasangan Muslim merasa lebih nyaman menjalani program kesuburan.',
+  },
+  {
+    q: 'Berapa biaya pemeriksaan kesuburan dan program bayi tabung di Alhaya?',
+    a: 'Skrining kesuburan wanita RM398, skrining kesuburan pria RM198, pemeriksaan kesuburan pasangan RM388, dan paket IVF Visit Malaysia RM18.888. Harga berlaku sesuai informasi dari Alhaya sampai 30 November 2026 dan dapat berubah sewaktu-waktu.',
+  },
+  {
+    q: 'Bagaimana cara membuat janji temu dari Indonesia?',
+    a: 'Hubungi Ocha lewat WhatsApp. Ocha akan menanyakan kebutuhan Anda, menyampaikannya ke Alhaya Fertility Centre, lalu mengatur jadwal konsultasi dengan dokter spesialis fertilitas. Layanan Ocha gratis untuk pasien.',
+  },
+  {
+    q: 'Apakah konsultasi harus dengan janji temu?',
+    a: 'Ya. Konsultasi dokter spesialis fertilitas di Alhaya hanya melayani pasien dengan janji temu, dan jadwal dokter dapat berubah, sehingga sebaiknya diatur jauh hari.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${canonical}#webpage`,
+    name: pageTitle,
+    description: pageDesc,
+    url: canonical,
+    inLanguage: 'id-ID',
+    isPartOf: { '@id': 'https://ocha.health/#website' },
+    mainEntity: { '@id': `${canonical}#clinic` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalClinic',
+    '@id': `${canonical}#clinic`,
+    name: 'Alhaya Fertility Centre',
+    url: canonical,
+    description: 'Klinik fertilitas ramah Muslim di Kuala Lumpur, bagian dari Alpha IVF Group, dengan layanan pemeriksaan kesuburan, IUI, dan IVF/ICSI satu atap.',
+    medicalSpecialty: 'Obstetric',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'No. 3.01, Left Wing, Level 3, KPJ Damansara Specialist Hospital 2, Jalan Bukit Lanjan',
+      addressLocality: 'Kuala Lumpur',
+      postalCode: '60000',
+      addressCountry: 'MY',
+    },
+    telephone: '+603-7627 0088',
+    openingHoursSpecification: [
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '17:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '08:00', closes: '13:00' },
+    ],
+    physician: doctors.map((doctor) => ({ '@type': 'Physician', name: doctor.name, medicalSpecialty: 'Obstetric' })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.q, acceptedAnswer: { '@type': 'Answer', text: faq.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${canonical}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: absoluteUrl('/') },
+      { '@type': 'ListItem', position: 2, name: 'Alhaya Fertility Centre', item: canonical },
+    ],
+  },
+];
+---
+
+<LandingLayout
+  title={pageTitle}
+  description={pageDesc}
+  canonicalPath="/alhaya-fertility-centre/"
+  image="/assets/alhaya-logo.png"
+  schemas={jsonLd}
+>
+  <main>
+
+    {/* ============ HERO ============ */}
+    <section class="relative pt-16 pb-20 lg:pt-20 lg:pb-28 overflow-hidden bg-slate-50">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-sky-100/50 rounded-full blur-3xl mix-blend-multiply"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-3xl mix-blend-multiply"></div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
+        <div class="text-center lg:text-left">
+          <img src="/assets/alhaya-logo.png" alt="Alhaya Fertility Centre" width="600" height="279" fetchpriority="high" class="h-14 md:h-16 w-auto mx-auto lg:mx-0 mb-8" />
+
+          <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl text-slate-900 leading-[1.1] tracking-tight mb-6">
+            Program bayi tabung di<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-500">Alhaya Fertility Centre.</span>
+          </h1>
+
+          <p class="text-lg md:text-xl text-slate-500 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
+            Klinik fertilitas <strong class="text-slate-700 font-semibold">ramah Muslim</strong> di Kuala Lumpur, bagian dari <strong class="text-slate-700 font-semibold">Alpha IVF Group</strong>. Ocha bantu atur konsultasi dan janji temu Anda — gratis.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-10">
+            <a href={waGeneral} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-[#276CA1] text-white px-7 py-3.5 rounded-full font-bold text-base hover:bg-[#1f5682] transition shadow-lg shadow-blue-900/20 hover:-translate-y-0.5 active:scale-[0.98] duration-200">
+              <MessageCircle className="w-5 h-5 flex-shrink-0" /> Konsultasi gratis via WhatsApp
+            </a>
+            <a href="#paket" class="inline-flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-7 py-3.5 rounded-full font-bold text-base hover:bg-slate-50 hover:border-sky-200 active:scale-[0.98] transition duration-200">
+              Lihat paket &amp; biaya <ArrowRight className="w-5 h-5 flex-shrink-0" />
+            </a>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+            {highlights.map((item) => (
+              <span class="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm">
+                <item.icon className="w-4 h-4 text-sky-600" />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div class="relative mt-8 lg:mt-0">
+          <div class="bg-white rounded-3xl border border-slate-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.12)] p-7 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-11 h-11 bg-sky-50 rounded-xl flex items-center justify-center">
+                <Stethoscope className="w-5 h-5 text-sky-600" />
+              </div>
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Layanan satu atap</div>
+                <div class="text-sm font-bold text-slate-800">Dari pemeriksaan sampai transfer embrio</div>
+              </div>
+            </div>
+            <ul class="space-y-3">
+              {[
+                'Skrining kesuburan pria dan wanita',
+                'IUI, IVF, dan ICSI',
+                'Laparoskopi dan histeroskopi',
+                'Pembekuan dan pencairan embrio',
+                'Tes diagnostik lanjutan',
+              ].map((item) => (
+                <li class="flex items-start gap-3 text-[15px] text-slate-600">
+                  <CheckCircle2 className="w-5 h-5 text-sky-500 flex-shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="mt-6 pt-6 border-t border-slate-100 flex items-center gap-2 text-sm text-slate-400 font-medium">
+              <MapPin className="w-4 h-4 text-sky-500 flex-shrink-0" />
+              <p>KPJ Damansara Specialist Hospital 2, Kuala Lumpur</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ KEUNGGULAN ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Kenapa pasangan memilih Alhaya</h2>
+          <p class="text-slate-500 leading-relaxed">Lima hal yang membedakan Alhaya Fertility Centre dari klinik kesuburan lain di Kuala Lumpur.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {advantages.map((item) => (
+            <div class="bg-white p-7 rounded-2xl border border-slate-100 hover:border-sky-200 hover:shadow-md transition duration-300 shadow-sm">
+              <div class="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center mb-5">
+                <item.icon className="w-6 h-6 text-sky-600" />
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ============ TEKNOLOGI ============ */}
+    <section class="py-24 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Teknologi laboratorium</h2>
+          <p class="text-slate-500 leading-relaxed">Teknologi berikut dipakai di seluruh Alpha IVF Group dan tersedia di Alhaya Fertility Centre.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {technologies.map((item) => (
+            <div class="bg-white p-7 rounded-2xl border border-slate-100 shadow-sm">
+              <div class="w-12 h-12 bg-white border border-slate-100 rounded-xl flex items-center justify-center mb-5 shadow-sm">
+                <item.icon className="w-6 h-6 text-sky-600" />
+              </div>
+              <h3 class="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
+              <p class="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-10">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-11 h-11 bg-sky-50 rounded-xl flex items-center justify-center">
+              <Dna className="w-5 h-5 text-sky-600" />
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">Seleksi embrio berlapis (CESS)</h3>
+          </div>
+          <ol class="grid md:grid-cols-2 gap-x-10 gap-y-4">
+            {embryoSelection.map((step, index) => (
+              <li class="flex items-start gap-4">
+                <span class="flex-shrink-0 w-7 h-7 rounded-full bg-sky-600 text-white text-xs font-bold flex items-center justify-center">{index + 1}</span>
+                <span class="text-sm text-slate-600 leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ DOKTER ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Dokter spesialis fertilitas</h2>
+          <p class="text-slate-500 leading-relaxed">Konsultasi hanya dengan janji temu. Ocha membantu mencarikan jadwal yang cocok.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          {doctors.map((doctor) => (
+            <article class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+              <img src={doctor.image} alt={doctor.name} width="640" height="800" loading="lazy" class="w-full h-[320px] object-cover object-top bg-slate-100" />
+              <div class="p-7 flex-grow flex flex-col">
+                <h3 class="text-xl font-bold text-slate-900 mb-1">{doctor.name}</h3>
+                <p class="text-sm font-semibold text-sky-600 mb-1">{doctor.role}</p>
+                <p class="text-xs text-slate-400 font-medium mb-5">{doctor.credentials}</p>
+                <ul class="space-y-3 flex-grow">
+                  {doctor.points.map((point) => (
+                    <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed">
+                      <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0 mt-1" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="mt-10 bg-slate-50 rounded-2xl border border-slate-100 p-7 flex flex-col sm:flex-row sm:items-center gap-5 justify-between">
+          <div class="flex items-start gap-3">
+            <Users className="w-5 h-5 text-sky-600 flex-shrink-0 mt-0.5" />
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Dokter spesialis fertilitas yang praktik di Alhaya: {specialists.join(', ')}. Semua konsultasi dengan janji temu.
+            </p>
+          </div>
+          <a href="/doctors/" class="inline-flex items-center justify-center gap-2 whitespace-nowrap bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-50 hover:border-sky-200 active:scale-[0.98] transition">
+            Lihat direktori dokter <ArrowRight className="w-4 h-4 flex-shrink-0" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ PAKET ============ */}
+    <section id="paket" class="py-24 bg-slate-50 scroll-mt-24">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-4">Paket &amp; biaya</h2>
+          <p class="text-slate-500 leading-relaxed">Harga berikut adalah harga promosi dari Alhaya Fertility Centre dalam ringgit Malaysia (RM), berlaku sampai 30 November 2026.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {packages.map((item) => (
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 md:p-8 flex flex-col">
+              <h3 class="text-lg font-bold text-slate-900 mb-3">{item.name}</h3>
+              <div class="flex items-baseline gap-3 mb-1">
+                <span class="font-serif text-3xl font-bold text-sky-600">{item.price}</span>
+                <span class="text-sm text-slate-400 font-medium">{item.normal}</span>
+              </div>
+              <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6">{item.note}</p>
+              <ul class="space-y-3 mb-6 flex-grow">
+                {item.includes.map((line) => (
+                  <li class="flex items-start gap-3 text-sm text-slate-600">
+                    <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+              <p class="text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-5">{item.footnote}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-10 bg-white rounded-2xl border border-slate-100 p-7">
+          <div class="flex items-start gap-3 mb-5">
+            <ShieldCheck className="w-5 h-5 text-sky-600 flex-shrink-0 mt-0.5" />
+            <h3 class="text-base font-bold text-slate-900">Syarat &amp; ketentuan paket</h3>
+          </div>
+          <ul class="grid md:grid-cols-2 gap-x-10 gap-y-3">
+            {[
+              'Paket skrining berlaku pada hari kerja, pukul 08.00 – 17.00.',
+              'Pembayaran tidak dapat dikembalikan, dipindahtangankan, atau ditukar.',
+              'Tidak dapat digabung dengan promosi pemeriksaan kesuburan lain.',
+              'Rencana pengobatan disesuaikan dengan hasil penilaian dokter spesialis fertilitas.',
+            ].map((line) => (
+              <li class="flex items-start gap-3 text-sm text-slate-600">
+                <CheckCircle2 className="w-4 h-4 text-slate-300 flex-shrink-0 mt-0.5" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <a href={waPackage} target="_blank" rel="noopener" class="mt-7 inline-flex items-center justify-center gap-2 bg-[#276CA1] text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-[#1f5682] transition active:scale-[0.98]">
+            <MessageCircle className="w-4 h-4 flex-shrink-0" /> Tanya detail paket
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ JADWAL & LOKASI ============ */}
+    <section class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-11 h-11 bg-sky-50 rounded-xl flex items-center justify-center">
+              <Clock className="w-5 h-5 text-sky-600" />
+            </div>
+            <h2 class="text-xl font-bold text-slate-900">Jam operasional</h2>
+          </div>
+          <dl class="divide-y divide-slate-100">
+            {hours.map((row) => (
+              <div class="flex items-center justify-between py-3.5">
+                <dt class="text-sm font-semibold text-slate-700">{row.day}</dt>
+                <dd class="text-sm text-slate-500 font-medium">{row.time}</dd>
+              </div>
+            ))}
+          </dl>
+          <div class="mt-6 flex items-start gap-3 text-sm text-slate-500 bg-slate-50 rounded-xl p-4">
+            <CalendarDays className="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" />
+            <p>Jadwal dokter dapat berubah. Konsultasi hanya melayani pasien dengan janji temu, jadi sebaiknya diatur jauh hari.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-11 h-11 bg-sky-50 rounded-xl flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-sky-600" />
+            </div>
+            <h2 class="text-xl font-bold text-slate-900">Lokasi klinik</h2>
+          </div>
+          <address class="not-italic text-[15px] text-slate-600 leading-relaxed mb-6">
+            No. 3.01, Left Wing, Level 3<br />
+            KPJ Damansara Specialist Hospital 2<br />
+            Jalan Bukit Lanjan<br />
+            60000 Kuala Lumpur, Malaysia
+          </address>
+          <div class="flex items-start gap-3 text-sm text-slate-500 mb-6">
+            <Phone className="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" />
+            <p>Pertanyaan umum klinik: +603-7627 0088</p>
+          </div>
+          <a href={waSchedule} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-[#276CA1] text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-[#1f5682] transition active:scale-[0.98]">
+            <MessageCircle className="w-4 h-4 flex-shrink-0" /> Atur janji temu lewat Ocha
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/* ============ FAQ ============ */}
+    <section class="py-24 bg-slate-50">
+      <div class="max-w-3xl mx-auto px-6">
+        <h2 class="font-serif text-3xl md:text-4xl font-medium text-slate-900 mb-12 text-center">Pertanyaan yang sering diajukan</h2>
+        <div class="space-y-4">
+          {faqs.map((faq) => (
+            <details class="group bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <summary class="flex items-center justify-between gap-4 cursor-pointer list-none text-base font-bold text-slate-900">
+                {faq.q}
+                <ArrowRight className="w-4 h-4 text-sky-600 flex-shrink-0 transition-transform group-open:rotate-90" />
+              </summary>
+              <p class="mt-4 text-sm text-slate-500 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ============ CTA ============ */}
+    <section class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="bg-gradient-to-br from-[#276CA1] to-[#1f5682] rounded-3xl p-10 md:p-14 text-center shadow-xl shadow-blue-900/20">
+          <h2 class="font-serif text-3xl md:text-4xl text-white mb-4">Siap memulai program kesuburan?</h2>
+          <p class="text-blue-100 leading-relaxed mb-8 max-w-xl mx-auto">
+            Ceritakan kondisi Anda ke Ocha. Kami bantu menyiapkan pertanyaan untuk dokter dan mengatur janji temu di Alhaya Fertility Centre. Gratis untuk pasien.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href={waGeneral} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-white text-[#276CA1] px-7 py-3.5 rounded-full font-bold hover:bg-blue-50 transition active:scale-[0.98]">
+              <MessageCircle className="w-5 h-5 flex-shrink-0" /> Chat Ocha sekarang
+            </a>
+            <a href="/cara-kerja/" class="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/30 text-white px-7 py-3.5 rounded-full font-bold hover:bg-white/20 transition active:scale-[0.98]">
+              Lihat cara kerja Ocha <ArrowRight className="w-5 h-5 flex-shrink-0" />
+            </a>
+          </div>
+        </div>
+
+        <p class="mt-8 text-xs text-slate-400 leading-relaxed text-center max-w-2xl mx-auto">
+          Informasi layanan, teknologi, harga, dan jadwal di halaman ini bersumber dari Alhaya Fertility Centre dan dapat berubah sewaktu-waktu. Ocha Healthcare adalah concierge medis gratis yang menghubungkan pasien dengan dokter dan rumah sakit mitra di Malaysia; Ocha bukan penyedia layanan medis dan tidak memberikan diagnosis. Keputusan pengobatan tetap ditentukan dokter setelah pemeriksaan.
+        </p>
+      </div>
+    </section>
+
+  </main>
+</LandingLayout>
